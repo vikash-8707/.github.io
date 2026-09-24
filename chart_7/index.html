@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isotype Flat Inventory (1 BHK, 2 BHK & 3 BHK)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main class="chart-container">
+    
+    <!-- Filter Buttons (All Flats, 1 BHK, 2 BHK, 3 BHK) -->
+    <div class="filter-bar" role="toolbar" aria-label="Flat Type Filters">
+      <button type="button" class="filter-btn active" data-filter="all">All Flats</button>
+      <button type="button" class="filter-btn" data-filter="1bhk">
+        <span class="legend-swatch" style="background: #c85a48;"></span> 1 BHK
+      </button>
+      <button type="button" class="filter-btn" data-filter="2bhk">
+        <span class="legend-swatch" style="background: #374151;"></span> 2 BHK
+      </button>
+      <button type="button" class="filter-btn" data-filter="3bhk">
+        <span class="legend-swatch" style="background: #4a7c92;"></span> 3 BHK
+      </button>
+    </div>
+
+    <!-- Main Isotype Flat Chart -->
+    <div id="isotype-chart-container"></div>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="isotype.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize Isotype Chart with 1 BHK, 2 BHK, and 3 BHK flat rows
+      const chart = new IsotypeFlatChart('#isotype-chart-container', ISOTYPE_PROJECTS_DATA, FLAT_TYPES);
+
+      // Wire Up Filter Buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          const target = e.currentTarget;
+          target.classList.add('active');
+          chart.setFilter(target.dataset.filter);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

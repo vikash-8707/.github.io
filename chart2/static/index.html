@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Altair Density & Violin Studio</title>
+    
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Vega & Vega-Lite & Vega-Embed Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    
+    <!-- Three.js & OrbitControls for 3D Car Model -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <!-- Top Navigation / Header -->
+    <header class="app-header">
+        <div class="brand-section">
+            <div class="brand-logo">
+                <i class="ph-bold ph-chart-polar"></i>
+            </div>
+            <div class="brand-info">
+                <h1>Dynamic Altair Violin Studio <span class="badge-pill">KDE Engine</span> <span class="db-pill" id="db-status-badge"><i class="ph-bold ph-database"></i> PostgreSQL (auth_db)</span></h1>
+                <p>Interactive Kernel Density Estimation, PostgreSQL Data & 3D Vehicle Studio</p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <!-- Preset Quick-Picks -->
+            <div class="preset-group">
+                <button class="preset-btn active" data-preset="mpg" id="preset-mpg" title="Fuel Economy by Origin">
+                    <i class="ph-bold ph-gas-pump"></i> MPG
+                </button>
+                <button class="preset-btn" data-preset="hp" id="preset-hp" title="Horsepower by Cylinders">
+                    <i class="ph-bold ph-lightning"></i> Horsepower
+                </button>
+                <button class="preset-btn" data-preset="weight" id="preset-weight" title="Vehicle Weight by Origin">
+                    <i class="ph-bold ph-barbell"></i> Weight
+                </button>
+                <button class="preset-btn" data-preset="accel" id="preset-accel" title="Acceleration Profile">
+                    <i class="ph-bold ph-timer"></i> Acceleration
+                </button>
+            </div>
+
+            <!-- Share / Embed Modal Trigger -->
+            <button class="btn-action btn-secondary" id="open-embed-modal-btn">
+                <i class="ph-bold ph-code"></i> Embed / Share
+            </button>
+
+            <!-- Light/Dark Theme Switch -->
+            <button class="btn-icon-square" id="theme-toggle-btn" title="Toggle Light / Dark Mode">
+                <i class="ph-bold ph-sun" id="theme-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <div class="app-layout">
+        
+        <!-- Left Sidebar: Controls -->
+        <aside class="control-panel">
+            
+            <!-- Card 1: Metric & Grouping -->
+            <div class="control-card">
+                <div class="card-title">
+                    <span>Variable Mapping</span>
+                    <i class="ph-bold ph-sliders"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="metric-select">Y-Axis Metric (Quantitative)</label>
+                    <select id="metric-select" class="form-control">
+                        <option value="Miles_per_Gallon" selected>Miles per Gallon (MPG)</option>
+                        <option value="Horsepower">Horsepower (HP)</option>
+                        <option value="Weight_in_lbs">Weight in lbs</option>
+                        <option value="Displacement">Displacement (cu. in.)</option>
+                        <option value="Acceleration">Acceleration (0-60 sec)</option>
+                        <option value="Cylinders">Engine Cylinders</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="groupby-select">Facet & Group By (Categorical)</label>
+                    <select id="groupby-select" class="form-control">
+                        <option value="Origin" selected>Country of Origin</option>
+                        <option value="Cylinders">Engine Cylinders</option>
+                        <option value="Year_Int">Model Year</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Card 2: Density Estimation Engine (KDE) -->
+            <div class="control-card">
+                <div class="card-title">
+                    <span>Density Estimation (KDE)</span>
+                    <i class="ph-bold ph-wave-sine"></i>
+                </div>
+
+                <div class="form-group">
+                    <div class="toggle-row">
+                        <label class="form-label" style="margin:0;">Automatic Bandwidth</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="auto-bandwidth-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="bandwidth-group" style="opacity: 0.5; pointer-events: none;">
+                    <label class="form-label" for="bandwidth-slider">
+                        Smoothing Bandwidth: <span class="value-badge" id="bandwidth-val">Auto</span>
+                    </label>
+                    <input type="range" id="bandwidth-slider" min="0.5" max="30" step="0.5" value="3.0">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Symmetry & Stack Mode</label>
+                    <div class="segmented-control">
+                        <label class="active" id="stack-center-label">
+                            <input type="radio" name="stack-mode" value="center" checked>
+                            <span>Symmetric Violin</span>
+                        </label>
+                        <label id="stack-zero-label">
+                            <input type="radio" name="stack-mode" value="zero">
+                            <span>Half Density</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="toggle-row">
+                        <label class="form-label" style="margin:0;">Auto Extent Range</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="auto-extent-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="manual-extent-container" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label" for="extent-min-slider">
+                            Extent Min: <span class="value-badge" id="extent-min-val">0</span>
+                        </label>
+                        <input type="range" id="extent-min-slider" min="0" max="300" step="1" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="extent-max-slider">
+                            Extent Max: <span class="value-badge" id="extent-max-val">50</span>
+                        </label>
+                        <input type="range" id="extent-max-slider" min="5" max="500" step="1" value="50">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Layout & Aesthetics -->
+            <div class="control-card">
+                <div class="card-title">
+                    <span>Layout & Geometry</span>
+                    <i class="ph-bold ph-palette"></i>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="width-slider">
+                        Violin Width (per facet): <span class="value-badge" id="width-val">110px</span>
+                    </label>
+                    <input type="range" id="width-slider" min="60" max="240" step="5" value="110">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="spacing-slider">
+                        Column Spacing: <span class="value-badge" id="spacing-val">4px</span>
+                    </label>
+                    <input type="range" id="spacing-slider" min="0" max="30" step="1" value="4">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="opacity-slider">
+                        Fill Opacity: <span class="value-badge" id="opacity-val">0.85</span>
+                    </label>
+                    <input type="range" id="opacity-slider" min="0.2" max="1.0" step="0.05" value="0.85">
+                </div>
+
+                <div class="form-group">
+                    <div class="toggle-row">
+                        <label class="form-label" style="margin:0;">Contour Outline Border</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="stroke-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="color-scheme-select">Palette Scheme</label>
+                    <select id="color-scheme-select" class="form-control">
+                        <option value="tableau10" selected>Tableau 10 (Vibrant Modern)</option>
+                        <option value="viridis">Viridis (Scientific Teal-Yellow)</option>
+                        <option value="plasma">Plasma (Neon Violet-Orange)</option>
+                        <option value="magma">Magma (Warm Infrared)</option>
+                        <option value="category10">Category 10</option>
+                        <option value="accent">Accent Pastel</option>
+                        <option value="dark2">Dark2 Editorial</option>
+                        <option value="spectral">Spectral Rainbow</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Card 4: Real-time Filters -->
+            <div class="control-card">
+                <div class="card-title">
+                    <span>Data Filters</span>
+                    <i class="ph-bold ph-funnel"></i>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Filter Origin</label>
+                    <div class="chip-group" id="origin-chips">
+                        <label class="chip active">
+                            <input type="checkbox" value="USA" checked> USA
+                        </label>
+                        <label class="chip active">
+                            <input type="checkbox" value="Europe" checked> Europe
+                        </label>
+                        <label class="chip active">
+                            <input type="checkbox" value="Japan" checked> Japan
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Filter Cylinders</label>
+                    <div class="chip-group" id="cylinder-chips">
+                        <label class="chip active"><input type="checkbox" value="3" checked> 3 cyl</label>
+                        <label class="chip active"><input type="checkbox" value="4" checked> 4 cyl</label>
+                        <label class="chip active"><input type="checkbox" value="5" checked> 5 cyl</label>
+                        <label class="chip active"><input type="checkbox" value="6" checked> 6 cyl</label>
+                        <label class="chip active"><input type="checkbox" value="8" checked> 8 cyl</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="year-min-slider">
+                        Min Year: <span class="value-badge" id="year-min-val">1970</span>
+                    </label>
+                    <input type="range" id="year-min-slider" min="1970" max="1982" step="1" value="1970">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="year-max-slider">
+                        Max Year: <span class="value-badge" id="year-max-val">1982</span>
+                    </label>
+                    <input type="range" id="year-max-slider" min="1970" max="1982" step="1" value="1982">
+                </div>
+                
+                <button class="btn-action btn-secondary" id="reset-filters-btn" style="width: 100%; justify-content: center; margin-top: 6px;">
+                    <i class="ph-bold ph-arrows-counter-clockwise"></i> Reset All Filters
+                </button>
+            </div>
+
+        </aside>
+
+        <!-- Right Main Viewport -->
+        <main class="dashboard-content">
+            
+            <!-- Dynamic KPI Metric Highlights -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Sample Size (N)</span>
+                    <span class="stat-value" id="kpi-count">--</span>
+                    <span class="stat-subtitle"><i class="ph-bold ph-database"></i> Active Filtered Cars</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Overall Mean</span>
+                    <span class="stat-value" id="kpi-mean">--</span>
+                    <span class="stat-subtitle" id="kpi-mean-subtitle"><i class="ph-bold ph-trend-up"></i> Average Metric Value</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Overall Median</span>
+                    <span class="stat-value" id="kpi-median">--</span>
+                    <span class="stat-subtitle"><i class="ph-bold ph-crosshair"></i> 50th Percentile</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Standard Dev (&sigma;)</span>
+                    <span class="stat-value" id="kpi-std">--</span>
+                    <span class="stat-subtitle"><i class="ph-bold ph-arrows-out-line-horizontal"></i> Spread / Dispersion</span>
+                </div>
+            </section>
+
+            <!-- Main Interactive Card -->
+            <section class="vis-card">
+                
+                <!-- Loading State Overlay -->
+                <div class="chart-loader" id="chart-loader">
+                    <div class="spinner"></div>
+                    <span style="font-weight: 600; font-size: 13px; color: var(--accent-cyan);">Generating Altair density spec...</span>
+                </div>
+
+                <div class="vis-header">
+                    <div class="vis-title-group">
+                        <h2 id="chart-main-title">
+                            Miles per Gallon Distribution by Origin
+                        </h2>
+                        <p id="chart-sub-title">Kernel density estimation computed across groups using Altair transform_density</p>
+                    </div>
+
+                    <!-- Navigation Tabs -->
+                    <div class="tab-nav">
+                        <button class="tab-btn active" data-tab="chart-pane" id="tab-chart-btn">
+                            <i class="ph-bold ph-chart-bar-horizontal"></i> Violin Plot
+                        </button>
+                        <button class="tab-btn" data-tab="car3d-pane" id="tab-3d-btn">
+                            <i class="ph-bold ph-car-profile"></i> 3D Car Studio
+                        </button>
+                        <button class="tab-btn" data-tab="data-pane" id="tab-data-btn">
+                            <i class="ph-bold ph-table"></i> Data Table
+                        </button>
+                        <button class="tab-btn" data-tab="python-pane" id="tab-python-btn">
+                            <i class="ph-bold ph-code"></i> Python Code
+                        </button>
+                        <button class="tab-btn" data-tab="json-pane" id="tab-json-btn">
+                            <i class="ph-bold ph-file-code"></i> Vega Spec
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab Panes Content -->
+                <div class="tab-content">
+                    
+                    <!-- Chart Pane -->
+                    <div class="tab-pane active" id="chart-pane">
+                        <div id="vis-container"></div>
+                    </div>
+
+                    <!-- 3D Car Studio Pane -->
+                    <div class="tab-pane" id="car3d-pane">
+                        <div class="car3d-layout">
+                            <div id="car-3d-viewport"></div>
+
+                            <!-- 3D Studio Floating Overlay Controls -->
+                            <div class="car3d-overlay">
+                                <!-- Top Bar: Model Selection from PostgreSQL & Camera Angles -->
+                                <div class="car3d-overlay-top">
+                                    <div class="car-select-box">
+                                        <label for="car-select-dropdown"><i class="ph-bold ph-database"></i> Model from PostgreSQL:</label>
+                                        <select id="car-select-dropdown" class="form-control compact-select"></select>
+                                    </div>
+                                    <div class="camera-angles-bar">
+                                        <button class="cam-btn active" data-angle="cinematic"><i class="ph-bold ph-camera"></i> 3/4 View</button>
+                                        <button class="cam-btn" data-angle="front">Front</button>
+                                        <button class="cam-btn" data-angle="side">Side</button>
+                                        <button class="cam-btn" data-angle="rear">Rear</button>
+                                        <button class="cam-btn" data-angle="top">Top</button>
+                                    </div>
+                                </div>
+
+                                <!-- Bottom Bar: Paint, Finish, Toggles & Live HUD -->
+                                <div class="car3d-overlay-bottom">
+                                    <div class="customizer-strip">
+                                        <div class="customizer-cell">
+                                            <span class="mini-label">Paint Color</span>
+                                            <div class="color-swatches" id="paint-swatches">
+                                                <button class="color-swatch active" data-color="d90429" style="background:#d90429" title="Crimson Red"></button>
+                                                <button class="color-swatch" data-color="00f5d4" style="background:#00f5d4" title="Cyber Cyan"></button>
+                                                <button class="color-swatch" data-color="111827" style="background:#111827" title="Midnight Onyx"></button>
+                                                <button class="color-swatch" data-color="f59e0b" style="background:#f59e0b" title="Liquid Gold"></button>
+                                                <button class="color-swatch" data-color="10b981" style="background:#10b981" title="Racing Green"></button>
+                                                <button class="color-swatch" data-color="f8fafc" style="background:#f8fafc" title="Pearl White"></button>
+                                                <button class="color-swatch" data-color="8b5cf6" style="background:#8b5cf6" title="Cyber Violet"></button>
+                                            </div>
+                                        </div>
+
+                                        <div class="customizer-cell">
+                                            <span class="mini-label">Finish Shader</span>
+                                            <select id="finish-select" class="form-control compact-select">
+                                                <option value="metallic" selected>Metallic Gloss</option>
+                                                <option value="matte">Satin Matte</option>
+                                                <option value="chrome">Chrome Mirror</option>
+                                                <option value="wireframe">Cyber Wireframe</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="customizer-cell toggles-cell">
+                                            <label class="switch-label">
+                                                <input type="checkbox" id="auto-rotate-3d-toggle" checked>
+                                                <span>Auto-Rotate</span>
+                                            </label>
+                                            <label class="switch-label">
+                                                <input type="checkbox" id="underglow-3d-toggle" checked>
+                                                <span>Neon Underglow</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Live PostgreSQL Telemetry HUD -->
+                                    <div class="telemetry-hud-card" id="telemetry-hud">
+                                        <div class="hud-top">
+                                            <div>
+                                                <span class="hud-caption">Active PostgreSQL Vehicle</span>
+                                                <h3 id="hud-car-name">Loading car specs...</h3>
+                                            </div>
+                                            <span class="hud-origin-badge" id="hud-car-origin">USA</span>
+                                        </div>
+                                        <div class="hud-metrics-grid">
+                                            <div class="hud-metric">
+                                                <span class="hud-num" id="hud-hp">--</span>
+                                                <span class="hud-lbl"><i class="ph-bold ph-lightning"></i> HP</span>
+                                            </div>
+                                            <div class="hud-metric">
+                                                <span class="hud-num" id="hud-mpg">--</span>
+                                                <span class="hud-lbl"><i class="ph-bold ph-gas-pump"></i> MPG</span>
+                                            </div>
+                                            <div class="hud-metric">
+                                                <span class="hud-num" id="hud-accel">--</span>
+                                                <span class="hud-lbl"><i class="ph-bold ph-timer"></i> 0-60</span>
+                                            </div>
+                                            <div class="hud-metric">
+                                                <span class="hud-num" id="hud-weight">--</span>
+                                                <span class="hud-lbl"><i class="ph-bold ph-barbell"></i> lbs</span>
+                                            </div>
+                                        </div>
+                                        <div class="hud-hotspot-hint">
+                                            <i class="ph-bold ph-cursor-click"></i> Click glowing spheres on the car to inspect Engine, Wheels, Cabin & Exhaust
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Table Pane -->
+                    <div class="tab-pane" id="data-pane">
+                        <div class="table-container">
+                            <table class="data-table" id="cars-table">
+                                <thead id="table-head"></thead>
+                                <tbody id="table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Python Code Pane -->
+                    <div class="tab-pane" id="python-pane">
+                        <div class="code-preview-container">
+                            <div class="code-header-bar">
+                                <span style="font-size: 12px; color: var(--text-secondary);">Direct reproducible Altair Python script for current view</span>
+                                <button class="btn-action btn-secondary" id="copy-code-btn">
+                                    <i class="ph-bold ph-copy"></i> Copy Script
+                                </button>
+                            </div>
+                            <pre class="code-block" id="python-code-display"></pre>
+                        </div>
+                    </div>
+
+                    <!-- Vega-Lite JSON Spec Pane -->
+                    <div class="tab-pane" id="json-pane">
+                        <div class="code-preview-container">
+                            <div class="code-header-bar">
+                                <span style="font-size: 12px; color: var(--text-secondary);">Compiled Vega-Lite 5 Specification</span>
+                                <button class="btn-action btn-secondary" id="copy-json-btn">
+                                    <i class="ph-bold ph-copy"></i> Copy JSON
+                                </button>
+                            </div>
+                            <pre class="code-block" id="json-spec-display"></pre>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Per-Group Summary Pills Bar -->
+                <div class="group-breakdown-bar" id="group-breakdown-bar">
+                    <!-- Dynamic pills rendered via JavaScript -->
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Embed & Share Modal -->
+    <div class="modal-overlay" id="embed-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Embed Interactive Altair Chart</h3>
+                <button class="modal-close" id="close-embed-modal-btn">&times;</button>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 13px;">
+                Use this responsive iframe snippet to embed this live dynamic Altair chart on any website, report, or Notion document.
+            </p>
+            <div class="snippet-box">
+                <textarea id="embed-iframe-code" readonly></textarea>
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="btn-action btn-secondary" id="open-embed-newtab-btn">
+                    <i class="ph-bold ph-arrow-square-out"></i> Open Standalone Chart
+                </button>
+                <button class="btn-action btn-primary" id="copy-embed-code-btn">
+                    <i class="ph-bold ph-copy"></i> Copy Iframe Code
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/car3d.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>

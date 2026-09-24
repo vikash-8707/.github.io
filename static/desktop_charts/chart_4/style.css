@@ -1,0 +1,145 @@
+/**
+ * Flourish Chord Diagram v11.0.1 Stylesheet
+ */
+
+:root {
+  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --bg-page: #ffffff;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --accent-color: #1a73e8;
+  --accent-hover: #1557b0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main Workspace */
+.workspace-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-page);
+  overflow: hidden;
+}
+
+/* Canvas Stage */
+.canvas-stage {
+  background: #ffffff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-right: none;
+}
+
+.chord-chart-wrapper {
+  width: 100%;
+  max-width: 760px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.flourish-chord-svg {
+  width: 100%;
+  height: auto;
+  max-height: 90vh;
+  display: block;
+  user-select: none;
+}
+
+/* Outer Ring Arcs */
+.chord-arc {
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+.chord-arc:hover {
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+}
+
+/* Ribbons (Flows) */
+.chord-ribbon {
+  transition: opacity 0.25s ease;
+}
+.chord-ribbon:hover {
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+}
+
+/* Character Labels */
+.chord-label {
+  font-family: var(--font-family);
+  font-size: 15px;
+  font-weight: 600;
+  fill: #1e293b;
+  letter-spacing: -0.2px;
+  transition: fill 0.2s ease, font-weight 0.2s ease;
+}
+.chord-label:hover {
+  fill: #0f172a;
+  font-weight: 800;
+}
+
+/* Dark Tooltip Card */
+.flourish-chord-tooltip {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  z-index: 100;
+  transition: opacity 0.15s ease;
+}
+
+.chord-tooltip-card {
+  background: #1e293b;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.chord-tooltip-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f8fafc;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+}
+
+.chord-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.chord-tooltip-row b {
+  color: #ffffff;
+}
+

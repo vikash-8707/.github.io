@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>pydeck</title>
+        <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.14.0/dist/maplibre-gl.css" />
+    <script src='https://cdn.jsdelivr.net/npm/@deck.gl/jupyter-widget@~9.3.*/dist/index.js'></script>
+    <link rel="stylesheet" href=https://cdn.jsdelivr.net/npm/@deck.gl/widgets@~9.3.*/dist/stylesheet.css />
+    <style>
+    body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#deck-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+#deck-container canvas {
+  z-index: 1;
+  background: none;
+}
+
+#deck-container .error_text {
+  color: red;
+  background: none;
+  position: absolute;
+  z-index: 100;
+}
+    </style>
+  </head>
+  <body>
+    <div id="deck-container">
+    </div>
+  </body>
+  <script>
+    const container = document.getElementById('deck-container');
+    const jsonInput = {
+  "initialViewState": {
+    "bearing": -30,
+    "latitude": 51.506,
+    "longitude": -0.0765,
+    "pitch": 58,
+    "zoom": 15.3
+  },
+  "layers": [
+    {
+      "@@type": "TextLayer",
+      "background": true,
+      "backgroundPadding": [
+        8,
+        5,
+        8,
+        5
+      ],
+      "data": [
+        {
+          "id": 1,
+          "lat": 51.5055,
+          "lon": -0.0754,
+          "name": "1  Tower Bridge"
+        },
+        {
+          "id": 2,
+          "lat": 51.5081,
+          "lon": -0.0759,
+          "name": "2  Tower of London"
+        },
+        {
+          "id": 3,
+          "lat": 51.5066,
+          "lon": -0.0814,
+          "name": "3  HMS Belfast"
+        },
+        {
+          "id": 4,
+          "lat": 51.5048,
+          "lon": -0.079,
+          "name": "4  City Hall"
+        },
+        {
+          "id": 5,
+          "lat": 51.5075,
+          "lon": -0.071,
+          "name": "5  St. Katharine Docks"
+        }
+      ],
+      "getAlignmentBaseline": "center",
+      "getAngle": 0,
+      "getBackgroundColor": [
+        255,
+        255,
+        255,
+        240
+      ],
+      "getColor": [
+        20,
+        20,
+        20,
+        255
+      ],
+      "getPosition": "@@=[lon, lat]",
+      "getSize": 15,
+      "getText": "@@=name",
+      "getTextAnchor": "start",
+      "id": "3c846e4e-d7d2-47a9-bc6b-5c85ce41a6c5",
+      "pickable": true
+    }
+  ],
+  "mapProvider": "carto",
+  "mapStyle": "https://tiles.openfreemap.org/styles/liberty",
+  "views": [
+    {
+      "@@type": "MapView",
+      "controller": true
+    }
+  ]
+};
+    const tooltip = {'text': '{name}'};
+    const customLibraries = null;
+    const configuration = null;
+
+    const deckInstance = createDeck({
+                  container,
+      jsonInput,
+      tooltip,
+      customLibraries,
+      configuration,
+          });
+
+  </script>
+</html>

@@ -1,0 +1,284 @@
+/* Google Fonts: Plus Jakarta Sans */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-page: #ffffff;
+  --bg-card: #ffffff;
+  --text-title: #0f172a;
+  --text-subtitle: #475569;
+  --text-legend: #1e293b;
+  --text-axis: #334155;
+  --border-card: rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-page);
+  font-family: var(--font-family);
+  color: var(--text-title);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Page wrapper */
+.page-container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+/* White Card Container matching PlotSet style */
+.chart-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 28px 32px 32px 32px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header */
+.chart-header {
+  margin-bottom: 16px;
+}
+
+.chart-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-title);
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.chart-subtitle {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-subtitle);
+  line-height: 1.45;
+}
+
+/* Legend items in 2 wrapping rows */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin-bottom: 18px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-legend);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.legend-item:hover {
+  background: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.legend-item.dimmed {
+  opacity: 0.35;
+}
+
+.legend-item.active {
+  background: #e2e8f0;
+  font-weight: 700;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Chart Canvas Area */
+.chart-body {
+  width: 100%;
+  position: relative;
+}
+
+.migration-chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* SVG Elements Styling */
+.area-layer {
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.top-envelope-line {
+  pointer-events: none;
+}
+
+.axis text {
+  user-select: none;
+}
+
+.axis path,
+.axis line {
+  shape-rendering: crispEdges;
+}
+
+/* Interactive Tooltip */
+.migration-tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 200;
+  transition: opacity 0.12s ease;
+}
+
+.migration-tooltip-box {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #ffffff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 1px 1px rgba(255, 255, 255, 0.15);
+  font-size: 11px;
+  min-width: 190px;
+  max-width: 250px;
+}
+
+.tooltip-year-badge {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.tooltip-range {
+  font-size: 11px;
+  font-weight: 400;
+  color: #94a3b8;
+  margin-left: 4px;
+}
+
+.tooltip-total-row {
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+
+.tooltip-total-row b {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.tooltip-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 6px 0 8px 0;
+}
+
+.tooltip-countries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-country-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.tooltip-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.tooltip-country-name {
+  color: #e2e8f0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tooltip-country-val {
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.tooltip-more-note {
+  font-size: 10px;
+  color: #94a3b8;
+  margin-top: 4px;
+  text-align: right;
+  font-style: italic;
+}
+
+/* Footer info */
+.chart-footer {
+  margin-top: 20px;
+  text-align: center;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.chart-footer a {
+  color: #94a3b8;
+  text-decoration: none;
+}
+
+.chart-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+  .chart-card {
+    padding: 20px 16px 24px 16px;
+    border-radius: 12px;
+  }
+
+  .chart-title {
+    font-size: 18px;
+  }
+
+  .chart-subtitle {
+    font-size: 12px;
+  }
+
+  .chart-legend {
+    gap: 4px 10px;
+  }
+
+  .legend-item {
+    font-size: 10px;
+  }
+}

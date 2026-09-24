@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Flourish Chord Diagram v11.0.1 (Friends Interactions)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- D3.js v7 for Chord Diagram Generation -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+  <!-- Workspace Container (Canvas + Flourish Sidebar) -->
+  <main class="workspace-container">
+    
+    <!-- Left Stage: Chord Diagram Canvas -->
+    <section class="canvas-stage">
+      <div id="chord-container" class="chord-chart-wrapper"></div>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="chord.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize Clean Standalone Chord Diagram
+      const chord = new FlourishChordDiagram('#chord-container', CHORD_DATA, {
+        defaultOpacity: 0.75,
+        focusedOpacity: 1.0,
+        defocusedOpacity: 0.10,
+        showValuesOnHover: false,
+        keepValuesOnClick: false,
+        showTooltip: false,
+        defaultFocusPair: null
+      });
+    });
+  </script>
+</body>
+</html>

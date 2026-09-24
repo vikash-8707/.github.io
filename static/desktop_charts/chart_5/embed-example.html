@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Embed Example - Migration to the US Stacked Area Chart</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="data.js"></script>
+  <script src="chart.js"></script>
+</head>
+<body style="background: #0f172a; padding: 24px;">
+
+  <!-- Any container element -->
+  <div style="max-width: 960px; margin: 0 auto; background: #fff; border-radius: 14px; padding: 24px;">
+    <h2 style="font-family: sans-serif; margin-bottom: 8px;">US Immigration Trends (1820–2009)</h2>
+    <div id="embed-chart-container"></div>
+  </div>
+
+  <script>
+    // Minimal 3-line initialization
+    const myChart = new StackedMigrationChart('#embed-chart-container', MIGRATION_DATA, CATEGORIES, {
+      aspectRatio: 0.45
+    });
+  </script>
+
+</body>
+</html>

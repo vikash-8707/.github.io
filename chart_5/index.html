@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Migration to the US by World Region, 1820-2009</title>
+  <meta name="description" content="Interactive stacked area chart showing migration to the US by world region from 1820 to 2009.">
+  <link rel="stylesheet" href="style.css">
+  <!-- D3.js v7 -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+  <div class="page-container">
+    <div class="chart-card">
+      
+      <!-- Chart Header -->
+      <header class="chart-header">
+        <h1 class="chart-title">Migration to the US by World Region, 1820-2009</h1>
+        <p class="chart-subtitle">The numbers are recorded by decade. The numbers for 1905 tell us the number of immigrants between 1900 and 1910.</p>
+      </header>
+
+      <!-- Category Legend -->
+      <div id="chart-legend" class="chart-legend" aria-label="Chart Legend"></div>
+
+      <!-- Main Stacked Area Chart -->
+      <main id="migration-chart" class="chart-body" role="img" aria-label="Stacked area chart showing immigration numbers from 1820 to 2009"></main>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Initialize Chart
+      const chart = new StackedMigrationChart('#migration-chart', MIGRATION_DATA, CATEGORIES, {
+        aspectRatio: 0.48
+      });
+
+      // 2. Render Interactive Legend Chips
+      const legendContainer = document.getElementById('chart-legend');
+      let activeSelectedId = null;
+
+      CATEGORIES.forEach(category => {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.dataset.id = category.id;
+        item.setAttribute('role', 'button');
+        item.setAttribute('tabindex', '0');
+        item.innerHTML = `
+          <span class="legend-swatch" style="background-color: ${category.color};"></span>
+          <span class="legend-label">${category.label}</span>
+        `;
+
+        // Hover effect to highlight corresponding area layer
+        item.addEventListener('mouseenter', () => {
+          if (!activeSelectedId) {
+            chart.highlightCategory(category.id);
+            document.querySelectorAll('.legend-item').forEach(el => {
+              if (el.dataset.id !== category.id) el.classList.add('dimmed');
+            });
+          }
+        });
+
+        item.addEventListener('mouseleave', () => {
+          if (!activeSelectedId) {
+            chart.resetHighlight();
+            document.querySelectorAll('.legend-item').forEach(el => el.classList.remove('dimmed'));
+          }
+        });
+
+        // Click to isolate / toggle selection
+        item.addEventListener('click', () => {
+          if (activeSelectedId === category.id) {
+            activeSelectedId = null;
+            chart.resetHighlight();
+            document.querySelectorAll('.legend-item').forEach(el => {
+              el.classList.remove('dimmed', 'active');
+            });
+          } else {
+            activeSelectedId = category.id;
+            chart.highlightCategory(category.id);
+            document.querySelectorAll('.legend-item').forEach(el => {
+              if (el.dataset.id === category.id) {
+                el.classList.add('active');
+                el.classList.remove('dimmed');
+              } else {
+                el.classList.remove('active');
+                el.classList.add('dimmed');
+              }
+            });
+          }
+        });
+
+        legendContainer.appendChild(item);
+      });
+    });
+  </script>
+</body>
+</html>

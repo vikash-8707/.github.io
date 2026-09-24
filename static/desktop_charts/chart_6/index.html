@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flourish Sankey Diagram (US Energy Flow)</title>
+  <meta name="description" content="Flourish Sankey diagram showing US Energy Consumption flows with Petroleum to Industrial flow of 8.38 quads.">
+  
+  <link rel="stylesheet" href="style.css">
+
+  <!-- D3.js v7 & D3-Sankey plugin -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+</head>
+<body>
+
+  <!-- Clean Canvas Presentation Without Sidebar -->
+  <main class="page-container">
+    <div class="canvas-card">
+      <div id="sankey-container" class="sankey-wrapper" role="img" aria-label="Sankey diagram of US Energy Flows"></div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="sankey.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize standalone Sankey Diagram with Petroleum -> Industrial default flow (8.38 quads)
+      const sankey = new FlourishSankey('#sankey-container', ENERGY_SANKEY_DATA, {
+        align: 'justify',
+        iterations: 10,
+        aspectRatio: 0.58,
+        selectedLink: { source: 'Petroleum', target: 'Industrial' }
+      });
+    });
+  </script>
+</body>
+</html>

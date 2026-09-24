@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>How to Embed Flourish Chord Diagram into Any Webpage</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #f1f5f9;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .website-card {
+      background: #ffffff;
+      max-width: 840px;
+      width: 100%;
+      border-radius: 16px;
+      padding: 32px 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 6px;
+      color: #0f172a;
+    }
+
+    p {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    /* Container for the chord diagram */
+    #my-chord-chart {
+      width: 100%;
+      max-width: 720px;
+      height: 680px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* Tooltip */
+    .flourish-chord-tooltip {
+      position: absolute;
+      pointer-events: none;
+      transform: translate(-50%, -100%);
+      z-index: 100;
+      transition: opacity 0.15s ease;
+    }
+    .chord-tooltip-card {
+      background: #1e293b;
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .chord-tooltip-header { font-size: 13px; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 4px; }
+    .chord-tooltip-row { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; color: #cbd5e1; }
+    .chord-tooltip-row b { color: #ffffff; }
+
+    .chord-arc { transition: opacity 0.2s ease; cursor: pointer; }
+    .chord-ribbon { transition: opacity 0.25s ease; cursor: pointer; }
+    .chord-label { font-family: inherit; font-size: 15px; font-weight: 600; fill: #1e293b; cursor: pointer; }
+  </style>
+
+  <!-- Step 1: Include D3.js -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+  <div class="website-card">
+    <h2>Friends Character Interactions</h2>
+    <p>Chord flow diagram with two-color gradients. Hover over arcs or ribbons to focus connections!</p>
+
+    <!-- Step 2: Add chord container -->
+    <div id="my-chord-chart"></div>
+  </div>
+
+  <!-- Step 3: Include data.js and chord.js -->
+  <script src="data.js"></script>
+  <script src="chord.js"></script>
+
+  <!-- Step 4: Initialize the chart -->
+  <script>
+    const chord = new FlourishChordDiagram('#my-chord-chart', CHORD_DATA, {
+      defaultOpacity: 0.75,
+      focusedOpacity: 1.0,
+      defocusedOpacity: 0.10,
+      defaultFocusPair: ['Joey', 'Chandler'] // Highlights the Joey-Chandler ribbon by default!
+    });
+  </script>
+
+</body>
+</html>

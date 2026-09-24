@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Flourish Data Explorer v26.1.1 (Bubble Cluster)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- D3.js v7 for Force-Directed Physics Simulation -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+
+  <!-- Workspace Container (Canvas + Flourish Sidebar) -->
+  <main class="workspace-container">
+    
+    <!-- Left Stage: Bubble Pack Canvas -->
+    <section class="canvas-stage">
+      
+      <!-- Top-Left Search Box -->
+      <div class="canvas-search-box">
+        <span>🔍</span>
+        <input type="text" id="searchInput" placeholder="Search country (e.g. India, Peru)...">
+      </div>
+
+      <!-- Top-Right Actions -->
+      <div class="canvas-top-right-tools">
+        <button class="canvas-action-btn" id="btnResetZoom" title="Reset Zoom">⟲</button>
+      </div>
+
+      <!-- Bubble Cluster Container -->
+      <div id="chart-container" class="bubble-chart-wrapper"></div>
+
+    </section>
+
+    <!-- Right Sidebar: Flourish Settings Panel (Matching Screenshot) -->
+    <aside class="settings-sidebar">
+      <div class="sidebar-title-row">
+        <span class="sidebar-title">Data explorer</span>
+        <span class="version-tag">v26.1.1</span>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">
+          <span>Data explorer</span>
+          <span style="font-size: 11px; color: #94a3b8;">▼</span>
+        </div>
+
+        <!-- Position Dropdown -->
+        <div class="form-field">
+          <label class="form-label">Position</label>
+          <select id="selectPosition" class="form-select">
+            <option value="none" selected>None (Single Cluster)</option>
+            <option value="region">Region (Split by Continent)</option>
+          </select>
+        </div>
+
+        <!-- Size Dropdown -->
+        <div class="form-field">
+          <label class="form-label">Size</label>
+          <select id="selectSize" class="form-select">
+            <option value="none" selected>None (Uniform)</option>
+            <option value="pop">Population</option>
+            <option value="gdp">GDP ($B)</option>
+          </select>
+        </div>
+
+        <!-- Color Dropdown -->
+        <div class="form-field">
+          <label class="form-label">Color</label>
+          <select id="selectColor" class="form-select">
+            <option value="none" selected>None (Flourish Grey)</option>
+            <option value="region">Region (Continent Colors)</option>
+          </select>
+        </div>
+
+        <!-- Filter Dropdown -->
+        <div class="form-field">
+          <label class="form-label">Filter</label>
+          <select id="selectFilter" class="form-select">
+            <option value="all" selected>All</option>
+            <option value="Africa">Africa</option>
+            <option value="Americas">Americas</option>
+            <option value="Asia">Asia</option>
+            <option value="Europe">Europe</option>
+            <option value="Oceania">Oceania</option>
+          </select>
+        </div>
+
+        <div class="info-note">
+          💡 <b>Tip:</b> Click & drag any bubble to feel the elastic spring physics! Change <b>Position</b> to "Region" to watch the cluster split dynamically.
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Data & Chart Scripts -->
+  <script src="data.js"></script>
+  <script src="bubble-chart.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize Bubble Chart with COUNTRIES_DATA
+      const chart = new FlourishBubbleChart('#chart-container', COUNTRIES_DATA, {
+        position: 'none',
+        sizeBy: 'none',
+        colorBy: 'none',
+        filterRegion: 'all'
+      });
+
+      // Connect Controls
+      document.getElementById('selectPosition').addEventListener('change', (e) => {
+        chart.setOption('position', e.target.value);
+      });
+
+      document.getElementById('selectSize').addEventListener('change', (e) => {
+        chart.setOption('sizeBy', e.target.value);
+      });
+
+      document.getElementById('selectColor').addEventListener('change', (e) => {
+        chart.setOption('colorBy', e.target.value);
+      });
+
+      document.getElementById('selectFilter').addEventListener('change', (e) => {
+        chart.setOption('filterRegion', e.target.value);
+      });
+
+      // Search Filter
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', (e) => {
+        chart.searchCountry(e.target.value);
+      });
+
+      // Reset Zoom
+      document.getElementById('btnResetZoom').addEventListener('click', () => {
+        chart.resetZoom();
+      });
+    });
+  </script>
+</body>
+</html>

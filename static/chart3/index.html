@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Bivariate Bar Studio - PostgreSQL</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Plotly JS for Interactive WebGL 3D -->
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="brand-section">
+            <div class="brand-logo">
+                <i class="ph-bold ph-chart-bar-horizontal"></i>
+            </div>
+            <div class="brand-info">
+                <h1>3D Bivariate Bar Studio <span class="badge-pill">Chart 3</span> <span class="db-badge" id="header-db-badge"><i class="ph-bold ph-database"></i> PostgreSQL: auth_db</span></h1>
+                <p>Publication-Grade 3D Histogram Bars directly from PostgreSQL</p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button class="btn-action btn-secondary" id="open-embed-btn">
+                <i class="ph-bold ph-code"></i> Embed / Share
+            </button>
+            <button class="btn-icon" id="theme-btn" title="Toggle Theme">
+                <i class="ph-bold ph-sun" id="theme-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="app-layout">
+        
+        <!-- Controls Sidebar -->
+        <aside class="control-panel">
+            
+            <!-- Card 1: Data Source -->
+            <div class="control-card">
+                <div class="card-title">
+                    <span>Database Query</span>
+                    <i class="ph-bold ph-database"></i>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="table-select">PostgreSQL Table</label>
+                    <select id="table-select" class="form-control"></select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="x-col-select">X-Axis Variable</label>
+                    <select id="x-col-select" class="form-control"></select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="y-col-select">Y-Axis Variable</label>
+                    <select id="y-col-select" class="form-control"></select>
+                </div>
+            </div>
+
+            <!-- Card 2: 3D Grid & Binning -->
+            <div class="control-card">
+                <div class="card-title">
+                    <span>3D Grid Resolution</span>
+                    <i class="ph-bold ph-squares-four"></i>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="bins-slider">
+                        Histogram Bins: <span class="val-badge" id="bins-val">6 x 6</span>
+                    </label>
+                    <input type="range" id="bins-slider" min="3" max="14" step="1" value="6">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="colormap-select">Color Palette</label>
+                    <select id="colormap-select" class="form-control">
+                        <option value="Viridis" selected>Viridis (Scientific)</option>
+                        <option value="Plasma">Plasma (Neon Warm)</option>
+                        <option value="Inferno">Inferno (High Contrast)</option>
+                        <option value="Turbo">Turbo (Rainbow Spectrum)</option>
+                        <option value="Cividis">Cividis (Colorblind Safe)</option>
+                        <option value="Blues">Blues (Monochrome)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Card 3: Camera Angles (Matplotlib View) -->
+            <div class="control-card">
+                <div class="card-title">
+                    <span>Camera Angles (Static View)</span>
+                    <i class="ph-bold ph-camera"></i>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="elev-slider">
+                        Elevation: <span class="val-badge" id="elev-val">28°</span>
+                    </label>
+                    <input type="range" id="elev-slider" min="10" max="80" step="2" value="28">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="azim-slider">
+                        Azimuth: <span class="val-badge" id="azim-val">-55°</span>
+                    </label>
+                    <input type="range" id="azim-slider" min="-180" max="180" step="5" value="-55">
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Main Viewport -->
+        <main class="main-viewport">
+            
+            <!-- KPI Metrics -->
+            <section class="kpi-row">
+                <div class="kpi-card">
+                    <span class="kpi-lbl">Total Records</span>
+                    <span class="kpi-val" id="kpi-records">--</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-lbl">Peak Bin Count</span>
+                    <span class="kpi-val" id="kpi-peak">--</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-lbl">Selected Table</span>
+                    <span class="kpi-val" id="kpi-table" style="font-size: 20px;">--</span>
+                </div>
+            </section>
+
+            <!-- 3D Visualization Box -->
+            <section class="vis-box">
+                <div class="vis-bar">
+                    <div class="vis-title">
+                        <h2 id="chart-heading" style="font-size: 16px; font-weight: 700;">3D Bivariate Histogram</h2>
+                    </div>
+
+                    <div class="vis-tabs">
+                        <button class="vis-tab-btn active" data-pane="plotly-pane" id="tab-plotly">
+                            <i class="ph-bold ph-cube"></i> Interactive 3D (WebGL)
+                        </button>
+                        <button class="vis-tab-btn" data-pane="image-pane" id="tab-image">
+                            <i class="ph-bold ph-image"></i> Matplotlib 3D (PNG)
+                        </button>
+                        <button class="vis-tab-btn" data-pane="code-pane" id="tab-code">
+                            <i class="ph-bold ph-code"></i> Python Code
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pane-wrapper">
+                    
+                    <!-- Plotly 3D Pane -->
+                    <div class="pane active" id="plotly-pane">
+                        <div id="plotly-3d-div"></div>
+                    </div>
+
+                    <!-- Matplotlib Image Pane -->
+                    <div class="pane" id="image-pane">
+                        <img id="matplotlib-img" src="" alt="Matplotlib 3D Bar Chart">
+                    </div>
+
+                    <!-- Python Code Pane -->
+                    <div class="pane" id="code-pane" style="padding: 20px; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 12px; color: var(--text-secondary);">Standalone production code implementing this exact chart</span>
+                            <button class="btn-action btn-secondary" id="copy-code-btn">
+                                <i class="ph-bold ph-copy"></i> Copy Code
+                            </button>
+                        </div>
+                        <pre class="code-view" id="code-snippet-pre"></pre>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Embed Modal -->
+    <div class="modal-overlay" id="embed-modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Embed 3D Bivariate Bar Chart</h3>
+                <button id="close-embed-btn" style="background:none; border:none; color:var(--text-muted); font-size:22px; cursor:pointer;">&times;</button>
+            </div>
+            <p style="font-size: 12px; color: var(--text-secondary);">
+                Embed this interactive 3D WebGL chart on any dashboard, report, or external web application:
+            </p>
+            <textarea id="embed-code-area" style="width:100%; height:90px; background:#05070c; color:var(--accent-cyan); font-family:var(--font-mono); font-size:12px; padding:10px; border:1px solid var(--border-subtle); border-radius:6px;" readonly></textarea>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn-action btn-secondary" id="open-embed-tab-btn"><i class="ph-bold ph-arrow-square-out"></i> Open Standalone</button>
+                <button class="btn-action btn-primary" id="copy-embed-btn"><i class="ph-bold ph-copy"></i> Copy Iframe</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

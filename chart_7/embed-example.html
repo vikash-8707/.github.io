@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Embed Example - Isotype Flat Distribution Chart</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="data.js"></script>
+  <script src="isotype.js"></script>
+</head>
+<body style="background: #f8fafc; padding: 32px; display: flex; justify-content: center;">
+
+  <!-- Standalone Container -->
+  <div style="max-width: 880px; width: 100%; background: #ffffff; border-radius: 8px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px; color: #0f172a;">Flat Inventory Distribution (1 BHK & 2 BHK)</h2>
+    <div id="embed-isotype-container"></div>
+  </div>
+
+  <script>
+    // 1-line Initialization
+    const flatChart = new IsotypeFlatChart('#embed-isotype-container', ISOTYPE_PROJECTS_DATA, FLAT_TYPES);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Flourish 3D Viewer v4.0.1 (Ridgeline Surface Model)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive 3D WebGL Ridgeline Surface Visualization matching Flourish 3D Viewer Studio replica.">
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Three.js (r128) & OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+  <!-- WebGL 3D Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Top-Left Info Badge -->
+  <aside class="info-badge">
+    <div class="badge-header">
+      <span class="badge-icon">✳</span>
+      <span class="badge-title">3D Viewer</span>
+    </div>
+    <span class="badge-sub">Surface Elevation Model • v4.0.1</span>
+    <div class="badge-tips">
+      <span>🖱️ Left-drag rotate • Scroll zoom • Hover ridges</span>
+    </div>
+  </aside>
+
+  <!-- Floating Bottom Controls HUD -->
+  <nav class="controls-hud" aria-label="3D Controls">
+    <button class="hud-btn active" id="btnViewIso" title="Isometric 3/4 View">
+      <span>🔲</span> Isometric
+    </button>
+    <button class="hud-btn" id="btnViewFront" title="Front Elevation View">
+      <span>📐</span> Front
+    </button>
+    <button class="hud-btn" id="btnViewSide" title="Side Profile View">
+      <span>📏</span> Side
+    </button>
+    <button class="hud-btn" id="btnViewTop" title="Top-Down Plan View">
+      <span>⬇️</span> Top
+    </button>
+
+    <div class="hud-separator"></div>
+
+    <button class="hud-btn" id="btnAutoRotate" title="Toggle 360° Turntable Rotation">
+      <span>🔄</span> Turntable
+    </button>
+    <button class="hud-btn" id="btnReset" title="Reset Camera to Default">
+      <span>⟲</span> Reset
+    </button>
+  </nav>
+
+  <!-- Bottom Right Fullscreen Button (Matching Flourish expand button) -->
+  <button class="btn-fullscreen" id="btnFullscreen" title="Toggle Fullscreen">
+    ⛶
+  </button>
+
+  <!-- Dynamic Raycast Tooltip -->
+  <div class="tooltip-3d" id="tooltip-3d"></div>
+
+  <!-- Data & 3D Engine Scripts -->
+  <script src="data.js"></script>
+  <script src="scene3d.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize Flourish 3D Viewer
+      const viewer = new Flourish3DViewer('#webgl-canvas', RIDGE_DATA);
+
+      // Camera Preset Buttons
+      const viewButtons = {
+        'btnViewIso': 'isometric',
+        'btnViewFront': 'front',
+        'btnViewSide': 'side',
+        'btnViewTop': 'top'
+      };
+
+      const setButtonActive = (activeId) => {
+        Object.keys(viewButtons).forEach(id => {
+          const btn = document.getElementById(id);
+          if (btn) {
+            btn.classList.toggle('active', id === activeId);
+          }
+        });
+      };
+
+      Object.entries(viewButtons).forEach(([id, preset]) => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.addEventListener('click', () => {
+            setButtonActive(id);
+            viewer.setCameraPreset(preset);
+          });
+        }
+      });
+
+      // Turntable Auto-Rotate Toggle
+      const btnAutoRotate = document.getElementById('btnAutoRotate');
+      if (btnAutoRotate) {
+        btnAutoRotate.addEventListener('click', () => {
+          const isRotating = viewer.toggleAutoRotate();
+          btnAutoRotate.classList.toggle('active', isRotating);
+        });
+      }
+
+      // Reset Button
+      const btnReset = document.getElementById('btnReset');
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          setButtonActive('btnViewIso');
+          if (btnAutoRotate) btnAutoRotate.classList.remove('active');
+          viewer.isAutoRotating = false;
+          viewer.resetCamera();
+        });
+      }
+
+      // Fullscreen Button
+      const btnFullscreen = document.getElementById('btnFullscreen');
+      if (btnFullscreen) {
+        btnFullscreen.addEventListener('click', () => {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          } else {
+            if (document.exitFullscreen) {
+              document.exitFullscreen();
+            }
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

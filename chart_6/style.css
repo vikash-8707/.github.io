@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-page: #ffffff;
+  --bg-canvas: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --primary-blue: #2563eb;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Page wrapper centering the chart */
+.page-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* White Canvas Card */
+.canvas-card {
+  background: var(--bg-canvas);
+  border-radius: 0;
+  box-shadow: none;
+  width: 100%;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.sankey-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.flourish-sankey-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Link and Node styling */
+.sankey-link {
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.sankey-link:hover {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+.sankey-node rect {
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.sankey-node:hover rect {
+  filter: brightness(0.92);
+}
+
+.sankey-label {
+  font-family: var(--font-family);
+  user-select: none;
+}
+
+/* Link value badge (8.38 pill) */
+.link-value-badge rect {
+  transition: transform 0.15s ease;
+}
+
+.link-value-badge text {
+  font-family: var(--font-family);
+  user-select: none;
+}
+
+/* Tooltip */
+.flourish-tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 500;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  font-size: 12px;
+}
+
+.tooltip-title {
+  font-weight: 600;
+  color: #f8fafc;
+  margin-bottom: 2px;
+}
+
+.tooltip-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.tooltip-unit {
+  font-size: 11px;
+  font-weight: 400;
+  color: #94a3b8;
+  margin-left: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+  .page-container {
+    padding: 16px 10px;
+  }
+
+  .canvas-card {
+    padding: 20px 16px;
+    border-radius: 10px;
+  }
+}

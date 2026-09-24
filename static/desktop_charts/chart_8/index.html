@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>India Interactive Marker Map</title>
+  <meta name="description" content="Flourish style interactive India marker map with metropolitan capitals, tech hubs, heritage photo landmarks, and scenic video tours.">
+
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main class="map-app-container">
+
+    <!-- Category Filter & View Navigation Toolbar -->
+    <div class="map-toolbar" role="toolbar" aria-label="India Map Controls">
+      
+      <!-- Type Filter Buttons -->
+      <div class="filter-buttons-group">
+        <button type="button" class="map-filter-btn active" data-filter="all">All Locations</button>
+        <button type="button" class="map-filter-btn" data-filter="building">
+          <span class="filter-icon-dot" style="background: #2563eb;"></span> Metros & State Capitals
+        </button>
+        <button type="button" class="map-filter-btn" data-filter="photo">
+          <span class="filter-icon-dot" style="background: #7c3aed;"></span> Heritage & Landmarks
+        </button>
+        <button type="button" class="map-filter-btn" data-filter="video">
+          <span class="filter-icon-dot" style="background: #dc2626;"></span> Scenic Video Tours
+        </button>
+      </div>
+
+      <!-- Quick View Switcher (All India vs Gurgaon Focus) -->
+      <div class="view-switcher-group">
+        <button type="button" class="view-switch-btn active" id="btnViewIndia">🇮🇳 All India</button>
+        <button type="button" class="view-switch-btn" id="btnViewGurgaon">🏙️ Gurgaon Focus</button>
+      </div>
+
+    </div>
+
+    <!-- Main Map Card -->
+    <div class="map-card">
+      <div id="map" role="region" aria-label="Interactive India Marker Map"></div>
+    </div>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="map.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Initialize Flourish Marker Map for India
+      const mapInstance = new FlourishMarkerMap('map', INDIA_MARKERS_DATA);
+
+      // 2. Wire Up Type Filter Buttons
+      const filterBtns = document.querySelectorAll('.map-filter-btn');
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          const target = e.currentTarget;
+          target.classList.add('active');
+          const filter = target.dataset.filter;
+          mapInstance.setFilter(filter);
+        });
+      });
+
+      // 3. Wire Up Quick View Switcher
+      const btnViewIndia = document.getElementById('btnViewIndia');
+      const btnViewGurgaon = document.getElementById('btnViewGurgaon');
+
+      btnViewIndia.addEventListener('click', () => {
+        btnViewIndia.classList.add('active');
+        btnViewGurgaon.classList.remove('active');
+        mapInstance.flyToIndia();
+      });
+
+      btnViewGurgaon.addEventListener('click', () => {
+        btnViewGurgaon.classList.add('active');
+        btnViewIndia.classList.remove('active');
+        mapInstance.flyToGurgaon();
+      });
+    });
+  </script>
+</body>
+</html>

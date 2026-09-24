@@ -1,0 +1,306 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-page: #ffffff;
+  --text-title: #0f172a;
+  --text-body: #334155;
+  --border-card: #d1d5db;
+  --primary-blue: #2563eb;
+  --color-1bhk: #c85a48;
+  --color-2bhk: #374151;
+  --color-3bhk: #4a7c92;
+  --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-page);
+  color: var(--text-body);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Main Container */
+.chart-container {
+  width: 100%;
+  max-width: 840px;
+  margin: 0 auto;
+}
+
+/* Filter Bar directly above chart */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.filter-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.filter-btn.active {
+  background: var(--primary-blue);
+  color: #ffffff;
+  border-color: var(--primary-blue);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.filter-btn.active .legend-swatch {
+  box-shadow: 0 0 0 1px #ffffff;
+}
+
+/* Chart Wrapper */
+.isotype-chart-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Action Menu Button (...) matching Vega-Lite screenshot */
+.vega-action-wrapper {
+  position: absolute;
+  top: -8px;
+  right: -36px;
+  z-index: 50;
+}
+
+.vega-action-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+  color: #64748b;
+  transition: all 0.15s ease;
+}
+
+.vega-action-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.vega-action-dropdown {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 4px 0;
+  min-width: 140px;
+  display: none;
+  z-index: 100;
+}
+
+.vega-action-dropdown.show {
+  display: block;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--text-body);
+  text-decoration: none;
+  transition: background 0.12s ease;
+}
+
+.dropdown-item:hover {
+  background: #f1f5f9;
+  color: #2563eb;
+}
+
+/* Framed Boxes matching Vega-Lite screenshot */
+.isotype-group-card {
+  display: flex;
+  border: 1px solid var(--border-card);
+  border-radius: 3px;
+  background: #ffffff;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.isotype-group-card:hover {
+  border-color: #94a3b8;
+}
+
+/* Left Group Label (Rotated vertically like screenshot) */
+.isotype-group-label {
+  width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  user-select: none;
+  padding: 8px 0;
+  flex-shrink: 0;
+}
+
+.isotype-group-label span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 11px;
+  font-weight: 500;
+  color: #475569;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Pictogram Content Area */
+.isotype-group-content {
+  flex: 1;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.isotype-row {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.isotype-icons-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+/* Icon Item Styling */
+.isotype-icon-item {
+  width: 46px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.18s ease;
+  transform-origin: center;
+}
+
+.isotype-icon-item:hover {
+  transform: scale(1.18);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  z-index: 20;
+}
+
+.flat-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Tooltip Popup */
+.isotype-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  font-size: 12px;
+  max-width: 250px;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.tip-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #38bdf8;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.tip-unit-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.tip-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  color: #cbd5e1;
+  font-size: 11.5px;
+}
+
+.tip-features {
+  color: #94a3b8;
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vega-action-wrapper {
+    right: 8px;
+    top: 8px;
+  }
+  .isotype-group-label {
+    width: 36px;
+  }
+  .isotype-group-content {
+    padding: 12px 14px;
+  }
+  .filter-bar {
+    justify-content: center;
+  }
+}

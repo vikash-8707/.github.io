@@ -1,0 +1,384 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --primary-blue: #2563eb;
+  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Centered Application Container */
+.map-app-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Category Filter Toolbar */
+.map-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.filter-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.map-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-muted);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.map-filter-btn:hover {
+  background: #f1f5f9;
+  color: var(--text-main);
+}
+
+.map-filter-btn.active {
+  background: var(--primary-blue);
+  color: #ffffff;
+  border-color: var(--primary-blue);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.filter-icon-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Quick View Switcher Group */
+.view-switcher-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: 20px;
+  border: 1px solid #cbd5e1;
+}
+
+.view-switch-btn {
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.view-switch-btn:hover {
+  color: #0f172a;
+}
+
+.view-switch-btn.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* Main Map Card */
+.map-card {
+  background: var(--bg-card);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.1), 0 0 1px 1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 640px;
+  border: 1px solid #e2e8f0;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  background: #a5c9eb; /* Match sea color before tiles load */
+}
+
+/* Custom Marker Items */
+.custom-flourish-div-icon {
+  background: transparent;
+  border: none;
+}
+
+.flourish-marker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transform-origin: left center;
+  transition: transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.flourish-marker-item:hover {
+  transform: scale(1.15);
+  z-index: 1000 !important;
+}
+
+.marker-icon-box {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.svg-icon {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+.marker-label-text {
+  font-family: var(--font-family);
+  font-size: 11px;
+  font-weight: 600;
+  color: #0f172a;
+  text-shadow: 
+    1.2px 1.2px 0 #ffffff,
+    -1.2px -1.2px 0 #ffffff,
+    1.2px -1.2px 0 #ffffff,
+    -1.2px 1.2px 0 #ffffff,
+    0 1.2px 0 #ffffff,
+    0 -1.2px 0 #ffffff,
+    1.2px 0 0 #ffffff,
+    -1.2px 0 0 #ffffff;
+  pointer-events: none;
+  letter-spacing: -0.01em;
+}
+
+.flourish-marker-item:hover .marker-label-text {
+  color: var(--primary-blue);
+}
+
+/* Custom Zoom Control in Top Right (Flourish Style) */
+.custom-zoom-control {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 800;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  border: 1px solid #cbd5e1;
+  overflow: hidden;
+}
+
+.zoom-btn {
+  width: 32px;
+  height: 32px;
+  background: #ffffff;
+  border: none;
+  border-bottom: 1px solid #e2e8f0;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.zoom-btn:last-child {
+  border-bottom: none;
+  font-size: 14px;
+}
+
+.zoom-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Flourish Custom Popups */
+.flourish-custom-popup .leaflet-popup-content-wrapper {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 14px 35px -5px rgba(0, 0, 0, 0.25);
+  padding: 0;
+  overflow: hidden;
+}
+
+.flourish-custom-popup .leaflet-popup-content {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.flourish-popup-card {
+  padding: 16px 18px;
+}
+
+.popup-photo-preview {
+  margin: -16px -18px 12px -18px;
+  height: 140px;
+  overflow: hidden;
+}
+
+.popup-photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.popup-video-preview {
+  margin: -16px -18px 12px -18px;
+  height: 110px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-play-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+}
+
+.play-btn-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.video-title-tag {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.popup-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.popup-category-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.badge-building {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.badge-photo {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.badge-video {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.popup-country {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.popup-city-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.popup-desc {
+  font-size: 12px;
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.popup-meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  color: #64748b;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .map-card {
+    height: 480px;
+  }
+  .map-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Remove Leaflet Attribution */
+.leaflet-control-attribution {
+  display: none !important;
+}
+

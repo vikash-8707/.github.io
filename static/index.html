@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dynamic Single 3D Chart & Database Visualization Engine powered by Python FastAPI and Plotly">
+    <title>Dynamic 3D Database & Surface Explorer — FastAPI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Plotly.js CDN -->
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar Controls -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-badge">
+                    <span class="icon">⚡</span>
+                    <div class="logo-meta">
+                        <span class="logo-title">3D Data Explorer</span>
+                        <span class="logo-sub">FastAPI Engine</span>
+                    </div>
+                </div>
+                <div class="status-indicator" id="connection-status" title="Database connection status">
+                    <span class="status-dot"></span>
+                    <span class="status-text" id="db-status-text">Connected</span>
+                </div>
+            </div>
+
+            <!-- Mode Tabs (Database vs Mathematical Surface vs All Charts) -->
+            <div class="mode-tabs">
+                <button class="mode-tab" id="tab-btn-db" data-tab="db">
+                    <span class="tab-icon">🗄️</span> Database
+                </button>
+                <button class="mode-tab active" id="tab-btn-math" data-tab="math">
+                    <span class="tab-icon">📐</span> Math
+                </button>
+                <a href="/all" class="mode-tab" style="text-decoration: none; display: flex; align-items: center; justify-content: center;" title="View All Charts (Chart 2 to Chart 9)">
+                    <span class="tab-icon">📊</span> All (2-9)
+                </a>
+            </div>
+
+            <div class="sidebar-content">
+                <!-- ================= DATABASE MODE PANEL ================= -->
+                <div id="panel-db" class="tab-panel">
+                    <!-- DB Connection Collapsible -->
+                    <div class="db-source-card">
+                        <div class="db-source-header" id="db-conn-toggle">
+                            <div class="db-badge">
+                                <span class="db-icon">🐘</span>
+                                <span id="active-db-name" class="db-name">PostgreSQL (auth_db)</span>
+                            </div>
+                            <button class="icon-toggle-btn" title="Change Database URI" id="edit-db-btn">⚙️</button>
+                        </div>
+                        <div id="db-conn-drawer" class="db-conn-drawer hidden">
+                            <label class="drawer-label" for="db-uri-input">Database Connection URI (SQLAlchemy):</label>
+                            <input type="text" id="db-uri-input" class="form-input-code" placeholder="postgresql+psycopg2://vikashkumarbharti@localhost:5432/auth_db" value="postgresql+psycopg2://vikashkumarbharti@localhost:5432/auth_db">
+                            <div class="conn-actions">
+                                <button id="connect-db-btn" class="btn btn-sm btn-accent">Connect</button>
+                                <button id="cancel-db-btn" class="btn btn-sm btn-ghost">Cancel</button>
+                            </div>
+                            <span id="conn-feedback" class="conn-feedback"></span>
+                        </div>
+                    </div>
+
+                    <!-- Table Selector -->
+                    <div class="control-group">
+                        <div class="group-header">
+                            <label class="group-label" for="db-table-select">Select Table</label>
+                            <span class="badge-row-count" id="table-row-count">-- rows</span>
+                        </div>
+                        <select id="db-table-select" class="form-select"></select>
+                    </div>
+
+                    <!-- Axis Mapping Cards -->
+                    <div class="control-group glass-card">
+                        <span class="card-section-title">3D Coordinate Mapping</span>
+                        <div class="axis-mapping-grid">
+                            <div class="axis-item">
+                                <label for="x-axis-select" class="axis-label x-color"><span class="axis-pill">X</span> Axis</label>
+                                <select id="x-axis-select" class="form-select-sm"></select>
+                            </div>
+                            <div class="axis-item">
+                                <label for="y-axis-select" class="axis-label y-color"><span class="axis-pill">Y</span> Axis</label>
+                                <select id="y-axis-select" class="form-select-sm"></select>
+                            </div>
+                            <div class="axis-item">
+                                <label for="z-axis-select" class="axis-label z-color"><span class="axis-pill">Z</span> Axis (Height)</label>
+                                <select id="z-axis-select" class="form-select-sm"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Type Selector -->
+                    <div class="control-group">
+                        <label class="group-label">3D Representation</label>
+                        <div class="chart-type-selector">
+                            <label class="radio-card active">
+                                <input type="radio" name="db-chart-type" value="scatter" checked>
+                                <span class="radio-title">✦ 3D Scatter</span>
+                                <span class="radio-desc">Data points with metadata tooltips</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="db-chart-type" value="mesh">
+                                <span class="radio-title">⬡ 3D Mesh</span>
+                                <span class="radio-desc">Triangulated continuous surface</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="db-chart-type" value="surface">
+                                <span class="radio-title">▦ 3D Surface</span>
+                                <span class="radio-desc">Gridded elevation map</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Colorscale -->
+                    <div class="control-group">
+                        <label class="group-label" for="db-colorscale">Colorscale Palette</label>
+                        <select id="db-colorscale" class="form-select">
+                            <option value="Viridis" selected>Viridis (Emerald to Indigo)</option>
+                            <option value="Plasma">Plasma (Violet to Gold)</option>
+                            <option value="Turbo">Turbo (High-contrast Rainbow)</option>
+                            <option value="RdBu">RdBu (Red to Blue Divergent)</option>
+                            <option value="Spectral">Spectral (Multi-hue Spectrum)</option>
+                            <option value="Inferno">Inferno (Deep Flame)</option>
+                            <option value="IceFire">IceFire (Thermal Bipolar)</option>
+                            <option value="Teal">Teal (Oceanic Green-Blue)</option>
+                        </select>
+                    </div>
+
+                    <!-- Row Limit Slider -->
+                    <div class="control-group">
+                        <div class="slider-header">
+                            <label for="row-limit-slider">Query Record Limit</label>
+                            <span id="row-limit-val" class="slider-val">2,500</span>
+                        </div>
+                        <input type="range" id="row-limit-slider" min="100" max="5000" step="100" value="2500" class="range-slider">
+                    </div>
+
+                    <!-- Custom SQL Toggle -->
+                    <div class="control-group">
+                        <div class="custom-sql-header" id="sql-drawer-toggle">
+                            <span class="custom-sql-title">⚡ Custom SQL Query</span>
+                            <span class="toggle-arrow" id="sql-arrow">▼</span>
+                        </div>
+                        <div id="sql-drawer" class="sql-drawer hidden">
+                            <textarea id="custom-sql-input" class="sql-textarea" rows="3" placeholder="SELECT pos_x, pos_y, altitude_z FROM sensor_measurements WHERE altitude_z > 10"></textarea>
+                            <button id="run-sql-btn" class="btn btn-sm btn-accent mt-2">Execute Custom SQL</button>
+                        </div>
+                    </div>
+
+                    <!-- Database Action Button -->
+                    <div class="actions-wrapper">
+                        <button id="load-db-chart-btn" class="btn btn-primary">
+                            <span class="btn-icon">⚡</span> Plot Database Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ================= MATH SURFACE MODE PANEL ================= -->
+                <div id="panel-math" class="tab-panel">
+                    <!-- Presets Section -->
+                    <div class="control-group">
+                        <label class="group-label" for="preset-select">Quick Presets</label>
+                        <select id="preset-select" class="form-select">
+                            <option value="classic_cubic" selected>Classic Cubic Surface (x³ + y³)</option>
+                            <option value="quadratic_bowl">Parabolic Bowl (x² + y²)</option>
+                            <option value="hyperbolic_saddle">Hyperbolic Saddle (x² - y²)</option>
+                            <option value="ripple_waves">Oscillating Ripples (Wave)</option>
+                        </select>
+                    </div>
+
+                    <!-- Mathematical Formulation -->
+                    <div class="control-group">
+                        <label class="group-label" for="function-type">Surface Formulation</label>
+                        <select id="function-type" class="form-select">
+                            <option value="polynomial" selected>Polynomial (x^p + y^p)</option>
+                            <option value="saddle">Saddle (x^p - y^p)</option>
+                            <option value="ripple">Circular Ripple Wave</option>
+                            <option value="gaussian_peaks">Dual Gaussian Peaks</option>
+                        </select>
+                    </div>
+
+                    <!-- Power / Exponent Slider -->
+                    <div class="control-group">
+                        <div class="slider-header">
+                            <label for="power-slider">Power / Exponent (p)</label>
+                            <span id="power-val" class="slider-val">3.0</span>
+                        </div>
+                        <input type="range" id="power-slider" min="0.5" max="5.0" step="0.1" value="3.0" class="range-slider">
+                    </div>
+
+                    <!-- Resolution Slider -->
+                    <div class="control-group">
+                        <div class="slider-header">
+                            <label for="resolution-slider">Mesh Resolution (N×N)</label>
+                            <span id="resolution-val" class="slider-val">10</span>
+                        </div>
+                        <input type="range" id="resolution-slider" min="8" max="60" step="1" value="10" class="range-slider">
+                        <span class="hint-text">Higher resolution = smoother surface</span>
+                    </div>
+
+                    <!-- Dynamic Morphing Animation -->
+                    <div class="control-group glass-card">
+                        <div class="toggle-row">
+                            <div>
+                                <span class="toggle-title">Live Morphing</span>
+                                <p class="toggle-subtitle">Continuous real-time wave flow</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="morph-toggle">
+                                <span class="slider-switch"></span>
+                            </label>
+                        </div>
+                        <div class="slider-header mt-2">
+                            <label for="speed-slider">Speed</label>
+                            <span id="speed-val" class="slider-val">1.0x</span>
+                        </div>
+                        <input type="range" id="speed-slider" min="0.2" max="3.0" step="0.2" value="1.0" class="range-slider">
+                    </div>
+
+                    <!-- Math Colorscale -->
+                    <div class="control-group">
+                        <label class="group-label" for="math-colorscale">Colorscale</label>
+                        <select id="math-colorscale" class="form-select">
+                            <option value="Viridis" selected>Viridis</option>
+                            <option value="Plasma">Plasma</option>
+                            <option value="Turbo">Turbo</option>
+                            <option value="Spectral">Spectral</option>
+                            <option value="RdBu">RdBu</option>
+                            <option value="Hot">Hot</option>
+                        </select>
+                    </div>
+
+                    <!-- Math Action Buttons -->
+                    <div class="actions-wrapper">
+                        <button id="update-math-btn" class="btn btn-primary">
+                            <span class="btn-icon">⚡</span> Update Surface
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics Footer -->
+            <div class="sidebar-footer">
+                <div class="metric-chip">
+                    <span class="metric-label">Compute Latency</span>
+                    <span id="metric-latency" class="metric-value">-- ms</span>
+                </div>
+                <div class="metric-chip">
+                    <span class="metric-label">Data Points</span>
+                    <span id="metric-vertices" class="metric-value">--</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area: Single 3D Chart Viewport -->
+        <main class="main-canvas">
+            <header class="top-nav">
+                <div class="nav-info">
+                    <h1 class="nav-title" id="page-title">3D Interactive Explorer</h1>
+                    <div class="nav-pills">
+                        <span class="badge-tag" id="chart-source-badge">🗄️ Database: sensor_measurements</span>
+                        <span class="badge-tag badge-cyan" id="chart-axes-badge">Z: altitude_z (vs X, Y)</span>
+                    </div>
+                </div>
+                <div class="nav-controls">
+                    <a href="/embed" target="_blank" class="nav-link-btn" title="Open chart-only page for embedding">
+                        <span>↗ Chart only</span>
+                    </a>
+                    <button id="sync-camera-btn" class="nav-link-btn" title="Reset 3D Camera to Optimal Perspective">
+                        <span>📷 Reset Camera</span>
+                    </button>
+                    <button id="snapshot-btn" class="nav-link-btn" title="Download High-Resolution PNG">
+                        <span>📸 Snapshot</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Single Full-Canvas Chart Container -->
+            <div class="chart-container-wrapper">
+                <div id="plotly-chart" class="chart-viewport"></div>
+                <div id="loading-overlay" class="loading-overlay">
+                    <div class="spinner"></div>
+                    <span class="loading-text" id="loading-text">Loading 3D data from database...</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

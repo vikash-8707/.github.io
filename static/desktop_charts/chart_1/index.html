@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dynamic 3D Marker Map - Gurgaon</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  
+  <!-- MapLibre GL 3D vector map engine -->
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-hover: #1557b0;
+      --surface: rgba(255, 255, 255, 0.95);
+      --border: rgba(0, 0, 0, 0.08);
+      --text: #1f2937;
+      --text-muted: #6b7280;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Flourish-Style Numbered Marker Pins */
+    .flourish-marker {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .flourish-marker:hover {
+      transform: scale(1.15) translateY(-3px);
+      z-index: 9999 !important;
+    }
+    .marker-number {
+      font-weight: 800;
+      font-size: 24px;
+      color: #1a73e8;
+      text-shadow:
+        -2px -2px 0 #fff,
+         2px -2px 0 #fff,
+        -2px  2px 0 #fff,
+         2px  2px 0 #fff,
+         0px  3px 8px rgba(0,0,0,0.25);
+      margin-right: 6px;
+      line-height: 1;
+    }
+    .marker-label {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    /* Floating UI Container */
+    .ui-panel {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: var(--surface);
+      backdrop-filter: blur(14px);
+      border-radius: 14px;
+      padding: 16px 20px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.14);
+      border: 1px solid var(--border);
+      z-index: 20;
+      width: 350px;
+      max-height: 92vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-row h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .db-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #059669;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    /* City Indicator */
+    .city-switcher {
+      display: flex;
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 3px;
+    }
+    .city-btn {
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      color: #64748b;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+    .city-btn.active {
+      background: #fff;
+      color: #1a73e8;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Controls helper */
+    .hint-box {
+      font-size: 12px;
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      line-height: 1.45;
+    }
+    .hint-box b {
+      color: #1e293b;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.35);
+    }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+    }
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+    .btn-danger {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    .btn-danger:hover {
+      background: #fecaca;
+    }
+
+    /* Add Form */
+    .add-form {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      background: #fdfdfd;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .add-form.active {
+      display: flex;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-group label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      font-family: inherit;
+      font-size: 13px;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #fff;
+      color: #0f172a;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: var(--primary);
+    }
+
+    /* Landmarks Quick List */
+    .landmark-list-header {
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .landmark-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .landmark-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: #f8fafc;
+      border: 1px solid #f1f5f9;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .landmark-item:hover {
+      background: #e0f2fe;
+      border-color: #bae6fd;
+    }
+    .landmark-item-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .landmark-badge {
+      background: #1a73e8;
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .landmark-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #0f172a;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      z-index: 9999;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<div class="ui-panel">
+  <div class="header-row">
+    <h1>🏙️ 3D Marker Map</h1>
+  </div>
+
+  <!-- City Indicator -->
+  <div class="city-switcher">
+    <button class="city-btn active" id="btnGurgaon" onclick="switchCity('gurgaon')">
+      🇮🇳 Gurgaon (DLF Cyber City)
+    </button>
+  </div>
+
+  <div class="hint-box">
+    <b>3D Controls:</b><br>
+    • <b>Right-Click + Drag:</b> Tilt & rotate in 3D<br>
+    • <b>Left-Click + Drag:</b> Pan map<br>
+    • <b>Scroll:</b> Zoom in/out
+  </div>
+
+  <button class="btn btn-primary" id="toggleAddBtn" onclick="toggleAddMode()">
+    ➕ Add New Marker
+  </button>
+
+  <!-- Add Marker Form -->
+  <form class="add-form" id="addForm" onsubmit="handleFormSubmit(event)">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <b style="font-size: 13px; color: #1e293b;">New Landmark (<span id="formCityLabel">Gurgaon</span>)</b>
+      <span style="font-size: 11px; color: #1a73e8; cursor: pointer; font-weight: 700;" onclick="enableMapClickPicker()">
+        📍 Pick on Map
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" id="titleInput" placeholder="e.g. DLF CyberHub" required />
+    </div>
+
+    <div class="form-group">
+      <label>Category</label>
+      <select id="categoryInput">
+        <option value="Skyscraper">Skyscraper</option>
+        <option value="Tech & Dining">Tech & Dining</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Commercial">Commercial</option>
+        <option value="Park">Park</option>
+        <option value="Landmark">Landmark</option>
+      </select>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+      <div class="form-group">
+        <label>Latitude</label>
+        <input type="number" step="any" id="latInput" placeholder="28.4951" required />
+      </div>
+      <div class="form-group">
+        <label>Longitude</label>
+        <input type="number" step="any" id="lngInput" placeholder="77.0894" required />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="descInput" rows="2" placeholder="Brief history or facts..."></textarea>
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+      <button type="submit" class="btn btn-primary" style="flex: 1;">Save Landmark</button>
+      <button type="button" class="btn btn-secondary" onclick="toggleAddMode()">Cancel</button>
+    </div>
+  </form>
+
+  <!-- Quick jump list -->
+  <div class="landmark-list-header">
+    <span id="listTitleLabel">GURGAON LANDMARKS</span>
+    <span id="landmarkCount" style="color: #1a73e8; font-weight: 800;">0</span>
+  </div>
+  <div class="landmark-items" id="landmarkItems">
+    <!-- Loaded dynamically -->
+  </div>
+
+  <button class="btn btn-secondary" style="font-size: 12px; padding: 6px;" onclick="resetDefaultLandmarks()">
+    🔄 Reset Defaults
+  </button>
+</div>
+
+<!-- Map Container -->
+<div id="map"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast">Marker saved!</div>
+
+<script>
+  // City View Configurations
+  const CITY_CONFIGS = {
+    gurgaon: {
+      name: "Gurgaon",
+      center: [77.0894, 28.4951], // DLF Cyber City / CyberHub
+      zoom: 15.4,
+      pitch: 58,
+      bearing: -25
+    }
+  };
+
+  let currentCity = 'gurgaon'; // Default to Gurgaon
+  let markersData = [];
+  let mapMarkers = [];
+  let isPickingOnMap = false;
+  let tempClickMarker = null;
+
+  // 1. Initialize MapLibre 3D Vector Map at Gurgaon
+  const map = new maplibregl.Map({
+    container: 'map',
+    style: 'https://tiles.openfreemap.org/styles/liberty', // Free OpenMapTiles with 3D buildings
+    center: CITY_CONFIGS.gurgaon.center,
+    zoom: CITY_CONFIGS.gurgaon.zoom,
+    pitch: CITY_CONFIGS.gurgaon.pitch,
+    bearing: CITY_CONFIGS.gurgaon.bearing,
+    antialias: true
+  });
+
+  // 3D Navigation Controls
+  map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+  map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+
+  // 2. Setup map layers and load markers
+  map.on('load', () => {
+    // Style 3D extruded buildings
+    if (map.getLayer('building-3d')) {
+      map.setPaintProperty('building-3d', 'fill-extrusion-color', '#dfdcda');
+      map.setPaintProperty('building-3d', 'fill-extrusion-opacity', 0.9);
+    }
+
+    // Load initial Gurgaon markers from PostgreSQL
+    fetchMarkers(currentCity);
+  });
+
+  // 3. City configuration
+  function switchCity(cityKey) {
+    if (!CITY_CONFIGS[cityKey]) return;
+    currentCity = cityKey;
+
+    // Update Tab UI
+    const btnG = document.getElementById('btnGurgaon');
+    if (btnG) btnG.classList.toggle('active', cityKey === 'gurgaon');
+    const formCity = document.getElementById('formCityLabel');
+    if (formCity) formCity.innerText = CITY_CONFIGS[cityKey].name;
+    const listTitle = document.getElementById('listTitleLabel');
+    if (listTitle) listTitle.innerText = `${CITY_CONFIGS[cityKey].name.toUpperCase()} LANDMARKS`;
+
+    // Fly camera smoothly in 3D
+    const cfg = CITY_CONFIGS[cityKey];
+    map.flyTo({
+      center: cfg.center,
+      zoom: cfg.zoom,
+      pitch: cfg.pitch,
+      bearing: cfg.bearing,
+      speed: 1.4,
+      curve: 1.5,
+      essential: true
+    });
+
+    // Fetch markers for this city from PostgreSQL
+    fetchMarkers(currentCity);
+  }
+
+  const DEFAULT_GURGAON_MARKERS = [
+    {
+      "id": 1,
+      "number": 1,
+      "title": "DLF CyberHub",
+      "latitude": 28.4951,
+      "longitude": 77.0894,
+      "description": "Iconic social and dining nexus integrated within India’s premier IT business district.",
+      "category": "Commercial",
+      "city": "gurgaon"
+    },
+    {
+      "id": 2,
+      "number": 2,
+      "title": "Gateway Tower",
+      "latitude": 28.4990,
+      "longitude": 77.0940,
+      "description": "Famous ship-shaped glass skyscraper welcoming visitors to Cyber City.",
+      "category": "Skyscraper",
+      "city": "gurgaon"
+    },
+    {
+      "id": 3,
+      "number": 3,
+      "title": "Ambience Mall",
+      "latitude": 28.5042,
+      "longitude": 77.0970,
+      "description": "Massive premium retail, dining, and entertainment destination on NH-48.",
+      "category": "Shopping",
+      "city": "gurgaon"
+    },
+    {
+      "id": 4,
+      "number": 4,
+      "title": "One Horizon Center",
+      "latitude": 28.4485,
+      "longitude": 77.0975,
+      "description": "Prestigious commercial tower on Golf Course Road, DLF Phase 5.",
+      "category": "Skyscraper",
+      "city": "gurgaon"
+    },
+    {
+      "id": 5,
+      "number": 5,
+      "title": "Sector 29 Leisure Hub",
+      "latitude": 28.4680,
+      "longitude": 77.0678,
+      "description": "Lively district with open parks, microbreweries, and dining venues.",
+      "category": "Entertainment",
+      "city": "gurgaon"
+    },
+    {
+      "id": 6,
+      "number": 6,
+      "title": "Aravalli Biodiversity Park",
+      "latitude": 28.4845,
+      "longitude": 77.1085,
+      "description": "Ecological reserve and walking trails amidst ancient Aravalli flora.",
+      "category": "Park",
+      "city": "gurgaon"
+    },
+    {
+      "id": 7,
+      "number": 7,
+      "title": "The Camellias (DLF 5)",
+      "latitude": 28.4550,
+      "longitude": 77.0965,
+      "description": "Super-luxury architectural skyscrapers along Golf Course Road.",
+      "category": "Skyscraper",
+      "city": "gurgaon"
+    }
+  ];
+
+  // 4. Fetch markers from PostgreSQL via FastAPI
+  async function fetchMarkers(city) {
+    try {
+      const url = `/api/markers?city=${city || 'gurgaon'}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Failed to fetch markers');
+      markersData = await res.json();
+      if (!markersData || markersData.length === 0) {
+        markersData = DEFAULT_GURGAON_MARKERS;
+      }
+      renderMarkers();
+      renderSidebarList();
+    } catch (err) {
+      console.warn('Using default Gurgaon landmarks:', err);
+      markersData = DEFAULT_GURGAON_MARKERS;
+      renderMarkers();
+      renderSidebarList();
+    }
+  }
+
+  // 5. Render markers on the 3D map
+  function renderMarkers() {
+    // Clear previous markers
+    mapMarkers.forEach(m => m.remove());
+    mapMarkers = [];
+
+    markersData.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'flourish-marker';
+      el.innerHTML = `
+        <span class="marker-number">${item.number || item.id}</span>
+        <span class="marker-label">${escapeHtml(item.title)}</span>
+      `;
+
+      // Interactive popup
+      const popup = new maplibregl.Popup({ offset: 16 }).setHTML(`
+        <div style="font-family: inherit; min-width: 190px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <span style="font-size: 11px; font-weight: 700; color: #1a73e8; text-transform: uppercase;">
+              ${escapeHtml(item.category || 'Landmark')}
+            </span>
+            <span style="font-size: 11px; color: #94a3b8;">#${item.number || item.id} (${escapeHtml(item.city || currentCity)})</span>
+          </div>
+          <h4 style="margin: 0 0 6px 0; color: #0f172a; font-size: 15px;">${escapeHtml(item.title)}</h4>
+          <p style="margin: 0 0 10px 0; font-size: 13px; color: #475569; line-height: 1.4;">
+            ${escapeHtml(item.description || 'No description provided.')}
+          </p>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 8px;">
+            <span style="font-size: 11px; color: #94a3b8;">${item.latitude.toFixed(4)}, ${item.longitude.toFixed(4)}</span>
+            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deleteMarker(${item.id})">
+              Delete
+            </button>
+          </div>
+        </div>
+      `);
+
+      const marker = new maplibregl.Marker({ element: el, anchor: 'left' })
+        .setLngLat([item.longitude, item.latitude])
+        .setPopup(popup)
+        .addTo(map);
+
+      mapMarkers.push(marker);
+    });
+
+    document.getElementById('landmarkCount').innerText = markersData.length;
+  }
+
+  // 6. Render sidebar quick jump list
+  function renderSidebarList() {
+    const list = document.getElementById('landmarkItems');
+    list.innerHTML = '';
+
+    markersData.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'landmark-item';
+      row.innerHTML = `
+        <div class="landmark-item-info">
+          <span class="landmark-badge">${item.number || item.id}</span>
+          <span class="landmark-name">${escapeHtml(item.title)}</span>
+        </div>
+        <span style="font-size: 11px; color: #94a3b8;">${escapeHtml(item.category || '')}</span>
+      `;
+      row.onclick = () => {
+        map.flyTo({
+          center: [item.longitude, item.latitude],
+          zoom: 16.5,
+          pitch: 60,
+          speed: 1.2
+        });
+      };
+      list.appendChild(row);
+    });
+  }
+
+  // 7. Handle Form Submit (POST /api/markers)
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    const payload = {
+      title: document.getElementById('titleInput').value.trim(),
+      category: document.getElementById('categoryInput').value,
+      latitude: parseFloat(document.getElementById('latInput').value),
+      longitude: parseFloat(document.getElementById('lngInput').value),
+      description: document.getElementById('descInput').value.trim(),
+      city: currentCity
+    };
+
+    try {
+      const res = await fetch('/api/markers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error('Failed to save');
+      const saved = await res.json();
+
+      if (tempClickMarker) {
+        tempClickMarker.remove();
+        tempClickMarker = null;
+      }
+
+      showToast(`✅ Saved "${saved.title}"!`);
+      toggleAddMode(false);
+      document.getElementById('addForm').reset();
+
+      // Refresh data
+      await fetchMarkers(currentCity);
+
+      // Fly to newly added landmark
+      map.flyTo({
+        center: [saved.longitude, saved.latitude],
+        zoom: 16.5,
+        pitch: 60,
+        speed: 1.2
+      });
+    } catch (err) {
+      console.error(err);
+      showToast('❌ Error saving marker to database');
+    }
+  }
+
+  // 8. Delete Marker (DELETE /api/markers/{id})
+  async function deleteMarker(id) {
+    if (!confirm('Are you sure you want to delete this marker?')) return;
+    try {
+      const res = await fetch(`/api/markers/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Delete failed');
+      showToast('🗑️ Marker deleted');
+      await fetchMarkers(currentCity);
+    } catch (err) {
+      console.error(err);
+      showToast('❌ Error deleting marker');
+    }
+  }
+
+  // 9. Reset database defaults
+  async function resetDefaultLandmarks() {
+    if (!confirm('Reset all markers back to initial defaults?')) return;
+    try {
+      await fetch('/api/markers/reset', { method: 'POST' });
+      showToast('🔄 Landmarks reset to default!');
+      await fetchMarkers(currentCity);
+    } catch (err) {
+      console.error(err);
+      showToast('❌ Failed to reset landmarks');
+    }
+  }
+
+  // 10. Interactive Map Click to pick coordinates
+  function toggleAddMode(forceState) {
+    const form = document.getElementById('addForm');
+    const btn = document.getElementById('toggleAddBtn');
+    const shouldOpen = forceState !== undefined ? forceState : !form.classList.contains('active');
+    
+    if (shouldOpen) {
+      form.classList.add('active');
+      btn.style.display = 'none';
+      enableMapClickPicker();
+    } else {
+      form.classList.remove('active');
+      btn.style.display = 'inline-flex';
+      disableMapClickPicker();
+    }
+  }
+
+  function enableMapClickPicker() {
+    isPickingOnMap = true;
+    map.getCanvas().style.cursor = 'crosshair';
+    showToast(`📍 Click anywhere in ${currentCity.toUpperCase()} to pick coordinates`);
+  }
+
+  function disableMapClickPicker() {
+    isPickingOnMap = false;
+    map.getCanvas().style.cursor = '';
+  }
+
+  map.on('click', (e) => {
+    if (!isPickingOnMap) return;
+    const { lng, lat } = e.lngLat;
+    document.getElementById('latInput').value = lat.toFixed(5);
+    document.getElementById('lngInput').value = lng.toFixed(5);
+
+    if (tempClickMarker) tempClickMarker.remove();
+    tempClickMarker = new maplibregl.Marker({ color: '#1a73e8' })
+      .setLngLat([lng, lat])
+      .addTo(map);
+
+    showToast(`📍 Selected: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+  });
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.innerText = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag));
+  }
+</script>
+
+</body>
+</html>

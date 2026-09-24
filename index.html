@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal Visual Analytics Hub — 4-Block Row Layout (Chart, Blank, Chart, Blank)</title>
+  <meta name="description" content="All-in-one interactive visualization dashboard with 4 blocks per row: Chart, Blank, Chart, Blank.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES & THEME DEFINITIONS
+       ========================================================================== */
+    :root {
+      /* Dark Theme (Default) */
+      --bg-page: #080c14;
+      --bg-surface: #0f172a;
+      --bg-card: rgba(15, 23, 42, 0.78);
+      --bg-card-hover: rgba(30, 41, 59, 0.88);
+      --bg-blank: rgba(15, 23, 42, 0.22);
+      --border-blank: rgba(255, 255, 255, 0.08);
+      --bg-input: #1e293b;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.5);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-primary: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.35);
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-purple: #a855f7;
+      --card-radius: 16px;
+      --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      --shadow-hover: 0 20px 40px -10px rgba(99, 102, 241, 0.22), 0 0 0 1px rgba(99, 102, 241, 0.3);
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      --header-height: 72px;
+    }
+
+    [data-theme="light"] {
+      --bg-page: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.90);
+      --bg-card-hover: #ffffff;
+      --bg-blank: rgba(241, 245, 249, 0.5);
+      --border-blank: rgba(0, 0, 0, 0.08);
+      --bg-input: #e2e8f0;
+      --border-color: rgba(0, 0, 0, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.5);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --accent-primary: #4f46e5;
+      --accent-glow: rgba(79, 70, 229, 0.2);
+      --card-radius: 16px;
+      --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 20px 35px -10px rgba(79, 70, 229, 0.15), 0 0 0 1px rgba(79, 70, 229, 0.3);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.5;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.09) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.07) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* ==========================================================================
+       TOP APP HEADER
+       ========================================================================== */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--header-height);
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      transition: var(--transition);
+    }
+
+    [data-theme="light"] .app-header {
+      background: rgba(255, 255, 255, 0.90);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #ffffff;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    .brand-text h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #34d399;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .btn-header {
+      height: 38px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-header:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-primary);
+      transform: translateY(-1px);
+    }
+
+    .btn-icon-only {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    /* ==========================================================================
+       SUB-TOOLBAR: CATEGORY FILTERS & LAYOUT CONTROLS
+       ========================================================================== */
+    .sub-toolbar {
+      padding: 16px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(8px);
+    }
+
+    [data-theme="light"] .sub-toolbar {
+      background: rgba(255, 255, 255, 0.65);
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .filter-btn:hover {
+      color: var(--text-main);
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .filter-btn.active {
+      background: var(--accent-primary);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px var(--accent-glow);
+    }
+
+    .filter-count {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .toolbar-tools {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-box {
+      position: relative;
+      width: 240px;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 36px;
+      padding: 0 12px 0 34px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 16px;
+    }
+
+    /* Layout Toggle */
+    .view-mode-group {
+      display: flex;
+      border-radius: 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 3px;
+    }
+
+    .view-btn {
+      padding: 4px 10px;
+      border: none;
+      background: transparent;
+      border-radius: 7px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .view-btn.active {
+      background: var(--accent-primary);
+      color: #ffffff;
+    }
+
+    /* Quick Jump Anchor Bar */
+    .quick-jump-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 28px;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.2);
+    }
+
+    .quick-jump-item {
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .quick-jump-item:hover {
+      color: var(--text-main);
+      border-color: var(--accent-primary);
+    }
+
+    .quick-jump-item.highlight-purple {
+      border-color: #a855f7;
+      color: #c084fc;
+      background: rgba(168, 85, 247, 0.1);
+    }
+
+    /* ==========================================================================
+       MAIN DASHBOARD GRID (4 BLOCKS PER ROW: CHART, BLANK, CHART, BLANK)
+       ========================================================================== */
+    .dashboard-container {
+      max-width: 1860px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* 4 Blocks Per Row: [Chart] [Blank] [Chart] [Blank] */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      transition: var(--transition);
+    }
+
+    /* Optional 2-Column Mode */
+    .charts-grid.view-two-col {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Optional 1-Column Stack Mode */
+    .charts-grid.view-stack {
+      grid-template-columns: 1fr;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1400px) {
+      .charts-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Single Chart Card (Perfect 1:1 Square) */
+    .chart-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .chart-card:hover {
+      box-shadow: var(--shadow-hover);
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================================
+       BLANK BLOCK STYLING (Perfect 1:1 Square Empty Clean Placeholders)
+       ========================================================================== */
+    .blank-card {
+      background: var(--bg-blank);
+      border: 1px dashed var(--border-blank);
+      border-radius: var(--card-radius);
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .blank-card:hover {
+      border-color: rgba(99, 102, 241, 0.25);
+      background: rgba(99, 102, 241, 0.02);
+    }
+
+
+    /* ==========================================================================
+       CARD HEADER & FOOTER REMOVED (Only pure image on card)
+       ========================================================================== */
+    .card-header,
+    .card-footer,
+    .thumb-overlay,
+    .card-title,
+    .card-subtitle,
+    .card-desc,
+    .footer-pills,
+    .chart-badge-row,
+    .card-actions {
+      display: none !important;
+    }
+
+    /* Thumbnail Chart Stage (Pure Full Image on Card) */
+    .chart-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      flex: 1 1 100%;
+      min-height: 0;
+      background: #ffffff;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+    }
+
+    [data-theme="light"] .chart-stage {
+      background: #ffffff;
+    }
+
+    .chart-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: var(--card-radius);
+      display: block;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+    }
+
+    .chart-card:hover .chart-thumb {
+      transform: scale(1.05);
+      filter: brightness(1.03);
+    }
+
+    .thumb-action-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      background: rgba(99, 102, 241, 0.95);
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
+      transform: translateY(6px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .thumb-action-pill svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+    }
+
+    .chart-card:hover .thumb-action-pill {
+      transform: translateY(0);
+    }
+
+    .thumb-action-pill:hover {
+      background: #4f46e5;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 12px 28px rgba(99, 102, 241, 0.7);
+    }
+
+    .stage-loader {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      z-index: 10;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .stage-loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(99, 102, 241, 0.15);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .card-footer {
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.25);
+      font-size: 11px;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+
+    [data-theme="light"] .card-footer {
+      background: rgba(248, 250, 252, 0.6);
+    }
+
+    .card-desc {
+      flex: 1;
+      margin-right: 8px;
+      line-height: 1.35;
+      color: var(--text-muted);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .footer-pills {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       FULLSCREEN MODAL OVERLAY
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-dialog {
+      width: 96vw;
+      height: 94vh;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.96);
+      transition: var(--transition);
+    }
+
+    .modal-overlay.active .modal-dialog {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-header h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-body {
+      flex: 1;
+      position: relative;
+      background: #ffffff;
+    }
+
+    .modal-body iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .app-footer {
+      text-align: center;
+      padding: 32px;
+      color: var(--text-dim);
+      font-size: 13px;
+      border-top: 1px solid var(--border-color);
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       TOP APP HEADER
+       ========================================================================== */ -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-logo-icon">
+        <i class="ph-bold ph-chart-polar"></i>
+      </div>
+      <div class="brand-text">
+        <h1>
+          Universal Visual Analytics Hub 
+          <span class="brand-badge">Alternating Format</span>
+        </h1>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        <span>14 Visualizations Live</span>
+      </div>
+
+      <button class="btn-header" id="btn-reload-all" title="Reload and re-animate all charts">
+        <i class="ph-bold ph-arrow-clockwise"></i> Reload All
+      </button>
+
+      <button class="btn-header btn-icon-only" id="theme-toggle-btn" title="Toggle Light / Dark Mode">
+        <i class="ph-bold ph-sun" id="theme-icon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       SUB-TOOLBAR: CATEGORY FILTERS & LAYOUT CONTROLS
+       ========================================================================== */ -->
+  <div class="sub-toolbar">
+    <!-- Category Filter Buttons -->
+    <div class="filter-group">
+      <button class="filter-btn active" data-category="all">
+        <i class="ph-bold ph-squares-four"></i> All Blocks
+      </button>
+      <button class="filter-btn" data-category="hierarchical-flow">
+        <i class="ph-bold ph-tree-structure"></i> Hierarchies & Flows
+      </button>
+      <button class="filter-btn" data-category="3d-webgl">
+        <i class="ph-bold ph-cube"></i> 3D & WebGL
+      </button>
+      <button class="filter-btn" data-category="distributions">
+        <i class="ph-bold ph-chart-scatter"></i> Distributions & Stats
+      </button>
+      <button class="filter-btn" data-category="maps-inventory">
+        <i class="ph-bold ph-map-pin"></i> Maps & Inventory
+      </button>
+    </div>
+
+    <!-- Search & Layout Tools -->
+    <div class="toolbar-tools">
+      <div class="search-box">
+        <i class="ph-bold ph-magnifying-glass"></i>
+        <input type="text" id="chart-search-input" placeholder="Search charts by name or tag...">
+      </div>
+
+      <div class="view-mode-group">
+        <button class="view-btn active" id="view-four-btn" title="4-Block Alternating Layout [Chart] [Blank] [Chart] [Blank]">
+          <i class="ph-bold ph-squares-four"></i> 4 Blocks
+        </button>
+        <button class="view-btn" id="view-two-btn" title="2-Column Grid View">
+          <i class="ph-bold ph-grid-four"></i> 2 Cols
+        </button>
+        <button class="view-btn" id="view-stack-btn" title="1-Column Full-Width Stack">
+          <i class="ph-bold ph-rows"></i> Stack
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Jump Anchor Bar -->
+  <nav class="quick-jump-bar" aria-label="Jump directly to chart">
+    <span style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Jump to:</span>
+    <a href="#card-treemap" class="quick-jump-item highlight-purple"><i class="ph-bold ph-squares-four"></i> Treemap</a>
+    <a href="#card-sunburst" class="quick-jump-item highlight-purple"><i class="ph-bold ph-sun"></i> Sunburst</a>
+    <a href="#card-desktop-chart" class="quick-jump-item"><i class="ph-bold ph-map-pin"></i> 3D Map (chart)</a>
+    <a href="#card-desktop-chart2" class="quick-jump-item"><i class="ph-bold ph-chart-polar"></i> Altair Violin (chart2)</a>
+    <a href="#card-desktop-chart3" class="quick-jump-item"><i class="ph-bold ph-chart-bar-horizontal"></i> 3D Bar (chart3)</a>
+    <a href="#card-chart-2" class="quick-jump-item"><i class="ph-bold ph-gauge"></i> Chart 2 (Gauge)</a>
+    <a href="#card-chart-3" class="quick-jump-item"><i class="ph-bold ph-circle-dashed"></i> Chart 3 (Bubble)</a>
+    <a href="#card-chart-4" class="quick-jump-item"><i class="ph-bold ph-circle-notch"></i> Chart 4 (Chord)</a>
+    <a href="#card-chart-5" class="quick-jump-item"><i class="ph-bold ph-chart-line-up"></i> Chart 5 (Area)</a>
+    <a href="#card-chart-6" class="quick-jump-item"><i class="ph-bold ph-arrows-split"></i> Chart 6 (Sankey)</a>
+    <a href="#card-chart-7" class="quick-jump-item"><i class="ph-bold ph-buildings"></i> Chart 7 (Isotype)</a>
+    <a href="#card-chart-8" class="quick-jump-item"><i class="ph-bold ph-map-trifold"></i> Chart 8 (India Map)</a>
+    <a href="#card-chart-9" class="quick-jump-item"><i class="ph-bold ph-mountains"></i> Chart 9 (3D Ridgeline)</a>
+  </nav>
+
+  <!-- ==========================================================================
+       MAIN DASHBOARD: 4 BLOCKS PER ROW
+       Pattern: [BLANK] [CHART] [BLANK] [CHART]
+       ========================================================================== */ -->
+  <main class="dashboard-container">
+    <div class="charts-grid" id="charts-grid">
+
+      <!-- ====================================================================
+           ROW 1: [CHART] [BLANK] [CHART] [BLANK] (Start with Chart)
+           ==================================================================== -->
+
+      <!-- Block 1: Chart -->
+      <article class="chart-card" id="card-treemap" data-category="hierarchical-flow distributions" data-keywords="treemap gapminder hierarchy world continent country population">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge badge-purple">TREEMAP</span>
+              <span class="chart-tag">Plotly Express</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="treemap" data-title="Gapminder Treemap Studio">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="treemap" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="treemap" data-title="Gapminder Treemap Studio">
+          <img class="chart-thumb" src="static/thumbnails/treemap.png?v=5" alt="Gapminder Treemap Studio" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="treemap" data-title="Gapminder Treemap Studio">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">Nested rectangles sized by Population with continuous color scale.</div>
+          <div class="footer-pills"><span class="chart-tag">Treemap</span></div>
+        </footer>
+      </article>
+
+      <!-- Block 2: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- Block 3: Chart -->
+      <article class="chart-card" id="card-sunburst" data-category="hierarchical-flow distributions" data-keywords="sunburst radial rings gapminder hierarchy world continent country population">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge badge-rose">SUNBURST</span>
+              <span class="chart-tag">Plotly Express</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="sunburst" data-title="Gapminder Sunburst Chart">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="sunburst" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="sunburst" data-title="Gapminder Sunburst Chart">
+          <img class="chart-thumb" src="static/thumbnails/sunburst.png?v=5" alt="Gapminder Sunburst Chart" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="sunburst" data-title="Gapminder Sunburst Chart">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">Concentric radial rings hierarchy with sector angles proportional to Population.</div>
+          <div class="footer-pills"><span class="chart-tag">Sunburst</span></div>
+        </footer>
+      </article>
+
+      <!-- Block 4: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- ====================================================================
+           ROW 2: [BLANK] [CHART] [BLANK] [CHART] (Start with Blank)
+           ==================================================================== -->
+
+      <!-- Block 5: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- Block 6: Chart -->
+      <article class="chart-card" id="card-desktop-chart" data-category="3d-webgl maps-inventory" data-keywords="chart 3d map maplibre pydeck gurgaon dlf cyberhub extruded buildings vector tiles">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge badge-amber">3D MAP</span>
+              <span class="chart-tag">MapLibre GL 3D</span>
+              <span class="chart-tag">Gurgaon</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="chart" data-title="Dynamic 3D Marker Map (Gurgaon)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="chart" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="chart" data-title="Dynamic 3D Marker Map (Gurgaon)">
+          <img class="chart-thumb" src="static/thumbnails/chart_map.png?v=5" alt="Dynamic 3D Marker Map (Gurgaon)" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="chart" data-title="Dynamic 3D Marker Map (Gurgaon)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">3D building heights, DLF CyberHub landmarks with smooth 3D camera controls.</div>
+          <div class="footer-pills"><span class="chart-tag">3D Map</span></div>
+        </footer>
+      </article>
+
+      <!-- Block 7: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- Block 8: Chart -->
+      <article class="chart-card" id="card-desktop-chart2" data-category="distributions" data-keywords="chart2 altair violin density kernel kde vega vega-lite cars miles per gallon origin cylinders">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge badge-cyan">VIOLIN</span>
+              <span class="chart-tag">Vega-Lite / Altair</span>
+              <span class="chart-tag">KDE Violin</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="chart2" data-title="Altair Density & Violin Studio">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="chart2" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="chart2" data-title="Altair Density & Violin Studio">
+          <img class="chart-thumb" src="static/thumbnails/chart_violin.png?v=5" alt="Altair Density & Violin Studio" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="chart2" data-title="Altair Density & Violin Studio">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">Vega-Lite kernel density estimation with custom bandwidth smoothing.</div>
+          <div class="footer-pills"><span class="chart-tag">Altair</span></div>
+        </footer>
+      </article>
+
+      <!-- ====================================================================
+           ROW 3: [CHART] [BLANK] [CHART] [BLANK] (Start with Chart)
+           ==================================================================== -->
+
+      <!-- Block 9: Chart -->
+      <article class="chart-card" id="card-desktop-chart3" data-category="3d-webgl distributions" data-keywords="chart3 3d bivariate bar chart postgresql histogram plotly voxels bars horsepower mpg">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge badge-emerald">3D BARS</span>
+              <span class="chart-tag">Plotly 3D WebGL</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="chart3" data-title="3D Bivariate Bar Studio">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="chart3" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="chart3" data-title="3D Bivariate Bar Studio">
+          <img class="chart-thumb" src="static/thumbnails/chart_bivariate.png?v=5" alt="3D Bivariate Bar Studio" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="chart3" data-title="3D Bivariate Bar Studio">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">Bivariate 2D histogram bins rendered as 3D extruded voxels.</div>
+          <div class="footer-pills"><span class="chart-tag">3D Bars</span></div>
+        </footer>
+      </article>
+
+      <!-- Block 10: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- Block 11: Chart -->
+      <article class="chart-card" id="card-chart-2" data-category="3d-webgl" data-keywords="gauge speedometer meter flourish needle chart_2 speed instrument automotive">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge">GAUGE</span>
+              <span class="chart-tag">Speedometer</span>
+              <span class="chart-tag">0–200 km/h</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="2" data-title="Flourish Precision Speedometer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="2" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="2" data-title="Flourish Speedo Meter">
+          <img class="chart-thumb" src="static/thumbnails/chart_gauge.png?v=6" alt="Flourish Speedo Meter" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="2" data-title="Flourish Precision Speedometer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">High-precision sports speedometer with 0–200 km/h scale, dynamic redline, and digital HUD.</div>
+          <div class="footer-pills"><span class="chart-tag">Speedometer</span><span class="chart-tag">Instrument</span></div>
+        </footer>
+      </article>
+
+      <!-- Block 12: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- ====================================================================
+           ROW 4: [BLANK] [CHART] [BLANK] [CHART] (Start with Blank)
+           ==================================================================== -->
+
+      <!-- Block 13: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- Block 14: Chart -->
+      <article class="chart-card" id="card-chart-3" data-category="distributions" data-keywords="bubble cluster force simulation d3 countries population gdp flourish chart_3">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge">BUBBLE</span>
+              <span class="chart-tag">Flourish v26.1.1</span>
+              <span class="chart-tag">D3 Force</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="3" data-title="Data Explorer Bubble Cluster">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="3" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="3" data-title="Data Explorer Bubble Cluster">
+          <img class="chart-thumb" src="static/thumbnails/chart_bubble.png?v=5" alt="Data Explorer Bubble Cluster" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="3" data-title="Data Explorer Bubble Cluster">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">Collision physics pack with size scaling by Population/GDP.</div>
+          <div class="footer-pills"><span class="chart-tag">D3 Physics</span></div>
+        </footer>
+      </article>
+
+      <!-- Block 15: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- Block 16: Chart -->
+      <article class="chart-card" id="card-chart-4" data-category="hierarchical-flow" data-keywords="chord diagram friends relations ribbons d3 matrix flourish network chart_4">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge">CHORD</span>
+              <span class="chart-tag">Flourish v11.0.1</span>
+              <span class="chart-tag">D3 Chord</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="4" data-title="Friends Chord Diagram">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="4" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="4" data-title="Friends Chord Diagram">
+          <img class="chart-thumb" src="static/thumbnails/chart_chord.png?v=5" alt="Friends Chord Diagram" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="4" data-title="Friends Chord Diagram">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">Circular relational chord matrix with hover focus and dimming.</div>
+          <div class="footer-pills"><span class="chart-tag">Chord</span></div>
+        </footer>
+      </article>
+
+      <!-- ====================================================================
+           ROW 5: [CHART] [BLANK] [CHART] [BLANK] (Start with Chart)
+           ==================================================================== -->
+
+      <!-- Block 17: Chart -->
+      <article class="chart-card" id="card-chart-5" data-category="distributions" data-keywords="stacked area migration timeline d3 monotone scrubber plotset us immigration chart_5">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge">STREAM</span>
+              <span class="chart-tag">PlotSet Design</span>
+              <span class="chart-tag">190-Yr Timeline</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="5" data-title="US Migration Stacked Area Timeline">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="5" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="5" data-title="US Migration Stacked Area Timeline">
+          <img class="chart-thumb" src="static/thumbnails/chart_stream.png?v=5" alt="US Migration Stacked Area Timeline" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="5" data-title="US Migration Stacked Area Timeline">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">190 years of US immigration with decade scrubber.</div>
+          <div class="footer-pills"><span class="chart-tag">Stacked Area</span></div>
+        </footer>
+      </article>
+
+      <!-- Block 18: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- Block 19: Chart -->
+      <article class="chart-card" id="card-chart-6" data-category="hierarchical-flow" data-keywords="sankey diagram energy llnl petroleum flow flourish d3 chart_6">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge">SANKEY</span>
+              <span class="chart-tag">Flourish v13.0.1</span>
+              <span class="chart-tag">d3-sankey</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="6" data-title="US Energy Flow Sankey Diagram">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="6" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="6" data-title="US Energy Flow Sankey Diagram">
+          <img class="chart-thumb" src="static/thumbnails/chart_sankey.png?v=5" alt="US Energy Flow Sankey Diagram" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="6" data-title="US Energy Flow Sankey Diagram">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">Energy flow from sources to sectors highlighting Petroleum (8.38 quads).</div>
+          <div class="footer-pills"><span class="chart-tag">Sankey</span></div>
+        </footer>
+      </article>
+
+      <!-- Block 20: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- ====================================================================
+           ROW 6: [BLANK] [CHART] [BLANK] [CHART] (Start with Blank)
+           ==================================================================== -->
+
+      <!-- Block 21: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- Block 22: Chart -->
+      <article class="chart-card" id="card-chart-7" data-category="maps-inventory" data-keywords="isotype pictogram flat inventory 1bhk 2bhk 3bhk apartments vega altair chart_7">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge">ISOTYPE</span>
+              <span class="chart-tag">Vega Style</span>
+              <span class="chart-tag">SVG Floorplans</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="7" data-title="Isotype Flat Inventory Pictogram">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="7" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="7" data-title="Isotype Flat Inventory Pictogram">
+          <img class="chart-thumb" src="static/thumbnails/chart_isotype.png?v=5" alt="Isotype Flat Inventory Pictogram" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="7" data-title="Isotype Flat Inventory Pictogram">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">Isotype pictograms substituting floorplan SVGs with real-time +/- adjusters.</div>
+          <div class="footer-pills"><span class="chart-tag">Isotype</span></div>
+        </footer>
+      </article>
+
+      <!-- Block 23: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- Block 24: Chart -->
+      <article class="chart-card" id="card-chart-8" data-category="maps-inventory" data-keywords="india map leaflet marker metros heritage landmarks tours flourish chart_8">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge">MAP</span>
+              <span class="chart-tag">Flourish v13.0.1</span>
+              <span class="chart-tag">Leaflet 1.9</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="8" data-title="India Interactive Marker Map">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="8" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="8" data-title="India Interactive Marker Map">
+          <img class="chart-thumb" src="static/thumbnails/chart_indiamap.png?v=5" alt="India Interactive Marker Map" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="8" data-title="India Interactive Marker Map">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">32 curated landmark markers across India with video tour embeds.</div>
+          <div class="footer-pills"><span class="chart-tag">Leaflet</span></div>
+        </footer>
+      </article>
+
+      <!-- ====================================================================
+           ROW 7: [CHART] [BLANK] [CHART] [BLANK] (Start with Chart)
+           ==================================================================== -->
+
+      <!-- Block 25: Chart -->
+      <article class="chart-card" id="card-chart-9" data-category="3d-webgl" data-keywords="3d viewer three.js webgl ridgeline surface elevation elevation model mountains flourish chart_9">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge">3D RIDGES</span>
+              <span class="chart-tag">Flourish v4.0.1</span>
+              <span class="chart-tag">Three.js WebGL</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="9" data-title="3D Ridgeline Surface Model">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="9" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="9" data-title="3D Ridgeline Surface Model">
+          <img class="chart-thumb" src="static/thumbnails/chart_ridgeline.png?v=6" alt="3D Ridgeline Surface Model" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="9" data-title="3D Ridgeline Surface Model">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">10 extruded ribbons, cyan-to-magenta gradient, turntable auto-rotate.</div>
+          <div class="footer-pills"><span class="chart-tag">Three.js</span></div>
+        </footer>
+      </article>
+
+      <!-- Block 26: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+      <!-- Block 27: Chart -->
+      <article class="chart-card" id="card-chart-math" data-category="3d-webgl" data-keywords="3d surface math polynomial cubic scatter database plotly webgl">
+        <header class="card-header">
+          <div class="chart-badge-row">
+            <span class="chart-num-badge">3D MATH</span>
+              <span class="chart-tag">Plotly 3D WebGL</span>
+              <span class="chart-tag">FastAPI Engine</span>
+          </div>
+          <div class="card-actions">
+            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="math" data-title="3D Mathematical Surface Explorer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="math" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        </header>
+        <div class="chart-stage" data-chart="math" data-title="3D Mathematical Surface Explorer">
+          <img class="chart-thumb" src="static/thumbnails/chart_surface.png?v=5" alt="3D Mathematical Surface Explorer" loading="lazy">
+          <div class="thumb-overlay">
+            <button class="thumb-action-pill btn-maximize" data-chart="math" data-title="3D Mathematical Surface Explorer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+              <span>Interactive View</span>
+            </button>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <div class="card-desc">Cubic polynomial surface with WebGL lighting, specular reflections, and camera zoom.</div>
+          <div class="footer-pills"><span class="chart-tag">Plotly 3D</span></div>
+        </footer>
+      </article>
+
+      <!-- Block 28: Blank -->
+      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+
+        </div>
+  </main>
+
+  <!-- ==========================================================================
+       FULLSCREEN MODAL DIALOG
+       ========================================================================== */ -->
+  <div class="modal-overlay" id="fullscreen-modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <header class="modal-header">
+        <h2 id="modal-chart-title">
+          <i class="ph-bold ph-chart-line-up"></i> Chart View
+        </h2>
+        <div class="modal-actions">
+          <a href="#" class="btn-header" id="modal-open-tab-btn" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> Open in New Window
+          </a>
+          <button class="btn-header btn-icon-only" id="modal-close-btn" title="Close (Esc)">
+            <i class="ph-bold ph-x"></i>
+          </button>
+        </div>
+      </header>
+      <div class="modal-body">
+        <iframe id="modal-iframe" src="about:blank" title="Fullscreen Chart View"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>Universal Visual Analytics Hub • Alternating 4-Block Layout: [Chart] [Blank] [Chart] [Blank]</p>
+  </footer>
+
+  <!-- ==========================================================================
+       ORCHESTRATION JAVASCRIPT
+       ========================================================================== */ -->
+  <script>
+    (function() {
+      function resolveChartUrl(chartKey) {
+        const hostname = window.location.hostname;
+        const isLocalPyServer = (hostname === 'localhost' || hostname === '127.0.0.1');
+
+        if (isLocalPyServer) {
+          if (chartKey === 'treemap') return '/treemap';
+          if (chartKey === 'sunburst') return '/sunburst';
+          if (chartKey === 'chart') return '/static/chart/index.html?t=' + Date.now();
+          if (chartKey === 'chart2') return '/chart2/embed?theme=light';
+          if (chartKey === 'chart3') return '/chart3/embed?theme=light';
+          if (chartKey === 'math') return '/embed';
+          return `/static/desktop_charts/chart_${chartKey}/index.html`;
+        }
+
+        // Static mode: Works on GitHub Pages, custom domains, or local file:// protocol
+        if (chartKey === 'treemap') return 'treemap/treemap.html';
+        if (chartKey === 'sunburst') return 'treemap/sunburst.html';
+        if (chartKey === 'chart') return 'chart/index.html';
+        if (chartKey === 'chart2') return 'chart2/index.html';
+        if (chartKey === 'chart3') return 'chart3/index.html';
+        if (chartKey === 'math') return 'math/index.html';
+        return `chart_${chartKey}/index.html`;
+      }
+
+      const chartItems = ['treemap', 'sunburst', 'chart', 'chart2', 'chart3', 2, 3, 4, 5, 6, 7, 8, 9, 'math'];
+      
+      // Wire up standalone external tab buttons
+      chartItems.forEach(key => {
+        const extBtns = document.querySelectorAll(`.btn-ext[data-chart="${key}"]`);
+        const url = resolveChartUrl(key);
+        extBtns.forEach(btn => {
+          btn.href = url;
+        });
+      });
+
+      // Handle thumbnail fallbacks for both root and static path contexts
+      document.querySelectorAll('.chart-thumb').forEach(img => {
+        img.onerror = function() {
+          if (this.src.includes('static/thumbnails/')) {
+            this.src = this.src.replace('static/thumbnails/', 'thumbnails/');
+          } else if (this.src.includes('thumbnails/')) {
+            this.src = this.src.replace('thumbnails/', 'static/thumbnails/');
+          }
+        };
+      });
+
+      // Clicking anywhere on the card opens the full interactive chart modal
+      document.querySelectorAll('.chart-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          const stage = card.querySelector('.chart-stage');
+          if (stage) {
+            const chartKey = stage.getAttribute('data-chart');
+            const title = stage.getAttribute('data-title');
+            if (chartKey) {
+              openInteractiveModal(chartKey, title);
+            }
+          }
+        });
+      });
+
+      // Individual Card Refresh
+      document.querySelectorAll('.btn-refresh').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-target');
+          const iframe = document.getElementById(targetId);
+          if (iframe) {
+            btn.querySelector('i').classList.add('ph-spin');
+            iframe.src = iframe.src;
+            setTimeout(() => {
+              btn.querySelector('i').classList.remove('ph-spin');
+            }, 600);
+          }
+        });
+      });
+
+      // Global Reload All
+      const reloadAllBtn = document.getElementById('btn-reload-all');
+      if (reloadAllBtn) {
+        reloadAllBtn.addEventListener('click', () => {
+          reloadAllBtn.querySelector('i').classList.add('ph-spin');
+          chartItems.forEach(key => {
+            let iframeId = `iframe-chart-${key}`;
+            let loaderId = `loader-chart-${key}`;
+
+            if (key === 'treemap') {
+              iframeId = 'iframe-treemap';
+              loaderId = 'loader-treemap';
+            } else if (key === 'sunburst') {
+              iframeId = 'iframe-sunburst';
+              loaderId = 'loader-sunburst';
+            } else if (key === 'chart' || key === 'chart2' || key === 'chart3') {
+              iframeId = `iframe-desktop-${key}`;
+              loaderId = `loader-desktop-${key}`;
+            }
+
+            const iframe = document.getElementById(iframeId);
+            const loader = document.getElementById(loaderId);
+            if (loader) loader.classList.remove('hidden');
+            if (iframe) iframe.src = iframe.src;
+          });
+          setTimeout(() => {
+            reloadAllBtn.querySelector('i').classList.remove('ph-spin');
+          }, 1200);
+        });
+      }
+
+      // Category Filters
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const allCards = document.querySelectorAll('.chart-card, .blank-card');
+
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const category = btn.getAttribute('data-category');
+          allCards.forEach(card => {
+            if (card.classList.contains('blank-card')) {
+              // Always keep blank cards visible in 'all' view to preserve 4-block layout
+              card.style.display = (category === 'all') ? 'flex' : 'none';
+              return;
+            }
+            const cardCats = card.getAttribute('data-category') || '';
+            if (category === 'all' || cardCats.includes(category)) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // Search Bar
+      const searchInput = document.getElementById('chart-search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase().trim();
+          allCards.forEach(card => {
+            if (card.classList.contains('blank-card')) {
+              card.style.display = query ? 'none' : 'flex';
+              return;
+            }
+            const text = (card.innerText + ' ' + (card.getAttribute('data-keywords') || '')).toLowerCase();
+            if (!query || text.includes(query)) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      }
+
+      // View Mode Toggle (4 Blocks vs 2 Cols vs Stack)
+      const gridContainer = document.getElementById('charts-grid');
+      const viewFourBtn = document.getElementById('view-four-btn');
+      const viewTwoBtn = document.getElementById('view-two-btn');
+      const viewStackBtn = document.getElementById('view-stack-btn');
+      const blankCards = document.querySelectorAll('.blank-card');
+
+      const setViewMode = (mode) => {
+        [viewFourBtn, viewTwoBtn, viewStackBtn].forEach(b => b && b.classList.remove('active'));
+        gridContainer.classList.remove('view-two-col', 'view-stack');
+
+        if (mode === 'two') {
+          gridContainer.classList.add('view-two-col');
+          if (viewTwoBtn) viewTwoBtn.classList.add('active');
+          blankCards.forEach(b => b.style.display = 'none');
+        } else if (mode === 'stack') {
+          gridContainer.classList.add('view-stack');
+          if (viewStackBtn) viewStackBtn.classList.add('active');
+          blankCards.forEach(b => b.style.display = 'none');
+        } else {
+          if (viewFourBtn) viewFourBtn.classList.add('active');
+          blankCards.forEach(b => b.style.display = 'flex');
+        }
+      };
+
+      if (viewFourBtn) viewFourBtn.addEventListener('click', () => setViewMode('four'));
+      if (viewTwoBtn) viewTwoBtn.addEventListener('click', () => setViewMode('two'));
+      if (viewStackBtn) viewStackBtn.addEventListener('click', () => setViewMode('stack'));
+
+      // Fullscreen Modal Controls
+      const modal = document.getElementById('fullscreen-modal');
+      const modalIframe = document.getElementById('modal-iframe');
+      const modalTitle = document.getElementById('modal-chart-title');
+      const modalOpenTab = document.getElementById('modal-open-tab-btn');
+      const modalClose = document.getElementById('modal-close-btn');
+
+      function openInteractiveModal(chartKey, title) {
+        const url = resolveChartUrl(chartKey);
+        modalTitle.innerHTML = `<span class="chart-num-badge">INTERACTIVE</span> ${title || 'Chart View'}`;
+        modalIframe.src = url;
+        modalOpenTab.href = url;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      document.querySelectorAll('.btn-maximize').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const chartKey = btn.getAttribute('data-chart');
+          const title = btn.getAttribute('data-title');
+          if (chartKey) {
+            openInteractiveModal(chartKey, title);
+          }
+        });
+      });
+
+      const closeModal = () => {
+        modal.classList.remove('active');
+        modalIframe.src = 'about:blank';
+        document.body.style.overflow = '';
+      };
+
+      if (modalClose) modalClose.addEventListener('click', closeModal);
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeModal();
+        });
+      }
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+          closeModal();
+        }
+      });
+
+      // Theme Switcher (Dark Mode by default)
+      const themeToggleBtn = document.getElementById('theme-toggle-btn');
+      const themeIcon = document.getElementById('theme-icon');
+
+      const savedTheme = localStorage.getItem('hub-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeIcon(savedTheme);
+
+      function updateThemeIcon(theme) {
+        if (themeIcon) {
+          if (theme === 'light') {
+            themeIcon.classList.remove('ph-sun');
+            themeIcon.classList.add('ph-moon');
+          } else {
+            themeIcon.classList.remove('ph-moon');
+            themeIcon.classList.add('ph-sun');
+          }
+        }
+      }
+
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          localStorage.setItem('hub-theme', newTheme);
+          updateThemeIcon(newTheme);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
