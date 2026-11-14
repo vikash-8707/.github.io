@@ -867,7 +867,7 @@
   <span class="floating-filter-badge" id="floatingTriggerBadge">9 Projects</span>
 </div>
 
-<!-- 3D HUD / Navigation Legend (Updated: Realistic Architectural Materials, zero blue) -->
+<!-- 3D HUD / Navigation Legend (Updated: Realistic Architectural Materials) -->
 <div class="hud-controls">
   <div style="font-weight: 800; color: #fff; font-size: 12px; margin-bottom: 2px;">
     🏙️ 3D PropertyAI Models (Gurgaon)
@@ -882,7 +882,7 @@
   </div>
   <div class="hud-legend-item">
     <div class="legend-box" style="background: #f59e0b; border: 1px solid #fff;"></div>
-    <span>3D Ultra Luxury Skyscraper (Gold Glass Crown)</span>
+    <span>3D Ultra Luxury Skyscraper (Gold Glass Crown &amp; Helipad)</span>
   </div>
   <hr style="border: 0; border-top: 1px solid var(--border); margin: 4px 0;">
   <div style="font-size: 10.5px;">
@@ -1137,10 +1137,83 @@
   }
 
   // ==========================================
+  // REUSABLE ARCHITECTURAL MATERIALS CACHE
+  // ==========================================
+  let cachedMaterials = null;
+  function getArchitecturalMaterials() {
+    if (cachedMaterials) return cachedMaterials;
+
+    cachedMaterials = {
+      // Tinted Neutral Architectural Glass (Dark charcoal tint, high reflectivity, no cartoonish blue)
+      glassMat: new THREE.MeshPhysicalMaterial({
+        color: 0x1e293b,
+        metalness: 0.88,
+        roughness: 0.12,
+        transparent: true,
+        opacity: 0.94
+      }),
+      // Warm Architectural Limestone / Concrete Slabs
+      slabMat: new THREE.MeshStandardMaterial({
+        color: 0xe2ded9,
+        roughness: 0.65,
+        metalness: 0.08
+      }),
+      // Slate Mullion Frames & Columns
+      frameMat: new THREE.MeshStandardMaterial({
+        color: 0x64748b,
+        roughness: 0.4,
+        metalness: 0.5
+      }),
+      // Crisp White Architectural Balcony Terraces
+      balconyMat: new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.25,
+        metalness: 0.05
+      }),
+      // Dark Charcoal Granite Podium Base
+      podiumMat: new THREE.MeshStandardMaterial({
+        color: 0x1e242b,
+        roughness: 0.85
+      }),
+      // Landscaped Podium Garden Deck
+      lawnMat: new THREE.MeshStandardMaterial({
+        color: 0x16a34a,
+        roughness: 0.9
+      }),
+      // Ultra Luxury Champagne Gold Architectural Crown
+      crownMat: new THREE.MeshStandardMaterial({
+        color: 0xd97706,
+        metalness: 0.85,
+        roughness: 0.2,
+        emissive: 0x78350f,
+        emissiveIntensity: 0.25
+      }),
+      // Helipad Landing Circle
+      helipadMat: new THREE.MeshStandardMaterial({
+        color: 0x334155,
+        roughness: 0.8
+      }),
+      // Rooftop Spire & Antennas
+      spireMat: new THREE.MeshStandardMaterial({
+        color: 0x94a3b8,
+        metalness: 0.85,
+        roughness: 0.25
+      }),
+      // Ground Ambient Occlusion Drop-Shadow
+      shadowMat: new THREE.MeshBasicMaterial({
+        color: 0x000000,
+        transparent: true,
+        opacity: 0.45
+      })
+    };
+    return cachedMaterials;
+  }
+
+  // ==========================================
   // PROCEDURAL 3D ARCHITECTURAL MESH BUILDERS
   // ==========================================
 
-  // 3D School Landmark Model
+  // 3D School Landmark Model (Pitched Red Roof & Clock Tower Standing Vertically Upright)
   function create3DSchoolModel() {
     const group = new THREE.Group();
 
@@ -1149,6 +1222,7 @@
     const roofMat = new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.4 });
     const windowMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.1, metalness: 0.8 });
     const lawnMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.9 });
+    const trackMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.9 });
 
     // Green Campus Ground
     const lawn = new THREE.Mesh(new THREE.BoxGeometry(160, 160, 2), lawnMat);
@@ -1160,10 +1234,11 @@
     center.position.set(0, -10, 14);
     group.add(center);
 
-    // Pitched Red Roof
+    // Pitched Red Roof (Cone pointing UP along Z)
     const roof = new THREE.Mesh(new THREE.ConeGeometry(45, 18, 4), roofMat);
-    roof.rotateZ(Math.PI / 4);
-    roof.position.set(0, -10, 35);
+    roof.rotation.x = Math.PI / 2;
+    roof.rotation.z = Math.PI / 4;
+    roof.position.set(0, -10, 33);
     group.add(roof);
 
     // Left Academic Wing
@@ -1176,21 +1251,23 @@
     rightWing.position.set(42, 2, 12);
     group.add(rightWing);
 
-    // Clock Tower Spire
+    // Clock Tower Spire Body
     const tower = new THREE.Mesh(new THREE.BoxGeometry(18, 18, 55), wallMat);
     tower.position.set(0, -14, 28);
     group.add(tower);
 
+    // Clock Tower Spire Cone (Pointing UP along Z)
     const spire = new THREE.Mesh(new THREE.ConeGeometry(12, 22, 4), roofMat);
-    spire.rotateZ(Math.PI / 4);
-    spire.position.set(0, -14, 65);
+    spire.rotation.x = Math.PI / 2;
+    spire.rotation.z = Math.PI / 4;
+    spire.position.set(0, -14, 67);
     group.add(spire);
 
-    // Sports Field / Running Track
-    const trackMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.9 });
-    const track = new THREE.Mesh(new THREE.CylinderGeometry(28, 28, 2, 24), trackMat);
-    track.position.set(0, 75, 2);
-    track.scale.set(1.4, 1, 0.9);
+    // Sports Field / Running Track (Flat circular disc on ground)
+    const track = new THREE.Mesh(new THREE.CylinderGeometry(28, 28, 1.5, 24), trackMat);
+    track.rotation.x = Math.PI / 2;
+    track.position.set(0, 75, 1.5);
+    track.scale.set(1.4, 0.9, 1);
     group.add(track);
 
     // Classroom Windows
@@ -1202,106 +1279,151 @@
       }
     }
 
-    group.scale.set(0.7, 0.7, 0.7);
+    group.scale.set(1.15, 1.15, 1.15);
     return group;
   }
 
-  // 3D High-Rise Residential Tower Model (Realistic Architectural Neutral Finish - NO BLUE)
+  // Realistic Procedural 3D Residential Skyscraper (True Vertical Z Orientation, Architectural Slabs & Twin Towers)
   function create3DBuildingModel(project) {
+    const mats = getArchitecturalMaterials();
     const group = new THREE.Group();
     const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
 
-    // Consistent, realistic architectural materials across all residential towers (NO BLUE)
-    const facadeMat = new THREE.MeshStandardMaterial({
-      color: 0xdcd8d4,
-      roughness: 0.65,
-      metalness: 0.1
-    });
+    // Real-world luxury skyscraper proportions (Gurgaon High-Rise Standard: 135m - 170m)
+    const mainH = isUltra ? 165 : 130; // Height in meters
+    const mainW = isUltra ? 42 : 36;   // Width in meters
+    const mainD = isUltra ? 32 : 26;   // Depth in meters
+    const podiumH = 12;
 
-    const glassMat = new THREE.MeshPhysicalMaterial({
-      color: 0x222c38,
-      metalness: 0.85,
-      roughness: 0.18,
-      transparent: true,
-      opacity: 0.92
-    });
+    // 1. Ground Drop Shadow (anchors building to terrain with realistic ambient occlusion)
+    const shadow = new THREE.Mesh(new THREE.CylinderGeometry(55, 55, 0.4, 32), mats.shadowMat);
+    shadow.rotation.x = Math.PI / 2;
+    shadow.position.set(8, 4, 0.2);
+    group.add(shadow);
 
-    const frameMat = new THREE.MeshStandardMaterial({
-      color: 0x64748b,
-      metalness: 0.5,
-      roughness: 0.35
-    });
-
-    const podiumMat = new THREE.MeshStandardMaterial({
-      color: 0x1e293b,
-      roughness: 0.85
-    });
-
-    const balconyMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      roughness: 0.25
-    });
-
-    const floors = isUltra ? 38 : 28;
-    const totalHeight = floors * 3.8;
-
-    // Podium Base
-    const podium = new THREE.Mesh(new THREE.BoxGeometry(95, 75, 14), podiumMat);
-    podium.position.set(0, 0, 7);
+    // 2. Granite Podium Base (Ground Parking & Retail Level)
+    const podiumW = 85, podiumD = 65;
+    const podium = new THREE.Mesh(new THREE.BoxGeometry(podiumW, podiumD, podiumH), mats.podiumMat);
+    podium.position.set(8, 4, podiumH / 2);
     group.add(podium);
 
-    // Tower 1 (Main High-Rise Tower)
-    const towerWidth = isUltra ? 36 : 28;
-    const towerDepth = isUltra ? 28 : 22;
-    const tower1 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth, towerDepth, totalHeight), glassMat);
-    tower1.position.set(-16, 0, totalHeight / 2 + 14);
+    // Landscaped Green Garden Deck on Podium Roof
+    const deck = new THREE.Mesh(new THREE.BoxGeometry(podiumW - 4, podiumD - 4, 0.8), mats.lawnMat);
+    deck.position.set(8, 4, podiumH + 0.4);
+    group.add(deck);
+
+    // Grand Entrance Canopy / Port-Cochère
+    const canopy = new THREE.Mesh(new THREE.BoxGeometry(26, 16, 2), mats.frameMat);
+    canopy.position.set(8, -podiumD / 2 - 4, 6);
+    group.add(canopy);
+
+    // 3. Main High-Rise Tower (Tower A)
+    // Reflective Tinted Glass Curtain Wall Core
+    const tower1 = new THREE.Mesh(new THREE.BoxGeometry(mainW, mainD, mainH), mats.glassMat);
+    tower1.position.set(-14, 0, podiumH + mainH / 2);
     group.add(tower1);
 
-    // Balcony Bands for Tower 1
-    const numBands = Math.floor(floors / 2);
-    for (let i = 1; i <= numBands; i++) {
-      const zPos = 14 + (i * 7.6);
-      const band = new THREE.Mesh(new THREE.BoxGeometry(towerWidth + 3.5, towerDepth + 3.5, 1.2), balconyMat);
-      band.position.set(-16, 0, zPos);
-      group.add(band);
+    // Visible Horizontal Concrete Floor Slabs & Window Ledges every 3.8m
+    const floors = Math.floor(mainH / 3.8);
+    for (let f = 1; f < floors; f++) {
+      const slabZ = podiumH + f * 3.8;
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(mainW + 3.2, mainD + 3.2, 0.8), mats.slabMat);
+      slab.position.set(-14, 0, slabZ);
+      group.add(slab);
     }
 
-    // Tower 2 (Twin Tower)
-    const tower2Height = totalHeight * 0.9;
-    const tower2 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.9, towerDepth * 0.9, tower2Height), glassMat);
-    tower2.position.set(22, 10, tower2Height / 2 + 14);
+    // 4 Corner Architectural Limestone Pillars
+    const pillarGeo = new THREE.BoxGeometry(2.4, 2.4, mainH);
+    const pillarOffsets = [
+      [-mainW / 2 + 1.2, -mainD / 2 + 1.2],
+      [ mainW / 2 - 1.2, -mainD / 2 + 1.2],
+      [-mainW / 2 + 1.2,  mainD / 2 - 1.2],
+      [ mainW / 2 - 1.2,  mainD / 2 - 1.2]
+    ];
+    pillarOffsets.forEach(([px, py]) => {
+      const pillar = new THREE.Mesh(pillarGeo, mats.slabMat);
+      pillar.position.set(-14 + px, py, podiumH + mainH / 2);
+      group.add(pillar);
+    });
+
+    // Cantilevered Architectural Balconies (Front & Back)
+    for (let f = 2; f < floors - 2; f += 2) {
+      const balZ = podiumH + f * 3.8;
+      // Front Balcony
+      const bal1 = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.75, 4.5, 1.2), mats.balconyMat);
+      bal1.position.set(-14, mainD / 2 + 2.0, balZ);
+      group.add(bal1);
+      // Back Balcony
+      const bal2 = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.75, 4.5, 1.2), mats.balconyMat);
+      bal2.position.set(-14, -mainD / 2 - 2.0, balZ);
+      group.add(bal2);
+    }
+
+    // 4. Secondary Stepped Tower (Tower B)
+    const twinH = isUltra ? 125 : 95;
+    const twinW = isUltra ? 34 : 28;
+    const twinD = isUltra ? 26 : 22;
+    const tower2 = new THREE.Mesh(new THREE.BoxGeometry(twinW, twinD, twinH), mats.glassMat);
+    tower2.position.set(22, 10, podiumH + twinH / 2);
     group.add(tower2);
 
-    // Balcony Bands for Tower 2
-    for (let i = 1; i <= Math.floor(floors * 0.9 / 2); i++) {
-      const zPos = 14 + (i * 7.6);
-      const band2 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.9 + 3.5, towerDepth * 0.9 + 3.5, 1.2), balconyMat);
-      band2.position.set(22, 10, zPos);
-      group.add(band2);
+    // Twin Tower Floor Slabs
+    const twinFloors = Math.floor(twinH / 3.8);
+    for (let f = 1; f < twinFloors; f++) {
+      const slabZ = podiumH + f * 3.8;
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(twinW + 2.6, twinD + 2.6, 0.7), mats.slabMat);
+      slab.position.set(22, 10, slabZ);
+      group.add(slab);
     }
 
-    // Architectural Penthouse & Roof Feature
+    // Twin Tower Balconies
+    for (let f = 2; f < twinFloors - 2; f += 2) {
+      const balZ = podiumH + f * 3.8;
+      const bal = new THREE.Mesh(new THREE.BoxGeometry(twinW * 0.7, 4.0, 1.1), mats.balconyMat);
+      bal.position.set(22, 10 + twinD / 2 + 1.8, balZ);
+      group.add(bal);
+    }
+
+    // 5. Iconic Penthouse Rooftop & Crown
+    const roofZ = podiumH + mainH;
     if (isUltra) {
-      const crownMat = new THREE.MeshStandardMaterial({
-        color: 0xf59e0b,
-        metalness: 0.8,
-        roughness: 0.25
-      });
-      const crown = new THREE.Mesh(new THREE.BoxGeometry(towerWidth + 4, towerDepth + 4, 8), crownMat);
-      crown.position.set(-16, 0, totalHeight + 17);
+      // Multi-tier Geometric Crown (Champagne Gold)
+      const crownH = 14;
+      const crown = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.85, mainD * 0.85, crownH), mats.crownMat);
+      crown.position.set(-14, 0, roofZ + crownH / 2);
       group.add(crown);
 
-      const helipad = new THREE.Mesh(new THREE.CylinderGeometry(8, 8, 2, 16), crownMat);
+      // Helipad Landing Pad (Circular Disc on Roof)
+      const helipad = new THREE.Mesh(new THREE.CylinderGeometry(11, 11, 1.6, 24), mats.helipadMat);
       helipad.rotation.x = Math.PI / 2;
-      helipad.position.set(-16, 0, totalHeight + 22);
+      helipad.position.set(-14, 0, roofZ + crownH + 0.8);
       group.add(helipad);
+
+      // Architectural Spire / Antenna Beacon
+      const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 1.8, 22, 8), mats.spireMat);
+      spire.rotation.x = Math.PI / 2;
+      spire.position.set(-14, 0, roofZ + crownH + 11);
+      group.add(spire);
     } else {
-      const roofCap = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.7, towerDepth * 0.7, 6), frameMat);
-      roofCap.position.set(-16, 0, totalHeight + 17);
-      group.add(roofCap);
+      // Modern Recessed Penthouse & Roof Trellis
+      const penthouseH = 8;
+      const penthouse = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.75, mainD * 0.75, penthouseH), mats.frameMat);
+      penthouse.position.set(-14, 0, roofZ + penthouseH / 2);
+      group.add(penthouse);
+
+      const trellis = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.9, mainD * 0.9, 1.2), mats.slabMat);
+      trellis.position.set(-14, 0, roofZ + penthouseH + 0.6);
+      group.add(trellis);
     }
 
-    group.scale.set(0.65, 0.65, 0.65);
+    // Twin Tower Roof Cap
+    const twinRoofZ = podiumH + twinH;
+    const twinCap = new THREE.Mesh(new THREE.BoxGeometry(twinW * 0.8, twinD * 0.8, 6), mats.frameMat);
+    twinCap.position.set(22, 10, twinRoofZ + 3);
+    group.add(twinCap);
+
+    // Architectural scale factor (1.25x ensures prominent 3D perspective from all camera angles)
+    group.scale.set(1.25, 1.25, 1.25);
     return group;
   }
 
@@ -1337,16 +1459,21 @@
       activeThreeCamera = new THREE.Camera();
       activeThreeScene = new THREE.Scene();
 
-      // Realistic Architectural Ambient & Directional Lighting
-      const ambLight = new THREE.AmbientLight(0xffffff, 0.85);
+      // Ambient & Environmental Hemisphere Lighting
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.7);
       activeThreeScene.add(ambLight);
 
-      const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.2);
-      dirLight1.position.set(80, 120, 150);
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x334155, 0.6);
+      activeThreeScene.add(hemiLight);
+
+      // Primary Sunlight (Casts crisp highlights and high-contrast architectural shadows)
+      const dirLight1 = new THREE.DirectionalLight(0xfffaed, 1.3);
+      dirLight1.position.set(120, -160, 240);
       activeThreeScene.add(dirLight1);
 
-      const dirLight2 = new THREE.DirectionalLight(0x94a3b8, 0.6);
-      dirLight2.position.set(-80, -100, 80);
+      // Secondary Fill Light (Softens shaded facades)
+      const dirLight2 = new THREE.DirectionalLight(0x94a3b8, 0.55);
+      dirLight2.position.set(-120, 140, 120);
       activeThreeScene.add(dirLight2);
 
       activeThreeScene.add(activeThreeGroup);
@@ -1702,7 +1829,7 @@
       essential: true
     });
 
-    // 3. Rebuild 3D Meshes in Three.js (Neutral Architectural Finish)
+    // 3. Rebuild 3D Meshes in Three.js (True Vertical Orientation & Realistic Architecture)
     rebuild3DModels(selectedSchool, matchingProjects);
 
     // 4. Update 3D Floating HTML Labels & Sidebar
@@ -1717,13 +1844,14 @@
     }
   }
 
+  // True Vertical Placement: Z points straight UP into the sky, altitude in meters!
   function placeMeshAtLngLat(mesh, lng, lat, altitude = 0) {
     const coord = maplibregl.MercatorCoordinate.fromLngLat([lng, lat], altitude);
     const scale = coord.meterInMercatorCoordinateUnits();
 
     mesh.position.set(coord.x, coord.y, coord.z);
     mesh.scale.set(scale, -scale, scale);
-    mesh.rotation.x = Math.PI / 2;
+    mesh.rotation.set(0, 0, 0); // No Math.PI/2 rotation! Z stands straight UP!
   }
 
   function rebuild3DModels(school, projects) {
@@ -1867,10 +1995,10 @@
   function focusProject(lng, lat) {
     map.flyTo({
       center: [lng, lat],
-      zoom: 16.5,
-      pitch: 65,
-      bearing: -15,
-      speed: 1.3,
+      zoom: 16.2,
+      pitch: 62,
+      bearing: -25,
+      speed: 1.2,
       curve: 1.2,
       essential: true
     });
