@@ -2,818 +2,1539 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Dynamic 3D Marker Map - Gurgaon</title>
+  <title>Propium 3D — Real Estate & School Proximity Explorer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
   
-  <!-- MapLibre GL 3D vector map engine -->
+  <!-- MapLibre GL 3D Vector Map Engine -->
   <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
-  <!-- Google Font -->
+  <!-- Three.js for 3D Architectural Meshes -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Google Fonts & Phosphor Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Real PropertyAI Database (405 Projects, 39 Schools) -->
+  <script src="data.js"></script>
 
   <style>
     :root {
-      --primary: #1a73e8;
-      --primary-hover: #1557b0;
-      --surface: rgba(255, 255, 255, 0.95);
-      --border: rgba(0, 0, 0, 0.08);
-      --text: #1f2937;
-      --text-muted: #6b7280;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.45);
+      --surface: rgba(15, 23, 42, 0.92);
+      --surface-card: rgba(30, 41, 59, 0.80);
+      --border: rgba(255, 255, 255, 0.12);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-gold: #f59e0b;
+      --accent-emerald: #10b981;
+      --accent-cyan: #06b6d4;
+      --accent-rose: #f43f5e;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      margin: 0;
-      padding: 0;
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      color: var(--text);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: #060911;
+      color: var(--text-main);
     }
 
     #map {
       position: absolute;
-      top: 0;
-      bottom: 0;
+      inset: 0;
       width: 100%;
       height: 100%;
     }
 
-    /* Flourish-Style Numbered Marker Pins */
-    .flourish-marker {
-      display: inline-flex;
-      align-items: center;
-      cursor: pointer;
-      user-select: none;
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .flourish-marker:hover {
-      transform: scale(1.15) translateY(-3px);
-      z-index: 9999 !important;
-    }
-    .marker-number {
-      font-weight: 800;
-      font-size: 24px;
-      color: #1a73e8;
-      text-shadow:
-        -2px -2px 0 #fff,
-         2px -2px 0 #fff,
-        -2px  2px 0 #fff,
-         2px  2px 0 #fff,
-         0px  3px 8px rgba(0,0,0,0.25);
-      margin-right: 6px;
-      line-height: 1;
-    }
-    .marker-label {
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(8px);
-      padding: 5px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 700;
-      color: #1e293b;
-      white-space: nowrap;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14);
-      border: 1px solid rgba(0, 0, 0, 0.06);
-    }
-
-    /* Floating UI Container */
-    .ui-panel {
+    /* Floating Left Sidebar Panel */
+    .filter-panel {
       position: absolute;
-      top: 20px;
-      left: 20px;
+      top: 18px;
+      left: 18px;
+      width: 410px;
+      max-height: calc(100vh - 36px);
       background: var(--surface);
-      backdrop-filter: blur(14px);
-      border-radius: 14px;
-      padding: 16px 20px;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.14);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--border);
-      z-index: 20;
-      width: 350px;
-      max-height: 92vh;
-      overflow-y: auto;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      z-index: 30;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    }
+    .filter-panel.collapsed {
+      transform: translateX(-430px);
+      opacity: 0;
+      pointer-events: none;
     }
 
-    .header-row {
+    /* Sidebar Toggle Trigger (Visible when collapsed) */
+    .sidebar-toggle-btn {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 29;
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s;
+    }
+    .sidebar-toggle-btn:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .panel-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 100%);
     }
-    .header-row h1 {
-      margin: 0;
-      font-size: 16px;
+    .panel-header h1 {
+      font-size: 14.5px;
       font-weight: 800;
-      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.3px;
+    }
+    .panel-header h1 i { color: var(--accent-cyan); font-size: 19px; }
+    
+    .panel-header-actions {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .db-status {
+    .badge-count {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.25);
+      color: #c7d2fe;
+      border: 1px solid rgba(165, 180, 252, 0.4);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .collapse-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      transition: all 0.15s;
+    }
+    .collapse-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .panel-body {
+      padding: 14px 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+    .panel-body::-webkit-scrollbar { width: 5px; }
+    .panel-body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+
+    /* Section Labels */
+    .filter-group-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Search Input */
+    .search-input {
+      width: 100%;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 5px;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--primary); }
+
+    /* Select Inputs */
+    .custom-select {
+      width: 100%;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .custom-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-glow);
+    }
+    .custom-select option {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    /* Radius Pill Selector */
+    .radius-selector {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+    .radius-btn {
+      padding: 7px 2px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface-card);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .radius-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+    .radius-btn.active {
+      background: var(--primary);
+      border-color: #818cf8;
+      color: #fff;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    /* Multi-select Pills */
+    .pills-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .pill-checkbox {
+      cursor: pointer;
+      user-select: none;
+    }
+    .pill-checkbox input { display: none; }
+    .pill-content {
+      padding: 4.5px 9px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface-card);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .pill-checkbox input:checked + .pill-content {
+      background: rgba(99, 102, 241, 0.35);
+      border-color: #818cf8;
+      color: #fff;
+    }
+    .pill-checkbox.gold input:checked + .pill-content {
+      background: rgba(245, 158, 11, 0.28);
+      border-color: var(--accent-gold);
+      color: #fde68a;
+    }
+
+    /* Matching Projects List in Sidebar */
+    .projects-list {
+      max-height: 220px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      padding-right: 2px;
+    }
+    .projects-list::-webkit-scrollbar { width: 4px; }
+    .projects-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+
+    .project-card {
+      padding: 9px 11px;
+      border-radius: var(--radius-sm);
+      background: rgba(30, 41, 59, 0.65);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .project-card:hover, .project-card.active-hover {
+      background: rgba(51, 65, 85, 0.95);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    }
+    .project-card.featured-card {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(245, 158, 11, 0.12) 100%);
+    }
+    .project-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .project-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .project-distance {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(6, 182, 212, 0.15);
+      padding: 1.5px 6px;
+      border-radius: 4px;
+    }
+    .project-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .tag-market {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+    .tag-market.ultra { background: rgba(245, 158, 11, 0.25); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .tag-market.luxury { background: rgba(99, 102, 241, 0.25); color: #c7d2fe; border: 1px solid rgba(99, 102, 241, 0.4); }
+    .tag-market.premium { background: rgba(16, 185, 129, 0.25); color: #a7f3d0; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+    /* ==========================================================================
+       MAP LABELS — REVOLUTIONARY ANTI-COLLISION & COMPACT PILL ARCHITECTURE
+       ========================================================================== */
+
+    /* 1. School Landmark Marker (Pulsing Ruby Beacon) */
+    .model-label-school {
+      pointer-events: auto;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      color: #ffffff;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.75), 0 6px 18px rgba(0, 0, 0, 0.6);
+      border: 2px solid #ffffff;
+      white-space: nowrap;
+      user-select: none;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 5000;
+    }
+    .model-label-school:hover { transform: scale(1.08) translateY(-2px); }
+
+    /* 2. Project Marker Wrapper with Dynamic Anti-Overlap Staggering */
+    .project-marker-wrapper {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), z-index 0.1s;
+    }
+    .project-marker-wrapper:hover {
+      z-index: 100000 !important;
+      transform: scale(1.08) !important;
+    }
+    .project-marker-wrapper.is-highlighted {
+      z-index: 100001 !important;
+      transform: scale(1.15) !important;
+    }
+    .project-marker-wrapper.is-highlighted .marker-pill {
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.9), 0 8px 24px rgba(0,0,0,0.7) !important;
+    }
+
+    /* Compact, Luxury Pill Badge */
+    .marker-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(99, 102, 241, 0.65);
+      border-radius: 999px;
+      padding: 4px 10px 4px 8px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .marker-pill.ultra {
+      border-color: rgba(245, 158, 11, 0.85);
+      background: linear-gradient(135deg, rgba(20, 20, 35, 0.96) 0%, rgba(35, 26, 12, 0.96) 100%);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.6), 0 0 15px rgba(245, 158, 11, 0.35);
+    }
+    .marker-pill.featured {
+      border-color: #38bdf8;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+    }
+    .marker-pill-title {
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      letter-spacing: -0.2px;
+    }
+    .marker-pill-dist {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(6, 182, 212, 0.18);
+      padding: 1.5px 5.5px;
+      border-radius: 999px;
+      border: 1px solid rgba(6, 182, 212, 0.35);
+    }
+    .marker-pill.ultra .marker-pill-dist {
+      color: #fde68a;
+      background: rgba(245, 158, 11, 0.2);
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    /* Leader stem for tiered / anti-overlap elevated markers */
+    .marker-stem {
+      width: 2px;
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.9) 0%, rgba(99, 102, 241, 0.2) 100%);
+      margin: 0 auto;
+      height: 0px;
+      transition: height 0.2s ease;
+    }
+    .marker-stem.ultra {
+      background: linear-gradient(180deg, rgba(245, 158, 11, 0.9) 0%, rgba(245, 158, 11, 0.2) 100%);
+    }
+
+    /* Ground pin dot */
+    .marker-ground-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 1.5px solid #fff;
+      box-shadow: 0 0 8px var(--primary-glow);
+      margin: 0 auto;
+    }
+    .marker-ground-dot.ultra {
+      background: var(--accent-gold);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+    }
+
+    /* Rich Glassmorphic Hover Card attached to Marker */
+    .marker-hover-card {
+      position: absolute;
+      bottom: calc(100% + 9px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      min-width: 260px;
+      max-width: 300px;
+      background: rgba(15, 23, 42, 0.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(99, 102, 241, 0.25);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100010;
+    }
+    .project-marker-wrapper:hover .marker-hover-card,
+    .project-marker-wrapper.is-active .marker-hover-card {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .hover-card-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .hover-card-dev {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      margin-bottom: 8px;
+    }
+    .hover-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .hover-stat-box {
+      background: rgba(30, 41, 59, 0.7);
+      padding: 5px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .hover-stat-label {
+      font-size: 9.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .hover-stat-val {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 1px;
+    }
+    .hover-units-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    .unit-chip {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(99, 102, 241, 0.2);
+      color: #c7d2fe;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+    .hover-action-btn {
+      width: 100%;
+      background: var(--primary);
+      border: none;
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+    .hover-action-btn:hover { background: var(--primary-hover); }
+
+    /* Top Right Cinematic Camera Controls */
+    .camera-hud-bar {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 28;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .cam-btn {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      font-size: 11px;
-      font-weight: 600;
-      color: #059669;
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      padding: 2px 8px;
-      border-radius: 999px;
-    }
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      background: #10b981;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.2); }
-    }
-
-    /* City Indicator */
-    .city-switcher {
-      display: flex;
-      background: #f1f5f9;
-      border-radius: 8px;
-      padding: 3px;
-    }
-    .city-btn {
-      padding: 7px 10px;
-      font-size: 12px;
-      font-weight: 700;
-      border: none;
-      background: transparent;
-      color: #64748b;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-family: inherit;
-    }
-    .city-btn.active {
-      background: #fff;
-      color: #1a73e8;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    }
-
-    /* Controls helper */
-    .hint-box {
-      font-size: 12px;
-      background: #f8fafc;
-      border-radius: 8px;
-      padding: 10px 12px;
-      border: 1px solid #e2e8f0;
-      color: #475569;
-      line-height: 1.45;
-    }
-    .hint-box b {
-      color: #1e293b;
-    }
-
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 9px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      font-family: inherit;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-    }
-    .btn-primary:hover {
-      background: var(--primary-hover);
-      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.35);
-    }
-    .btn-secondary {
-      background: #f1f5f9;
-      color: #334155;
-    }
-    .btn-secondary:hover {
-      background: #e2e8f0;
-    }
-    .btn-danger {
-      background: #fee2e2;
-      color: #dc2626;
-    }
-    .btn-danger:hover {
-      background: #fecaca;
-    }
-
-    /* Add Form */
-    .add-form {
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      background: #fdfdfd;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 14px;
-    }
-    .add-form.active {
-      display: flex;
-    }
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .form-group label {
-      font-size: 11px;
-      font-weight: 700;
-      color: #475569;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .form-group input, .form-group textarea, .form-group select {
-      font-family: inherit;
-      font-size: 13px;
-      padding: 8px 10px;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      background: #fff;
-      color: #0f172a;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    .form-group input:focus, .form-group textarea:focus {
-      border-color: var(--primary);
-    }
-
-    /* Landmarks Quick List */
-    .landmark-list-header {
-      font-size: 12px;
-      font-weight: 700;
-      color: #475569;
-      display: flex;
-      justify-content: space-between;
-      margin-top: 4px;
-    }
-    .landmark-items {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    .landmark-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 10px;
-      background: #f8fafc;
-      border: 1px solid #f1f5f9;
-      border-radius: 6px;
-      cursor: pointer;
       transition: all 0.15s;
     }
-    .landmark-item:hover {
-      background: #e0f2fe;
-      border-color: #bae6fd;
+    .cam-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary);
     }
-    .landmark-item-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .landmark-badge {
-      background: #1a73e8;
-      color: white;
-      font-size: 11px;
-      font-weight: 800;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .landmark-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: #1e293b;
+    .cam-btn.active {
+      background: var(--primary);
+      border-color: #818cf8;
+      color: #fff;
     }
 
-    /* Toast Notification */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #0f172a;
-      color: white;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      z-index: 9999;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    /* 3D Legend at Bottom Right */
+    .hud-controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-muted);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+    .hud-legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
     }
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
+    .legend-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
     }
   </style>
 </head>
 <body>
 
-<div class="ui-panel">
-  <div class="header-row">
-    <h1>🏙️ 3D Marker Map</h1>
-  </div>
-
-  <!-- City Indicator -->
-  <div class="city-switcher">
-    <button class="city-btn active" id="btnGurgaon" onclick="switchCity('gurgaon')">
-      🇮🇳 Gurgaon (DLF Cyber City)
-    </button>
-  </div>
-
-  <div class="hint-box">
-    <b>3D Controls:</b><br>
-    • <b>Right-Click + Drag:</b> Tilt & rotate in 3D<br>
-    • <b>Left-Click + Drag:</b> Pan map<br>
-    • <b>Scroll:</b> Zoom in/out
-  </div>
-
-  <button class="btn btn-primary" id="toggleAddBtn" onclick="toggleAddMode()">
-    ➕ Add New Marker
-  </button>
-
-  <!-- Add Marker Form -->
-  <form class="add-form" id="addForm" onsubmit="handleFormSubmit(event)">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <b style="font-size: 13px; color: #1e293b;">New Landmark (<span id="formCityLabel">Gurgaon</span>)</b>
-      <span style="font-size: 11px; color: #1a73e8; cursor: pointer; font-weight: 700;" onclick="enableMapClickPicker()">
-        📍 Pick on Map
-      </span>
-    </div>
-
-    <div class="form-group">
-      <label>Title</label>
-      <input type="text" id="titleInput" placeholder="e.g. DLF CyberHub" required />
-    </div>
-
-    <div class="form-group">
-      <label>Category</label>
-      <select id="categoryInput">
-        <option value="Skyscraper">Skyscraper</option>
-        <option value="Tech & Dining">Tech & Dining</option>
-        <option value="Shopping">Shopping</option>
-        <option value="Entertainment">Entertainment</option>
-        <option value="Commercial">Commercial</option>
-        <option value="Park">Park</option>
-        <option value="Landmark">Landmark</option>
-      </select>
-    </div>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-      <div class="form-group">
-        <label>Latitude</label>
-        <input type="number" step="any" id="latInput" placeholder="28.4951" required />
-      </div>
-      <div class="form-group">
-        <label>Longitude</label>
-        <input type="number" step="any" id="lngInput" placeholder="77.0894" required />
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>Description</label>
-      <textarea id="descInput" rows="2" placeholder="Brief history or facts..."></textarea>
-    </div>
-
-    <div style="display: flex; gap: 8px;">
-      <button type="submit" class="btn btn-primary" style="flex: 1;">Save Landmark</button>
-      <button type="button" class="btn btn-secondary" onclick="toggleAddMode()">Cancel</button>
-    </div>
-  </form>
-
-  <!-- Quick jump list -->
-  <div class="landmark-list-header">
-    <span id="listTitleLabel">GURGAON LANDMARKS</span>
-    <span id="landmarkCount" style="color: #1a73e8; font-weight: 800;">0</span>
-  </div>
-  <div class="landmark-items" id="landmarkItems">
-    <!-- Loaded dynamically -->
-  </div>
-
-  <button class="btn btn-secondary" style="font-size: 12px; padding: 6px;" onclick="resetDefaultLandmarks()">
-    🔄 Reset Defaults
-  </button>
-</div>
-
 <!-- Map Container -->
 <div id="map"></div>
 
-<!-- Toast -->
-<div class="toast" id="toast">Marker saved!</div>
+<!-- Sidebar Open Button (visible when sidebar collapsed) -->
+<button class="sidebar-toggle-btn" id="openSidebarBtn" onclick="toggleSidebar(true)" style="display: none;">
+  <i class="ph-bold ph-faders"></i>
+  <span>Open Filters &amp; Projects</span>
+</button>
+
+<!-- Cinematic 3D Camera Bar -->
+<div class="camera-hud-bar">
+  <button class="cam-btn active" id="btn3d" onclick="setCameraMode('3d')">
+    <i class="ph-bold ph-cube"></i> 3D View
+  </button>
+  <button class="cam-btn" id="btnTop" onclick="setCameraMode('top')">
+    <i class="ph-bold ph-compass"></i> Top 2D
+  </button>
+  <button class="cam-btn" id="btnOrbit" onclick="toggleOrbit()">
+    <i class="ph-bold ph-arrows-clockwise"></i> Orbit 360°
+  </button>
+  <button class="cam-btn" onclick="resetSchoolView()">
+    <i class="ph-bold ph-crosshair"></i> Reset
+  </button>
+</div>
+
+<!-- 3D Legend & HUD at Bottom Right -->
+<div class="hud-controls">
+  <div style="font-weight: 800; color: #fff; font-size: 11.5px; margin-bottom: 2px;">
+    🏙️ 3D PropertyAI Map (Gurgaon)
+  </div>
+  <div class="hud-legend-item">
+    <div class="legend-box" style="background: #ef4444; border: 1px solid #fff;"></div>
+    <span>3D School Campus (Pitched Red Roof &amp; Clock Tower)</span>
+  </div>
+  <div class="hud-legend-item">
+    <div class="legend-box" style="background: #f59e0b; border: 1px solid #fff;"></div>
+    <span>3D Ultra Luxury Skyscraper (Gold Glass Crown)</span>
+  </div>
+  <div class="hud-legend-item">
+    <div class="legend-box" style="background: #6366f1; border: 1px solid #fff;"></div>
+    <span>3D Luxury High-Rise (Modern Blue Towers)</span>
+  </div>
+  <hr style="border: 0; border-top: 1px solid var(--border); margin: 3px 0;">
+  <div style="font-size: 10px;">
+    <b>3D Controls:</b> Right-Click + Drag to rotate/tilt • Scroll to zoom
+  </div>
+</div>
+
+<!-- Floating Filter Panel -->
+<div class="filter-panel" id="filterPanel">
+  <div class="panel-header">
+    <h1><i class="ph-bold ph-buildings"></i> 3D Real Estate Explorer</h1>
+    <div class="panel-header-actions">
+      <span class="badge-count" id="matchBadge">0 Projects</span>
+      <button class="collapse-btn" onclick="toggleSidebar(false)" title="Collapse Sidebar">
+        <i class="ph-bold ph-caret-left" style="font-size: 16px;"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <!-- 1. School Landmark -->
+    <div>
+      <div class="filter-group-label">
+        <span>1. Center School (3D Campus)</span>
+        <i class="ph-bold ph-graduation-cap"></i>
+      </div>
+      <input type="text" class="search-input" id="schoolSearch" placeholder="🔍 Search school name or corridor..." oninput="filterSchoolOptions()" />
+      <select class="custom-select" id="schoolSelect" onchange="handleFilterChange()">
+        <!-- Populated from data.js -->
+      </select>
+    </div>
+
+    <!-- 2. Radius Selection -->
+    <div>
+      <div class="filter-group-label">
+        <span>2. Proximity Radius (KM)</span>
+        <span id="radiusDisplay" style="color: var(--accent-cyan); font-family: 'JetBrains Mono'; font-weight: 800;">4 km</span>
+      </div>
+      <div class="radius-selector">
+        <button class="radius-btn" onclick="setRadius(2)">2 KM</button>
+        <button class="radius-btn" onclick="setRadius(3)">3 KM</button>
+        <button class="radius-btn active" onclick="setRadius(4)">4 KM</button>
+        <button class="radius-btn" onclick="setRadius(5)">5 KM</button>
+        <button class="radius-btn" onclick="setRadius(8)">8 KM</button>
+      </div>
+    </div>
+
+    <!-- 3. Target Market -->
+    <div>
+      <div class="filter-group-label">
+        <span>3. Target Market</span>
+        <i class="ph-bold ph-crown"></i>
+      </div>
+      <div class="pills-group">
+        <label class="pill-checkbox gold">
+          <input type="checkbox" value="Ultra Luxury" checked onchange="handleFilterChange()">
+          <span class="pill-content"><i class="ph-bold ph-sparkle"></i> Ultra Luxury</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="Luxury" checked onchange="handleFilterChange()">
+          <span class="pill-content"><i class="ph-bold ph-gem"></i> Luxury</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="Premium" checked onchange="handleFilterChange()">
+          <span class="pill-content">Premium</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="Mid Segment" onchange="handleFilterChange()">
+          <span class="pill-content">Mid Segment</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- 4. Unit Configuration -->
+    <div>
+      <div class="filter-group-label">
+        <span>4. Unit Configuration</span>
+        <i class="ph-bold ph-house-line"></i>
+      </div>
+      <div class="pills-group">
+        <label class="pill-checkbox">
+          <input type="checkbox" value="2 BHK" onchange="handleFilterChange()">
+          <span class="pill-content">2 BHK</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="3 BHK" checked onchange="handleFilterChange()">
+          <span class="pill-content">3 BHK</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="4 BHK" checked onchange="handleFilterChange()">
+          <span class="pill-content">4 BHK</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="Penthouse" onchange="handleFilterChange()">
+          <span class="pill-content">Penthouse</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- 5. Corridor Filter -->
+    <div>
+      <div class="filter-group-label">
+        <span>5. Corridor</span>
+        <i class="ph-bold ph-path"></i>
+      </div>
+      <select class="custom-select" id="corridorSelect" onchange="handleFilterChange()">
+        <option value="ALL">All Corridors (Entire Gurgaon)</option>
+        <option value="Golf Course Extension Road" selected>Golf Course Extension Road (GCER)</option>
+        <option value="Golf Course Road">Golf Course Road (GCR)</option>
+        <option value="Dwarka Expressway">Dwarka Expressway (DXE)</option>
+        <option value="Central Gurgaon">Central Gurgaon (CG)</option>
+        <option value="Sohna Road">Sohna Road</option>
+        <option value="Southern Peripheral Road">Southern Peripheral Road (SPR)</option>
+        <option value="New Gurgaon">New Gurgaon</option>
+      </select>
+    </div>
+
+    <!-- 6. Matching Projects List -->
+    <div>
+      <div class="filter-group-label">
+        <span>3D Projects in Radius</span>
+        <span id="listCountLabel">0 Found</span>
+      </div>
+      <div class="projects-list" id="projectsList">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-  // City View Configurations
-  const CITY_CONFIGS = {
-    gurgaon: {
-      name: "Gurgaon",
-      center: [77.0894, 28.4951], // DLF Cyber City / CyberHub
-      zoom: 15.4,
-      pitch: 58,
-      bearing: -25
+  // Ensure dataset from data.js
+  const SCHOOLS = (typeof REAL_SCHOOLS_DATA !== 'undefined' && REAL_SCHOOLS_DATA.length > 0) ? REAL_SCHOOLS_DATA : [];
+  const PROJECTS = (typeof REAL_PROJECTS_DATA !== 'undefined' && REAL_PROJECTS_DATA.length > 0) ? REAL_PROJECTS_DATA : [];
+
+  // ==========================================
+  // HAVERSINE DISTANCE (KM)
+  // ==========================================
+  function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth's radius in KM
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  // Generate GeoJSON Circle for 3D Radius Buffer
+  function createGeoJsonCircle(center, radiusKm, points = 64) {
+    const coords = [];
+    const distanceX = radiusKm / (111.320 * Math.cos(center[1] * Math.PI / 180));
+    const distanceY = radiusKm / 110.574;
+
+    for (let i = 0; i <= points; i++) {
+      const theta = (i / points) * (2 * Math.PI);
+      const x = distanceX * Math.cos(theta);
+      const y = distanceY * Math.sin(theta);
+      coords.push([center[0] + x, center[1] + y]);
     }
-  };
 
-  let currentCity = 'gurgaon'; // Default to Gurgaon
-  let markersData = [];
-  let mapMarkers = [];
-  let isPickingOnMap = false;
-  let tempClickMarker = null;
+    return {
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [coords]
+      }
+    };
+  }
 
-  // 1. Initialize MapLibre 3D Vector Map at Gurgaon
+  // ==========================================
+  // PROCEDURAL 3D MESH ARCHITECTURE (THREE.JS)
+  // ==========================================
+  
+  // 3D School Campus Model
+  function create3DSchoolModel() {
+    const group = new THREE.Group();
+
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.7 });
+    const trimMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+    const roofMat = new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.4 });
+    const windowMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.1, metalness: 0.8 });
+    const lawnMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.9 });
+
+    // Green Campus Ground
+    const lawn = new THREE.Mesh(new THREE.BoxGeometry(150, 110, 3), lawnMat);
+    lawn.position.set(0, 0, 1.5);
+    group.add(lawn);
+
+    // Main Academic Block
+    const mainBlock = new THREE.Mesh(new THREE.BoxGeometry(85, 45, 26), wallMat);
+    mainBlock.position.set(0, 10, 15);
+    group.add(mainBlock);
+
+    // Pitched Roof
+    const roofGeo = new THREE.ConeGeometry(38, 14, 4);
+    roofGeo.rotateZ(Math.PI / 4);
+    const roof = new THREE.Mesh(roofGeo, roofMat);
+    roof.position.set(0, 10, 35);
+    roof.scale.set(1.4, 0.7, 1);
+    group.add(roof);
+
+    // Academic Wings
+    const leftWing = new THREE.Mesh(new THREE.BoxGeometry(32, 55, 20), wallMat);
+    leftWing.position.set(-42, 2, 12);
+    group.add(leftWing);
+
+    const rightWing = new THREE.Mesh(new THREE.BoxGeometry(32, 55, 20), wallMat);
+    rightWing.position.set(42, 2, 12);
+    group.add(rightWing);
+
+    // Clock Tower Spire
+    const tower = new THREE.Mesh(new THREE.BoxGeometry(18, 18, 55), wallMat);
+    tower.position.set(0, -14, 28);
+    group.add(tower);
+
+    const spire = new THREE.Mesh(new THREE.ConeGeometry(12, 22, 4), roofMat);
+    spire.rotateZ(Math.PI / 4);
+    spire.position.set(0, -14, 65);
+    group.add(spire);
+
+    // Sports Field / Running Track
+    const trackMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.9 });
+    const track = new THREE.Mesh(new THREE.CylinderGeometry(28, 28, 2, 24), trackMat);
+    track.position.set(0, 75, 2);
+    track.scale.set(1.4, 1, 0.9);
+    group.add(track);
+
+    return group;
+  }
+
+  // 3D High-Rise Residential Tower Model
+  function create3DBuildingModel(proj) {
+    const group = new THREE.Group();
+    const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
+    const is4S = proj.name.toLowerCase().includes('4s');
+
+    // Colors
+    const facadeColor = isUltra ? 0x1e293b : 0x0f172a;
+    const glassColor = isUltra ? 0xf59e0b : 0x38bdf8;
+    const frameColor = isUltra ? 0xd97706 : 0x475569;
+
+    const facadeMat = new THREE.MeshStandardMaterial({ color: facadeColor, roughness: 0.6 });
+    const glassMat = new THREE.MeshStandardMaterial({ color: glassColor, roughness: 0.1, metalness: 0.9 });
+    const frameMat = new THREE.MeshStandardMaterial({ color: frameColor, roughness: 0.4 });
+    const crownMat = new THREE.MeshStandardMaterial({
+      color: isUltra ? 0xffd700 : 0x6366f1,
+      roughness: 0.2,
+      metalness: 0.9,
+      emissive: isUltra ? 0x78350f : 0x1e1b4b,
+      emissiveIntensity: 0.4
+    });
+
+    // Height based on market segment
+    const baseHeight = isUltra ? 160 : is4S ? 145 : 110;
+    const towerWidth = isUltra ? 45 : 40;
+    const towerDepth = 35;
+
+    // Podium Base
+    const podium = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 1.6, towerDepth * 1.5, 14), facadeMat);
+    podium.position.set(0, 0, 7);
+    group.add(podium);
+
+    // Main Tower 1
+    const tower1 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth, towerDepth, baseHeight), facadeMat);
+    tower1.position.set(-8, 0, baseHeight / 2 + 10);
+    group.add(tower1);
+
+    // Glass Facade Strip
+    const glassStrip = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.7, towerDepth + 2, baseHeight - 15), glassMat);
+    glassStrip.position.set(-8, 0, baseHeight / 2 + 12);
+    group.add(glassStrip);
+
+    // Tower 2 (Twin Tower configuration for luxury properties)
+    const tower2Height = baseHeight * 0.88;
+    const tower2 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.85, towerDepth * 0.85, tower2Height), facadeMat);
+    tower2.position.set(28, 12, tower2Height / 2 + 10);
+    group.add(tower2);
+
+    // Sky Bridge connecting towers
+    const bridge = new THREE.Mesh(new THREE.BoxGeometry(32, 14, 12), glassMat);
+    bridge.position.set(10, 6, baseHeight * 0.7);
+    group.add(bridge);
+
+    // Crown / Spire Architectural Feature
+    if (isUltra) {
+      const crown = new THREE.Mesh(new THREE.ConeGeometry(18, 32, 4), crownMat);
+      crown.rotateZ(Math.PI / 4);
+      crown.position.set(-8, 0, baseHeight + 24);
+      group.add(crown);
+    } else {
+      const crown = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.6, towerDepth * 0.6, 12), crownMat);
+      crown.position.set(-8, 0, baseHeight + 15);
+      group.add(crown);
+    }
+
+    return group;
+  }
+
+  // ==========================================
+  // INITIALIZE 3D MAPLIBRE ENGINE
+  // ==========================================
+  
   const map = new maplibregl.Map({
     container: 'map',
-    style: 'https://tiles.openfreemap.org/styles/liberty', // Free OpenMapTiles with 3D buildings
-    center: CITY_CONFIGS.gurgaon.center,
-    zoom: CITY_CONFIGS.gurgaon.zoom,
-    pitch: CITY_CONFIGS.gurgaon.pitch,
-    bearing: CITY_CONFIGS.gurgaon.bearing,
+    style: 'https://tiles.openfreemap.org/styles/positron', // High-precision 3D vector tiles
+    center: [77.0847, 28.4410], // Golf Course Road & Extension corridor
+    zoom: 12.8,
+    pitch: 58,
+    bearing: -15,
     antialias: true
   });
 
-  // 3D Navigation Controls
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
-  map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
+  map.addControl(new maplibregl.FullscreenControl(), 'top-right');
 
-  // 2. Setup map layers and load markers
-  map.on('load', () => {
-    // Style 3D extruded buildings
-    if (map.getLayer('building-3d')) {
-      map.setPaintProperty('building-3d', 'fill-extrusion-color', '#dfdcda');
-      map.setPaintProperty('building-3d', 'fill-extrusion-opacity', 0.9);
+  let activeThreeGroup = new THREE.Group();
+  let threeRenderer, threeScene, threeCamera;
+  let activeHtmlMarkers = [];
+  let currentMatchedProjects = [];
+  let selectedRadiusKm = 4;
+  let isOrbiting = false;
+  let orbitAnimId = null;
+
+  // Custom Three.js Layer for True 3D Architectural Meshes
+  const custom3DLayer = {
+    id: 'threejs-3d-models',
+    type: 'custom',
+    renderingMode: '3d',
+    onAdd: function (mapInstance, gl) {
+      threeCamera = new THREE.Camera();
+      threeScene = new THREE.Scene();
+
+      // Cinematic Directional & Ambient Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+      threeScene.add(ambientLight);
+
+      const sunLight = new THREE.DirectionalLight(0xfffaed, 1.4);
+      sunLight.position.set(150, -200, 300);
+      threeScene.add(sunLight);
+
+      const fillLight = new THREE.DirectionalLight(0x818cf8, 0.6);
+      fillLight.position.set(-150, 200, 100);
+      threeScene.add(fillLight);
+
+      threeScene.add(activeThreeGroup);
+
+      threeRenderer = new THREE.WebGLRenderer({
+        canvas: mapInstance.getCanvas(),
+        context: gl,
+        antialias: true
+      });
+      threeRenderer.autoClear = false;
+    },
+    render: function (gl, matrix) {
+      const m = new THREE.Matrix4().fromArray(matrix);
+      threeCamera.projectionMatrix = m;
+      threeRenderer.state.reset();
+      threeRenderer.render(threeScene, threeCamera);
+      map.triggerRepaint();
     }
+  };
 
-    // Load initial Gurgaon markers from PostgreSQL
-    fetchMarkers(currentCity);
+  // Convert LngLat into Three.js MapLibre coordinate space
+  function placeMeshAtLngLat(mesh, lng, lat, altitude = 0) {
+    const coord = maplibregl.MercatorCoordinate.fromLngLat([lng, lat], altitude);
+    const scale = coord.meterInMercatorCoordinateUnits();
+    mesh.position.set(coord.x, coord.y, coord.z);
+    mesh.scale.set(scale, -scale, scale);
+  }
+
+  map.on('style.load', () => {
+    // 3D Terrain & Building Extrusions from OpenMapTiles
+    map.addLayer(custom3DLayer);
+
+    // Circular Proximity GeoJSON Source
+    map.addSource('radius-buffer', {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] }
+    });
+
+    // 1. Semi-transparent Cyan Radial Glow
+    map.addLayer({
+      id: 'radius-buffer-fill',
+      type: 'fill',
+      source: 'radius-buffer',
+      paint: {
+        'fill-color': '#6366f1',
+        'fill-opacity': 0.12
+      }
+    });
+
+    // 2. Pulsing Radial Border
+    map.addLayer({
+      id: 'radius-buffer-outline',
+      type: 'line',
+      source: 'radius-buffer',
+      paint: {
+        'line-color': '#818cf8',
+        'line-width': 2.5,
+        'line-dasharray': [3, 2]
+      }
+    });
+
+    // Initialize UI Selectors and initial render
+    initSchoolDropdown();
+    handleFilterChange();
+
+    // Attach dynamic anti-overlap updater on map movement
+    map.on('move', updateMarkerCollisionOffsets);
+    map.on('zoom', updateMarkerCollisionOffsets);
   });
 
-  // 3. City configuration
-  function switchCity(cityKey) {
-    if (!CITY_CONFIGS[cityKey]) return;
-    currentCity = cityKey;
+  // Populate School Dropdown
+  function initSchoolDropdown() {
+    const select = document.getElementById('schoolSelect');
+    select.innerHTML = '';
 
-    // Update Tab UI
-    const btnG = document.getElementById('btnGurgaon');
-    if (btnG) btnG.classList.toggle('active', cityKey === 'gurgaon');
-    const formCity = document.getElementById('formCityLabel');
-    if (formCity) formCity.innerText = CITY_CONFIGS[cityKey].name;
-    const listTitle = document.getElementById('listTitleLabel');
-    if (listTitle) listTitle.innerText = `${CITY_CONFIGS[cityKey].name.toUpperCase()} LANDMARKS`;
+    SCHOOLS.forEach((sch, i) => {
+      const opt = document.createElement('option');
+      opt.value = sch.id;
+      opt.innerText = `${sch.name} (${sch.corridor})`;
+      if (sch.name.includes('Heritage') || sch.name.includes('Amity')) {
+        if (!select.value) opt.selected = true;
+      }
+      select.appendChild(opt);
+    });
 
-    // Fly camera smoothly in 3D
-    const cfg = CITY_CONFIGS[cityKey];
+    if (!select.value && SCHOOLS.length > 0) {
+      select.selectedIndex = 0;
+    }
+  }
+
+  // Filter school dropdown via search input
+  function filterSchoolOptions() {
+    const q = document.getElementById('schoolSearch').value.toLowerCase();
+    const select = document.getElementById('schoolSelect');
+    select.innerHTML = '';
+
+    const filtered = SCHOOLS.filter(s => s.name.toLowerCase().includes(q) || s.corridor.toLowerCase().includes(q));
+    filtered.forEach(sch => {
+      const opt = document.createElement('option');
+      opt.value = sch.id;
+      opt.innerText = `${sch.name} (${sch.corridor})`;
+      select.appendChild(opt);
+    });
+
+    if (filtered.length > 0) {
+      handleFilterChange();
+    }
+  }
+
+  function setRadius(r) {
+    selectedRadiusKm = r;
+    document.querySelectorAll('.radius-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.innerText.includes(`${r} KM`));
+    });
+    document.getElementById('radiusDisplay').innerText = `${r} km`;
+    handleFilterChange();
+  }
+
+  // Main Dynamic Filter Computation
+  function handleFilterChange() {
+    const schoolId = document.getElementById('schoolSelect').value;
+    const selectedSchool = SCHOOLS.find(s => s.id === schoolId) || SCHOOLS[0];
+    if (!selectedSchool) return;
+
+    // Target Market Selection
+    const marketCheckboxes = Array.from(document.querySelectorAll('.pill-checkbox input[value="Ultra Luxury"], .pill-checkbox input[value="Luxury"], .pill-checkbox input[value="Premium"], .pill-checkbox input[value="Mid Segment"]'));
+    const selectedMarkets = marketCheckboxes.filter(c => c.checked).map(c => c.value);
+
+    // Configuration Selection
+    const configCheckboxes = Array.from(document.querySelectorAll('.pill-checkbox input[value="2 BHK"], .pill-checkbox input[value="3 BHK"], .pill-checkbox input[value="4 BHK"], .pill-checkbox input[value="Penthouse"]'));
+    const selectedConfigs = configCheckboxes.filter(c => c.checked).map(c => c.value);
+
+    // Corridor Selection
+    const selectedCorridor = document.getElementById('corridorSelect').value;
+
+    // Filter projects from PropertyAI database
+    const matched = [];
+    PROJECTS.forEach(proj => {
+      // 1. Distance from center school
+      const dist = calculateDistanceKm(selectedSchool.lat, selectedSchool.lng, proj.lat, proj.lng);
+      if (dist > selectedRadiusKm) return;
+
+      // 2. Target Market Match
+      if (selectedMarkets.length > 0) {
+        const matchesMarket = selectedMarkets.some(m => (proj.target_market || '').toLowerCase() === m.toLowerCase());
+        if (!matchesMarket) return;
+      }
+
+      // 3. Configuration Match
+      if (selectedConfigs.length > 0) {
+        const projConfigs = proj.configurations || [];
+        const matchesConfig = selectedConfigs.some(cfg => projConfigs.some(pc => pc.toLowerCase().includes(cfg.toLowerCase())));
+        if (!matchesConfig) return;
+      }
+
+      // 4. Corridor Match
+      if (selectedCorridor !== 'ALL') {
+        const c1 = (proj.corridor || '').toLowerCase();
+        const c2 = selectedCorridor.toLowerCase();
+        if (!c1.includes(c2) && !c2.includes(c1)) return;
+      }
+
+      matched.push({
+        ...proj,
+        distanceFromSchool: dist
+      });
+    });
+
+    // Sort by proximity to school
+    matched.sort((a, b) => a.distanceFromSchool - b.distanceFromSchool);
+    currentMatchedProjects = matched;
+
+    // Update 3D Proximity Circle
+    const circleFeature = createGeoJsonCircle([selectedSchool.lng, selectedSchool.lat], selectedRadiusKm);
+    if (map.getSource('radius-buffer')) {
+      map.getSource('radius-buffer').setData({
+        type: 'FeatureCollection',
+        features: [circleFeature]
+      });
+    }
+
+    // Render 3D Meshes & Labels
+    render3DArchitecture(selectedSchool, matched);
+    renderHtmlLabels(selectedSchool, matched);
+    renderProjectsSidebar(matched, selectedSchool);
+
+    // Smooth Camera Framing
     map.flyTo({
-      center: cfg.center,
-      zoom: cfg.zoom,
-      pitch: cfg.pitch,
-      bearing: cfg.bearing,
-      speed: 1.4,
-      curve: 1.5,
-      essential: true
-    });
-
-    // Fetch markers for this city from PostgreSQL
-    fetchMarkers(currentCity);
-  }
-
-  const DEFAULT_GURGAON_MARKERS = [
-    {
-      "id": 1,
-      "number": 1,
-      "title": "DLF CyberHub",
-      "latitude": 28.4951,
-      "longitude": 77.0894,
-      "description": "Iconic social and dining nexus integrated within India’s premier IT business district.",
-      "category": "Commercial",
-      "city": "gurgaon"
-    },
-    {
-      "id": 2,
-      "number": 2,
-      "title": "Gateway Tower",
-      "latitude": 28.4990,
-      "longitude": 77.0940,
-      "description": "Famous ship-shaped glass skyscraper welcoming visitors to Cyber City.",
-      "category": "Skyscraper",
-      "city": "gurgaon"
-    },
-    {
-      "id": 3,
-      "number": 3,
-      "title": "Ambience Mall",
-      "latitude": 28.5042,
-      "longitude": 77.0970,
-      "description": "Massive premium retail, dining, and entertainment destination on NH-48.",
-      "category": "Shopping",
-      "city": "gurgaon"
-    },
-    {
-      "id": 4,
-      "number": 4,
-      "title": "One Horizon Center",
-      "latitude": 28.4485,
-      "longitude": 77.0975,
-      "description": "Prestigious commercial tower on Golf Course Road, DLF Phase 5.",
-      "category": "Skyscraper",
-      "city": "gurgaon"
-    },
-    {
-      "id": 5,
-      "number": 5,
-      "title": "Sector 29 Leisure Hub",
-      "latitude": 28.4680,
-      "longitude": 77.0678,
-      "description": "Lively district with open parks, microbreweries, and dining venues.",
-      "category": "Entertainment",
-      "city": "gurgaon"
-    },
-    {
-      "id": 6,
-      "number": 6,
-      "title": "Aravalli Biodiversity Park",
-      "latitude": 28.4845,
-      "longitude": 77.1085,
-      "description": "Ecological reserve and walking trails amidst ancient Aravalli flora.",
-      "category": "Park",
-      "city": "gurgaon"
-    },
-    {
-      "id": 7,
-      "number": 7,
-      "title": "The Camellias (DLF 5)",
-      "latitude": 28.4550,
-      "longitude": 77.0965,
-      "description": "Super-luxury architectural skyscrapers along Golf Course Road.",
-      "category": "Skyscraper",
-      "city": "gurgaon"
-    }
-  ];
-
-  // 4. Fetch markers from PostgreSQL via FastAPI
-  async function fetchMarkers(city) {
-    try {
-      const url = `/api/markers?city=${city || 'gurgaon'}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('Failed to fetch markers');
-      markersData = await res.json();
-      if (!markersData || markersData.length === 0) {
-        markersData = DEFAULT_GURGAON_MARKERS;
-      }
-      renderMarkers();
-      renderSidebarList();
-    } catch (err) {
-      console.warn('Using default Gurgaon landmarks:', err);
-      markersData = DEFAULT_GURGAON_MARKERS;
-      renderMarkers();
-      renderSidebarList();
-    }
-  }
-
-  // 5. Render markers on the 3D map
-  function renderMarkers() {
-    // Clear previous markers
-    mapMarkers.forEach(m => m.remove());
-    mapMarkers = [];
-
-    markersData.forEach(item => {
-      const el = document.createElement('div');
-      el.className = 'flourish-marker';
-      el.innerHTML = `
-        <span class="marker-number">${item.number || item.id}</span>
-        <span class="marker-label">${escapeHtml(item.title)}</span>
-      `;
-
-      // Interactive popup
-      const popup = new maplibregl.Popup({ offset: 16 }).setHTML(`
-        <div style="font-family: inherit; min-width: 190px;">
-          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-            <span style="font-size: 11px; font-weight: 700; color: #1a73e8; text-transform: uppercase;">
-              ${escapeHtml(item.category || 'Landmark')}
-            </span>
-            <span style="font-size: 11px; color: #94a3b8;">#${item.number || item.id} (${escapeHtml(item.city || currentCity)})</span>
-          </div>
-          <h4 style="margin: 0 0 6px 0; color: #0f172a; font-size: 15px;">${escapeHtml(item.title)}</h4>
-          <p style="margin: 0 0 10px 0; font-size: 13px; color: #475569; line-height: 1.4;">
-            ${escapeHtml(item.description || 'No description provided.')}
-          </p>
-          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 8px;">
-            <span style="font-size: 11px; color: #94a3b8;">${item.latitude.toFixed(4)}, ${item.longitude.toFixed(4)}</span>
-            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deleteMarker(${item.id})">
-              Delete
-            </button>
-          </div>
-        </div>
-      `);
-
-      const marker = new maplibregl.Marker({ element: el, anchor: 'left' })
-        .setLngLat([item.longitude, item.latitude])
-        .setPopup(popup)
-        .addTo(map);
-
-      mapMarkers.push(marker);
-    });
-
-    document.getElementById('landmarkCount').innerText = markersData.length;
-  }
-
-  // 6. Render sidebar quick jump list
-  function renderSidebarList() {
-    const list = document.getElementById('landmarkItems');
-    list.innerHTML = '';
-
-    markersData.forEach(item => {
-      const row = document.createElement('div');
-      row.className = 'landmark-item';
-      row.innerHTML = `
-        <div class="landmark-item-info">
-          <span class="landmark-badge">${item.number || item.id}</span>
-          <span class="landmark-name">${escapeHtml(item.title)}</span>
-        </div>
-        <span style="font-size: 11px; color: #94a3b8;">${escapeHtml(item.category || '')}</span>
-      `;
-      row.onclick = () => {
-        map.flyTo({
-          center: [item.longitude, item.latitude],
-          zoom: 16.5,
-          pitch: 60,
-          speed: 1.2
-        });
-      };
-      list.appendChild(row);
+      center: [selectedSchool.lng, selectedSchool.lat],
+      zoom: selectedRadiusKm <= 2 ? 14.5 : selectedRadiusKm <= 4 ? 13.5 : 12.3,
+      pitch: 58,
+      bearing: -15,
+      duration: 1200
     });
   }
 
-  // 7. Handle Form Submit (POST /api/markers)
-  async function handleFormSubmit(e) {
-    e.preventDefault();
-    const payload = {
-      title: document.getElementById('titleInput').value.trim(),
-      category: document.getElementById('categoryInput').value,
-      latitude: parseFloat(document.getElementById('latInput').value),
-      longitude: parseFloat(document.getElementById('lngInput').value),
-      description: document.getElementById('descInput').value.trim(),
-      city: currentCity
-    };
-
-    try {
-      const res = await fetch('/api/markers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) throw new Error('Failed to save');
-      const saved = await res.json();
-
-      if (tempClickMarker) {
-        tempClickMarker.remove();
-        tempClickMarker = null;
-      }
-
-      showToast(`✅ Saved "${saved.title}"!`);
-      toggleAddMode(false);
-      document.getElementById('addForm').reset();
-
-      // Refresh data
-      await fetchMarkers(currentCity);
-
-      // Fly to newly added landmark
-      map.flyTo({
-        center: [saved.longitude, saved.latitude],
-        zoom: 16.5,
-        pitch: 60,
-        speed: 1.2
-      });
-    } catch (err) {
-      console.error(err);
-      showToast('❌ Error saving marker to database');
+  // Render Procedural 3D Three.js Meshes
+  function render3DArchitecture(school, projects) {
+    while (activeThreeGroup.children.length > 0) {
+      const obj = activeThreeGroup.children[0];
+      activeThreeGroup.remove(obj);
     }
+
+    // 3D School Model
+    const schoolMesh = create3DSchoolModel();
+    placeMeshAtLngLat(schoolMesh, school.lng, school.lat, 0);
+    activeThreeGroup.add(schoolMesh);
+
+    // 3D Towers for top 25 nearest projects to prevent WebGL lag
+    projects.slice(0, 25).forEach(p => {
+      const bldgMesh = create3DBuildingModel(p);
+      placeMeshAtLngLat(bldgMesh, p.lng, p.lat, 0);
+      activeThreeGroup.add(bldgMesh);
+    });
+
+    map.triggerRepaint();
   }
 
-  // 8. Delete Marker (DELETE /api/markers/{id})
-  async function deleteMarker(id) {
-    if (!confirm('Are you sure you want to delete this marker?')) return;
-    try {
-      const res = await fetch(`/api/markers/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Delete failed');
-      showToast('🗑️ Marker deleted');
-      await fetchMarkers(currentCity);
-    } catch (err) {
-      console.error(err);
-      showToast('❌ Error deleting marker');
-    }
-  }
+  // ==========================================================================
+  // RENDER SLEEK ANTI-OVERLAP HTML MARKERS
+  // ==========================================================================
+  function renderHtmlLabels(school, projects) {
+    activeHtmlMarkers.forEach(({ marker }) => marker.remove());
+    activeHtmlMarkers = [];
 
-  // 9. Reset database defaults
-  async function resetDefaultLandmarks() {
-    if (!confirm('Reset all markers back to initial defaults?')) return;
-    try {
-      await fetch('/api/markers/reset', { method: 'POST' });
-      showToast('🔄 Landmarks reset to default!');
-      await fetchMarkers(currentCity);
-    } catch (err) {
-      console.error(err);
-      showToast('❌ Failed to reset landmarks');
-    }
-  }
+    // 1. Center School Pin
+    const schoolEl = document.createElement('div');
+    schoolEl.className = 'model-label-school';
+    schoolEl.innerHTML = `<i class="ph-bold ph-graduation-cap" style="font-size: 15px;"></i> <span>${school.name}</span>`;
+    schoolEl.title = `3D School Campus • ${school.corridor}`;
 
-  // 10. Interactive Map Click to pick coordinates
-  function toggleAddMode(forceState) {
-    const form = document.getElementById('addForm');
-    const btn = document.getElementById('toggleAddBtn');
-    const shouldOpen = forceState !== undefined ? forceState : !form.classList.contains('active');
-    
-    if (shouldOpen) {
-      form.classList.add('active');
-      btn.style.display = 'none';
-      enableMapClickPicker();
-    } else {
-      form.classList.remove('active');
-      btn.style.display = 'inline-flex';
-      disableMapClickPicker();
-    }
-  }
-
-  function enableMapClickPicker() {
-    isPickingOnMap = true;
-    map.getCanvas().style.cursor = 'crosshair';
-    showToast(`📍 Click anywhere in ${currentCity.toUpperCase()} to pick coordinates`);
-  }
-
-  function disableMapClickPicker() {
-    isPickingOnMap = false;
-    map.getCanvas().style.cursor = '';
-  }
-
-  map.on('click', (e) => {
-    if (!isPickingOnMap) return;
-    const { lng, lat } = e.lngLat;
-    document.getElementById('latInput').value = lat.toFixed(5);
-    document.getElementById('lngInput').value = lng.toFixed(5);
-
-    if (tempClickMarker) tempClickMarker.remove();
-    tempClickMarker = new maplibregl.Marker({ color: '#1a73e8' })
-      .setLngLat([lng, lat])
+    const schoolMarker = new maplibregl.Marker({ element: schoolEl, anchor: 'bottom' })
+      .setLngLat([school.lng, school.lat])
       .addTo(map);
 
-    showToast(`📍 Selected: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-  });
+    schoolEl.addEventListener('click', () => {
+      focusProject(school.lng, school.lat, 16);
+    });
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.innerText = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
+    // 2. Project Pins with Anti-Overlap Staggering and Rich Hover Card
+    projects.slice(0, 25).forEach((proj, idx) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'project-marker-wrapper';
+      wrapper.id = `map-marker-${proj.id || idx}`;
+
+      const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
+      const is4S = proj.name.toLowerCase().includes('4s');
+      const pillClass = isUltra ? 'ultra' : is4S ? 'featured' : '';
+
+      wrapper.innerHTML = `
+        <!-- Rich Hover Card -->
+        <div class="marker-hover-card">
+          <div class="hover-card-title">
+            <span>${proj.name}</span>
+            <span class="tag-market ${isUltra ? 'ultra' : 'luxury'}">${proj.target_market}</span>
+          </div>
+          <div class="hover-card-dev">by ${proj.developer}</div>
+
+          <div class="hover-card-grid">
+            <div class="hover-stat-box">
+              <div class="hover-stat-label">📍 Distance</div>
+              <div class="hover-stat-val" style="color: var(--accent-cyan); font-family: 'JetBrains Mono';">${proj.distanceFromSchool.toFixed(2)} km</div>
+            </div>
+            <div class="hover-stat-box">
+              <div class="hover-stat-label">📐 Land Area</div>
+              <div class="hover-stat-val">${proj.total_area_acres ? `${proj.total_area_acres} Acres` : '10+ Acres'}</div>
+            </div>
+          </div>
+
+          <div class="hover-stat-label" style="margin-bottom: 3px;">Units Available</div>
+          <div class="hover-units-row">
+            ${(proj.configurations || ['2 BHK', '3 BHK']).map(cfg => `<span class="unit-chip">${cfg}</span>`).join('')}
+          </div>
+
+          <div style="font-size: 10.5px; color: #a5b4fc; margin-bottom: 8px;">
+            <b>Location:</b> ${proj.sector || proj.address || proj.corridor}
+          </div>
+
+          <button class="hover-action-btn" onclick="focusProject(${proj.lng}, ${proj.lat}, 16.8)">
+            <i class="ph-bold ph-binoculars"></i> Inspect 3D Tower
+          </button>
+        </div>
+
+        <!-- Sleek Compact Pill Badge -->
+        <div class="marker-pill ${pillClass}">
+          <i class="ph-bold ph-buildings" style="color: ${isUltra ? 'var(--accent-gold)' : 'var(--accent-cyan)'}; font-size: 13px;"></i>
+          <span class="marker-pill-title">${proj.name}</span>
+          <span class="marker-pill-dist">${proj.distanceFromSchool.toFixed(1)} km</span>
+        </div>
+
+        <!-- Leader Stem for elevated tiers -->
+        <div class="marker-stem ${isUltra ? 'ultra' : ''}"></div>
+
+        <!-- Ground Pin Dot -->
+        <div class="marker-ground-dot ${isUltra ? 'ultra' : ''}"></div>
+      `;
+
+      const marker = new maplibregl.Marker({ element: wrapper, anchor: 'bottom' })
+        .setLngLat([proj.lng, proj.lat])
+        .addTo(map);
+
+      // Click to focus
+      wrapper.addEventListener('click', (e) => {
+        e.stopPropagation();
+        focusProject(proj.lng, proj.lat, 16.6);
+        highlightProject(proj.id || idx);
+      });
+
+      // Hover sync with sidebar
+      wrapper.addEventListener('mouseenter', () => {
+        syncSidebarHighlight(proj.id || idx, true);
+      });
+      wrapper.addEventListener('mouseleave', () => {
+        syncSidebarHighlight(proj.id || idx, false);
+      });
+
+      activeHtmlMarkers.push({
+        marker,
+        wrapper,
+        proj,
+        id: proj.id || idx
+      });
+    });
+
+    // Run initial collision calculation
+    updateMarkerCollisionOffsets();
   }
 
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>'"]/g, tag => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[tag] || tag));
+  // ==========================================================================
+  // DYNAMIC SCREEN-SPACE COLLISION AVOIDANCE & STAGGERING
+  // ==========================================================================
+  function updateMarkerCollisionOffsets() {
+    if (activeHtmlMarkers.length === 0) return;
+
+    const placed = [];
+    activeHtmlMarkers.forEach(({ wrapper, proj }) => {
+      const pt = map.project([proj.lng, proj.lat]);
+      let tier = 0;
+
+      // Check collision against already placed markers in screen coordinates
+      for (const p of placed) {
+        const dx = Math.abs(pt.x - p.x);
+        const dy = Math.abs(pt.y - p.y);
+        // If markers are closer than 135px horizontally and 36px vertically
+        if (dx < 135 && dy < 36 && p.tier === tier) {
+          tier++;
+        }
+      }
+
+      placed.push({ x: pt.x, y: pt.y - tier * 32, tier });
+
+      // Apply vertical elevation & leader stem to avoid overlapping
+      const pill = wrapper.querySelector('.marker-pill');
+      const stem = wrapper.querySelector('.marker-stem');
+      const stemHeight = tier * 30;
+
+      if (stem) stem.style.height = `${stemHeight}px`;
+      if (pill) {
+        pill.style.transform = `translateY(-${stemHeight > 0 ? 0 : 0}px)`;
+      }
+      wrapper.style.zIndex = 1000 + (25 - tier);
+    });
+  }
+
+  // Render Matching Projects in Sidebar
+  function renderProjectsSidebar(projects, school) {
+    const listEl = document.getElementById('projectsList');
+    const badgeEl = document.getElementById('matchBadge');
+    const countEl = document.getElementById('listCountLabel');
+
+    badgeEl.innerText = `${projects.length} Project${projects.length !== 1 ? 's' : ''}`;
+    countEl.innerText = `${projects.length} Found in ${selectedRadiusKm}km`;
+
+    if (projects.length === 0) {
+      listEl.innerHTML = `
+        <div style="text-align: center; padding: 22px 10px; color: var(--text-muted); font-size: 11.5px;">
+          <i class="ph-bold ph-warning-circle" style="font-size: 24px; color: var(--accent-gold); display: block; margin-bottom: 6px;"></i>
+          No 3D projects found within <b>${selectedRadiusKm} km</b> of ${school.name} matching selected filters.<br>
+          <span style="color: #818cf8; cursor: pointer; text-decoration: underline; margin-top: 6px; display: inline-block; font-weight: 700;" onclick="setRadius(5)">Expand radius to 5 KM</span>
+        </div>
+      `;
+      return;
+    }
+
+    listEl.innerHTML = projects.map((p, idx) => {
+      const isUltra = (p.target_market || '').toLowerCase().includes('ultra');
+      const is4S = p.name.toLowerCase().includes('4s');
+      const badgeClass = isUltra ? 'ultra' : p.target_market === 'Luxury' ? 'luxury' : 'premium';
+      const pid = p.id || idx;
+
+      return `
+        <div class="project-card ${is4S ? 'featured-card' : ''}" 
+             id="sidebar-card-${pid}"
+             onclick="focusProject(${p.lng}, ${p.lat}, 16.5); highlightProject('${pid}')"
+             onmouseenter="highlightMarkerOnMap('${pid}', true)"
+             onmouseleave="highlightMarkerOnMap('${pid}', false)">
+          <div class="project-card-header">
+            <span class="project-title">${p.name}</span>
+            <span class="project-distance">${p.distanceFromSchool.toFixed(1)} km</span>
+          </div>
+          <div class="project-meta">
+            <span class="tag-market ${badgeClass}">${p.target_market}</span>
+            <span>${(p.configurations || []).slice(0, 2).join(', ')}</span>
+            <span style="margin-left: auto; color: var(--text-muted);">${p.sector || p.corridor}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Two-way highlight functions
+  function highlightMarkerOnMap(pid, active) {
+    const el = document.getElementById(`map-marker-${pid}`);
+    if (el) {
+      el.classList.toggle('is-highlighted', active);
+    }
+  }
+
+  function syncSidebarHighlight(pid, active) {
+    const card = document.getElementById(`sidebar-card-${pid}`);
+    if (card) {
+      card.classList.toggle('active-hover', active);
+      if (active) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function highlightProject(pid) {
+    document.querySelectorAll('.project-card').forEach(c => c.classList.remove('active-hover'));
+    const card = document.getElementById(`sidebar-card-${pid}`);
+    if (card) {
+      card.classList.add('active-hover');
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  // Camera Controls
+  function focusProject(lng, lat, zoom = 16.5) {
+    map.flyTo({
+      center: [lng, lat],
+      zoom: zoom,
+      pitch: 65,
+      bearing: -15,
+      speed: 1.2,
+      curve: 1.2,
+      essential: true
+    });
+  }
+
+  function resetSchoolView() {
+    const schoolId = document.getElementById('schoolSelect').value;
+    const school = SCHOOLS.find(s => s.id === schoolId) || SCHOOLS[0];
+    if (school) {
+      focusProject(school.lng, school.lat, selectedRadiusKm <= 2 ? 14.5 : selectedRadiusKm <= 4 ? 13.5 : 12.3);
+    }
+  }
+
+  function setCameraMode(mode) {
+    document.getElementById('btn3d').classList.toggle('active', mode === '3d');
+    document.getElementById('btnTop').classList.toggle('active', mode === 'top');
+
+    if (mode === 'top') {
+      map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
+    } else {
+      map.easeTo({ pitch: 62, bearing: -20, duration: 800 });
+    }
+  }
+
+  function toggleOrbit() {
+    isOrbiting = !isOrbiting;
+    document.getElementById('btnOrbit').classList.toggle('active', isOrbiting);
+
+    if (isOrbiting) {
+      function orbitStep() {
+        if (!isOrbiting) return;
+        map.setBearing(map.getBearing() + 0.18);
+        orbitAnimId = requestAnimationFrame(orbitStep);
+      }
+      orbitStep();
+    } else {
+      cancelAnimationFrame(orbitAnimId);
+    }
+  }
+
+  // Sidebar toggle
+  function toggleSidebar(open) {
+    const panel = document.getElementById('filterPanel');
+    const openBtn = document.getElementById('openSidebarBtn');
+    if (open) {
+      panel.classList.remove('collapsed');
+      openBtn.style.display = 'none';
+    } else {
+      panel.classList.add('collapsed');
+      openBtn.style.display = 'flex';
+    }
   }
 </script>
-
 </body>
 </html>
