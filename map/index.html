@@ -26,9 +26,9 @@
       --primary: #6366f1;
       --primary-hover: #4f46e5;
       --primary-glow: rgba(99, 102, 241, 0.45);
-      --surface: rgba(15, 23, 42, 0.92);
-      --surface-card: rgba(30, 41, 59, 0.80);
-      --border: rgba(255, 255, 255, 0.12);
+      --surface: rgba(15, 23, 42, 0.90);
+      --surface-card: rgba(30, 41, 59, 0.85);
+      --border: rgba(255, 255, 255, 0.10);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --accent-gold: #f59e0b;
@@ -63,7 +63,7 @@
       position: absolute;
       top: 18px;
       left: 18px;
-      width: 410px;
+      width: 420px;
       max-height: calc(100vh - 36px);
       background: var(--surface);
       backdrop-filter: blur(24px);
@@ -75,44 +75,10 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
-    }
-    .filter-panel.collapsed {
-      transform: translateX(-430px);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    /* Sidebar Toggle Trigger (Visible when collapsed) */
-    .sidebar-toggle-btn {
-      position: absolute;
-      top: 18px;
-      left: 18px;
-      z-index: 29;
-      background: var(--surface);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      color: #fff;
-      padding: 10px 16px;
-      border-radius: var(--radius-md);
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      transition: all 0.2s;
-    }
-    .sidebar-toggle-btn:hover {
-      background: rgba(30, 41, 59, 0.95);
-      border-color: var(--primary);
-      transform: translateY(-1px);
     }
 
     .panel-header {
-      padding: 14px 18px;
+      padding: 16px 20px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -120,64 +86,41 @@
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 100%);
     }
     .panel-header h1 {
-      font-size: 14.5px;
+      font-size: 15px;
       font-weight: 800;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       letter-spacing: -0.3px;
     }
-    .panel-header h1 i { color: var(--accent-cyan); font-size: 19px; }
-    
-    .panel-header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .panel-header h1 i { color: var(--accent-cyan); font-size: 20px; }
     .badge-count {
       font-size: 11px;
       font-weight: 800;
-      padding: 3px 9px;
+      padding: 4px 10px;
       border-radius: 999px;
       background: rgba(99, 102, 241, 0.25);
       color: #c7d2fe;
       border: 1px solid rgba(165, 180, 252, 0.4);
       font-family: 'JetBrains Mono', monospace;
     }
-    .collapse-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      padding: 4px 6px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      transition: all 0.15s;
-    }
-    .collapse-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-    }
 
     .panel-body {
-      padding: 14px 18px;
+      padding: 16px 20px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 13px;
+      gap: 15px;
     }
-    .panel-body::-webkit-scrollbar { width: 5px; }
-    .panel-body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
 
     /* Section Labels */
     .filter-group-label {
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.6px;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -190,12 +133,11 @@
       border: 1px solid var(--border);
       color: var(--text-main);
       border-radius: var(--radius-sm);
-      padding: 8px 12px;
-      font-size: 12px;
+      padding: 9px 12px;
+      font-size: 12.5px;
       font-family: inherit;
       outline: none;
-      margin-bottom: 5px;
-      transition: border-color 0.2s;
+      margin-bottom: 6px;
     }
     .search-input:focus { border-color: var(--primary); }
 
@@ -206,8 +148,8 @@
       border: 1px solid var(--border);
       color: var(--text-main);
       border-radius: var(--radius-sm);
-      padding: 9px 12px;
-      font-size: 12.5px;
+      padding: 10px 12px;
+      font-size: 13px;
       font-weight: 600;
       font-family: inherit;
       outline: none;
@@ -230,12 +172,12 @@
       gap: 5px;
     }
     .radius-btn {
-      padding: 7px 2px;
+      padding: 8px 2px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border);
       background: var(--surface-card);
       color: var(--text-muted);
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 800;
       cursor: pointer;
       text-align: center;
@@ -253,7 +195,7 @@
     .pills-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
+      gap: 6px;
     }
     .pill-checkbox {
       cursor: pointer;
@@ -261,7 +203,7 @@
     }
     .pill-checkbox input { display: none; }
     .pill-content {
-      padding: 4.5px 9px;
+      padding: 5px 10px;
       border-radius: 6px;
       border: 1px solid var(--border);
       background: var(--surface-card);
@@ -271,48 +213,45 @@
       transition: all 0.15s;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
     }
     .pill-checkbox input:checked + .pill-content {
-      background: rgba(99, 102, 241, 0.35);
+      background: rgba(99, 102, 241, 0.3);
       border-color: #818cf8;
       color: #fff;
     }
     .pill-checkbox.gold input:checked + .pill-content {
-      background: rgba(245, 158, 11, 0.28);
+      background: rgba(245, 158, 11, 0.25);
       border-color: var(--accent-gold);
       color: #fde68a;
     }
 
-    /* Matching Projects List in Sidebar */
+    /* Matching Projects List */
     .projects-list {
-      max-height: 220px;
+      max-height: 230px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 8px;
       padding-right: 2px;
     }
-    .projects-list::-webkit-scrollbar { width: 4px; }
-    .projects-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
-
     .project-card {
-      padding: 9px 11px;
+      padding: 10px 12px;
       border-radius: var(--radius-sm);
       background: rgba(30, 41, 59, 0.65);
       border: 1px solid var(--border);
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .project-card:hover, .project-card.active-hover {
+    .project-card:hover {
       background: rgba(51, 65, 85, 0.95);
       border-color: var(--primary);
       transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
     }
     .project-card.featured-card {
-      border-color: rgba(245, 158, 11, 0.45);
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(245, 158, 11, 0.12) 100%);
+      border-color: rgba(245, 158, 11, 0.4);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(245, 158, 11, 0.1) 100%);
     }
     .project-card-header {
       display: flex;
@@ -321,31 +260,31 @@
       margin-bottom: 4px;
     }
     .project-title {
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 800;
       color: #fff;
     }
     .project-distance {
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 800;
       color: var(--accent-cyan);
       font-family: 'JetBrains Mono', monospace;
       background: rgba(6, 182, 212, 0.15);
-      padding: 1.5px 6px;
+      padding: 2px 7px;
       border-radius: 4px;
     }
     .project-meta {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 10.5px;
+      font-size: 11px;
       color: var(--text-muted);
       flex-wrap: wrap;
     }
     .tag-market {
-      font-size: 9px;
+      font-size: 9.5px;
       font-weight: 800;
-      padding: 1px 5px;
+      padding: 1px 6px;
       border-radius: 3px;
       text-transform: uppercase;
     }
@@ -353,301 +292,96 @@
     .tag-market.luxury { background: rgba(99, 102, 241, 0.25); color: #c7d2fe; border: 1px solid rgba(99, 102, 241, 0.4); }
     .tag-market.premium { background: rgba(16, 185, 129, 0.25); color: #a7f3d0; border: 1px solid rgba(16, 185, 129, 0.4); }
 
-    /* ==========================================================================
-       MAP LABELS — REVOLUTIONARY ANTI-COLLISION & COMPACT PILL ARCHITECTURE
-       ========================================================================== */
-
-    /* 1. School Landmark Marker (Pulsing Ruby Beacon) */
+    /* Floating 3D HTML Labels anchored above 3D Models */
     .model-label-school {
       pointer-events: auto;
       cursor: pointer;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 7px;
       background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-      color: #ffffff;
-      padding: 6px 14px;
+      color: white;
+      padding: 7px 14px;
       border-radius: 999px;
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 800;
-      box-shadow: 0 0 25px rgba(239, 68, 68, 0.75), 0 6px 18px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.8), 0 4px 12px rgba(0,0,0,0.5);
       border: 2px solid #ffffff;
       white-space: nowrap;
       user-select: none;
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 5000;
     }
-    .model-label-school:hover { transform: scale(1.08) translateY(-2px); }
+    .model-label-school:hover { transform: scale(1.1); }
 
-    /* 2. Project Marker Wrapper with Dynamic Anti-Overlap Staggering */
-    .project-marker-wrapper {
-      position: relative;
+    .model-label-building {
+      pointer-events: auto;
       cursor: pointer;
-      user-select: none;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), z-index 0.1s;
-    }
-    .project-marker-wrapper:hover {
-      z-index: 100000 !important;
-      transform: scale(1.08) !important;
-    }
-    .project-marker-wrapper.is-highlighted {
-      z-index: 100001 !important;
-      transform: scale(1.15) !important;
-    }
-    .project-marker-wrapper.is-highlighted .marker-pill {
-      border-color: #38bdf8 !important;
-      box-shadow: 0 0 25px rgba(56, 189, 248, 0.9), 0 8px 24px rgba(0,0,0,0.7) !important;
-    }
-
-    /* Compact, Luxury Pill Badge */
-    .marker-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(15, 23, 42, 0.94);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(99, 102, 241, 0.65);
-      border-radius: 999px;
-      padding: 4px 10px 4px 8px;
+      gap: 2px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid var(--primary);
+      border-radius: 9px;
+      padding: 5px 10px;
       color: #fff;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 700;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
       white-space: nowrap;
-      transition: all 0.2s ease;
+      user-select: none;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .marker-pill.ultra {
-      border-color: rgba(245, 158, 11, 0.85);
-      background: linear-gradient(135deg, rgba(20, 20, 35, 0.96) 0%, rgba(35, 26, 12, 0.96) 100%);
-      box-shadow: 0 8px 22px rgba(0,0,0,0.6), 0 0 15px rgba(245, 158, 11, 0.35);
+    .model-label-building.ultra-label {
+      border-color: var(--accent-gold);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
     }
-    .marker-pill.featured {
+    .model-label-building.featured-label {
       border-color: #38bdf8;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
     }
-    .marker-pill-title {
-      max-width: 140px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      letter-spacing: -0.2px;
+    .model-label-building:hover {
+      transform: scale(1.15) translateY(-4px);
+      z-index: 9999 !important;
     }
-    .marker-pill-dist {
-      font-size: 10px;
-      font-weight: 800;
-      color: var(--accent-cyan);
-      font-family: 'JetBrains Mono', monospace;
-      background: rgba(6, 182, 212, 0.18);
-      padding: 1.5px 5.5px;
-      border-radius: 999px;
-      border: 1px solid rgba(6, 182, 212, 0.35);
-    }
-    .marker-pill.ultra .marker-pill-dist {
-      color: #fde68a;
-      background: rgba(245, 158, 11, 0.2);
-      border-color: rgba(245, 158, 11, 0.4);
-    }
-
-    /* Leader stem for tiered / anti-overlap elevated markers */
-    .marker-stem {
-      width: 2px;
-      background: linear-gradient(180deg, rgba(99, 102, 241, 0.9) 0%, rgba(99, 102, 241, 0.2) 100%);
-      margin: 0 auto;
-      height: 0px;
-      transition: height 0.2s ease;
-    }
-    .marker-stem.ultra {
-      background: linear-gradient(180deg, rgba(245, 158, 11, 0.9) 0%, rgba(245, 158, 11, 0.2) 100%);
-    }
-
-    /* Ground pin dot */
-    .marker-ground-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--primary);
-      border: 1.5px solid #fff;
-      box-shadow: 0 0 8px var(--primary-glow);
-      margin: 0 auto;
-    }
-    .marker-ground-dot.ultra {
-      background: var(--accent-gold);
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
-    }
-
-    /* Rich Glassmorphic Hover Card attached to Marker */
-    .marker-hover-card {
-      position: absolute;
-      bottom: calc(100% + 9px);
-      left: 50%;
-      transform: translateX(-50%) translateY(4px);
-      opacity: 0;
-      pointer-events: none;
-      visibility: hidden;
-      min-width: 260px;
-      max-width: 300px;
-      background: rgba(15, 23, 42, 0.97);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(99, 102, 241, 0.25);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 100010;
-    }
-    .project-marker-wrapper:hover .marker-hover-card,
-    .project-marker-wrapper.is-active .marker-hover-card {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .hover-card-title {
-      font-size: 13.5px;
-      font-weight: 800;
-      color: #fff;
+    .label-top-row {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-    }
-    .hover-card-dev {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-      margin-bottom: 8px;
-    }
-    .hover-card-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-    .hover-stat-box {
-      background: rgba(30, 41, 59, 0.7);
-      padding: 5px 8px;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-    }
-    .hover-stat-label {
-      font-size: 9.5px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-    .hover-stat-val {
-      font-size: 11.5px;
-      font-weight: 800;
-      color: #fff;
-      margin-top: 1px;
-    }
-    .hover-units-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-bottom: 8px;
-    }
-    .unit-chip {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(99, 102, 241, 0.2);
-      color: #c7d2fe;
-      border: 1px solid rgba(99, 102, 241, 0.3);
-    }
-    .hover-action-btn {
-      width: 100%;
-      background: var(--primary);
-      border: none;
-      color: #fff;
-      font-size: 11.5px;
-      font-weight: 800;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: background 0.15s;
-    }
-    .hover-action-btn:hover { background: var(--primary-hover); }
-
-    /* Top Right Cinematic Camera Controls */
-    .camera-hud-bar {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      z-index: 28;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--surface);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      padding: 6px 8px;
-      border-radius: var(--radius-md);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
-    .cam-btn {
-      background: var(--surface-card);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 11.5px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
       align-items: center;
       gap: 5px;
-      transition: all 0.15s;
     }
-    .cam-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: var(--primary);
-    }
-    .cam-btn.active {
-      background: var(--primary);
-      border-color: #818cf8;
-      color: #fff;
+    .label-sub-row {
+      font-size: 10px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
-    /* 3D Legend at Bottom Right */
+    /* 3D Legend & HUD at Bottom Right */
     .hud-controls {
       position: absolute;
       bottom: 20px;
       right: 20px;
       background: var(--surface);
       backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      padding: 10px 14px;
+      padding: 12px 16px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border);
-      font-size: 11px;
+      font-size: 11.5px;
       color: var(--text-muted);
       z-index: 20;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
       box-shadow: 0 12px 30px rgba(0,0,0,0.5);
     }
     .hud-legend-item {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
     }
     .legend-box {
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       border-radius: 3px;
     }
   </style>
@@ -657,32 +391,10 @@
 <!-- Map Container -->
 <div id="map"></div>
 
-<!-- Sidebar Open Button (visible when sidebar collapsed) -->
-<button class="sidebar-toggle-btn" id="openSidebarBtn" onclick="toggleSidebar(true)" style="display: none;">
-  <i class="ph-bold ph-faders"></i>
-  <span>Open Filters &amp; Projects</span>
-</button>
-
-<!-- Cinematic 3D Camera Bar -->
-<div class="camera-hud-bar">
-  <button class="cam-btn active" id="btn3d" onclick="setCameraMode('3d')">
-    <i class="ph-bold ph-cube"></i> 3D View
-  </button>
-  <button class="cam-btn" id="btnTop" onclick="setCameraMode('top')">
-    <i class="ph-bold ph-compass"></i> Top 2D
-  </button>
-  <button class="cam-btn" id="btnOrbit" onclick="toggleOrbit()">
-    <i class="ph-bold ph-arrows-clockwise"></i> Orbit 360°
-  </button>
-  <button class="cam-btn" onclick="resetSchoolView()">
-    <i class="ph-bold ph-crosshair"></i> Reset
-  </button>
-</div>
-
-<!-- 3D Legend & HUD at Bottom Right -->
+<!-- 3D HUD / Navigation Legend -->
 <div class="hud-controls">
-  <div style="font-weight: 800; color: #fff; font-size: 11.5px; margin-bottom: 2px;">
-    🏙️ 3D PropertyAI Map (Gurgaon)
+  <div style="font-weight: 800; color: #fff; font-size: 12px; margin-bottom: 2px;">
+    🏙️ 3D PropertyAI Models (Gurgaon)
   </div>
   <div class="hud-legend-item">
     <div class="legend-box" style="background: #ef4444; border: 1px solid #fff;"></div>
@@ -696,22 +408,17 @@
     <div class="legend-box" style="background: #6366f1; border: 1px solid #fff;"></div>
     <span>3D Luxury High-Rise (Modern Blue Towers)</span>
   </div>
-  <hr style="border: 0; border-top: 1px solid var(--border); margin: 3px 0;">
-  <div style="font-size: 10px;">
+  <hr style="border: 0; border-top: 1px solid var(--border); margin: 4px 0;">
+  <div style="font-size: 10.5px;">
     <b>3D Controls:</b> Right-Click + Drag to rotate/tilt • Scroll to zoom
   </div>
 </div>
 
 <!-- Floating Filter Panel -->
-<div class="filter-panel" id="filterPanel">
+<div class="filter-panel">
   <div class="panel-header">
     <h1><i class="ph-bold ph-buildings"></i> 3D Real Estate Explorer</h1>
-    <div class="panel-header-actions">
-      <span class="badge-count" id="matchBadge">0 Projects</span>
-      <button class="collapse-btn" onclick="toggleSidebar(false)" title="Collapse Sidebar">
-        <i class="ph-bold ph-caret-left" style="font-size: 16px;"></i>
-      </button>
-    </div>
+    <span class="badge-count" id="matchBadge">0 Projects</span>
   </div>
 
   <div class="panel-body">
@@ -721,7 +428,7 @@
         <span>1. Center School (3D Campus)</span>
         <i class="ph-bold ph-graduation-cap"></i>
       </div>
-      <input type="text" class="search-input" id="schoolSearch" placeholder="🔍 Search school name or corridor..." oninput="filterSchoolOptions()" />
+      <input type="text" class="search-input" id="schoolSearch" placeholder="🔍 Search school..." oninput="filterSchoolOptions()" />
       <select class="custom-select" id="schoolSelect" onchange="handleFilterChange()">
         <!-- Populated from data.js -->
       </select>
@@ -891,207 +598,199 @@
     mainBlock.position.set(0, 10, 15);
     group.add(mainBlock);
 
-    // Pitched Roof
-    const roofGeo = new THREE.ConeGeometry(38, 14, 4);
-    roofGeo.rotateZ(Math.PI / 4);
-    const roof = new THREE.Mesh(roofGeo, roofMat);
-    roof.position.set(0, 10, 35);
-    roof.scale.set(1.4, 0.7, 1);
+    // Pitched Red Roof
+    const roofGeom = new THREE.ConeGeometry(55, 20, 4);
+    const roof = new THREE.Mesh(roofGeom, roofMat);
+    roof.rotation.y = Math.PI / 4;
+    roof.rotation.x = Math.PI / 2;
+    roof.position.set(0, 10, 33);
+    roof.scale.set(1.2, 0.7, 1);
     group.add(roof);
 
-    // Academic Wings
-    const leftWing = new THREE.Mesh(new THREE.BoxGeometry(32, 55, 20), wallMat);
-    leftWing.position.set(-42, 2, 12);
-    group.add(leftWing);
-
-    const rightWing = new THREE.Mesh(new THREE.BoxGeometry(32, 55, 20), wallMat);
-    rightWing.position.set(42, 2, 12);
-    group.add(rightWing);
-
-    // Clock Tower Spire
-    const tower = new THREE.Mesh(new THREE.BoxGeometry(18, 18, 55), wallMat);
-    tower.position.set(0, -14, 28);
+    // Central Clock Tower
+    const tower = new THREE.Mesh(new THREE.BoxGeometry(22, 22, 50), trimMat);
+    tower.position.set(0, 20, 26);
     group.add(tower);
 
-    const spire = new THREE.Mesh(new THREE.ConeGeometry(12, 22, 4), roofMat);
-    spire.rotateZ(Math.PI / 4);
-    spire.position.set(0, -14, 65);
+    // Spire
+    const spire = new THREE.Mesh(new THREE.ConeGeometry(15, 18, 4), roofMat);
+    spire.rotation.y = Math.PI / 4;
+    spire.rotation.x = Math.PI / 2;
+    spire.position.set(0, 20, 56);
     group.add(spire);
 
-    // Sports Field / Running Track
-    const trackMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.9 });
-    const track = new THREE.Mesh(new THREE.CylinderGeometry(28, 28, 2, 24), trackMat);
-    track.position.set(0, 75, 2);
-    track.scale.set(1.4, 1, 0.9);
-    group.add(track);
+    // Windows
+    for (let x = -30; x <= 30; x += 15) {
+      for (let z = 10; z <= 22; z += 6) {
+        const win = new THREE.Mesh(new THREE.BoxGeometry(6, 1, 4), windowMat);
+        win.position.set(x, -12, z);
+        group.add(win);
+      }
+    }
 
+    group.scale.set(0.7, 0.7, 0.7);
     return group;
   }
 
   // 3D High-Rise Residential Tower Model
-  function create3DBuildingModel(proj) {
+  function create3DBuildingModel(project) {
     const group = new THREE.Group();
-    const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
-    const is4S = proj.name.toLowerCase().includes('4s');
+    const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
 
-    // Colors
-    const facadeColor = isUltra ? 0x1e293b : 0x0f172a;
-    const glassColor = isUltra ? 0xf59e0b : 0x38bdf8;
-    const frameColor = isUltra ? 0xd97706 : 0x475569;
+    const glassColor = isUltra ? 0x0284c7 : 0x4f46e5;
+    const frameColor = isUltra ? 0xf59e0b : 0xe2e8f0;
 
-    const facadeMat = new THREE.MeshStandardMaterial({ color: facadeColor, roughness: 0.6 });
-    const glassMat = new THREE.MeshStandardMaterial({ color: glassColor, roughness: 0.1, metalness: 0.9 });
-    const frameMat = new THREE.MeshStandardMaterial({ color: frameColor, roughness: 0.4 });
-    const crownMat = new THREE.MeshStandardMaterial({
-      color: isUltra ? 0xffd700 : 0x6366f1,
-      roughness: 0.2,
-      metalness: 0.9,
-      emissive: isUltra ? 0x78350f : 0x1e1b4b,
-      emissiveIntensity: 0.4
+    const glassMat = new THREE.MeshPhysicalMaterial({
+      color: glassColor,
+      metalness: 0.85,
+      roughness: 0.15,
+      transparent: true,
+      opacity: 0.95
     });
 
-    // Height based on market segment
-    const baseHeight = isUltra ? 160 : is4S ? 145 : 110;
-    const towerWidth = isUltra ? 45 : 40;
-    const towerDepth = 35;
+    const frameMat = new THREE.MeshStandardMaterial({
+      color: frameColor,
+      metalness: 0.6,
+      roughness: 0.3
+    });
+
+    const podiumMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
+    const balconyMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+
+    const floors = isUltra ? 38 : 28;
+    const totalHeight = floors * 3.8;
 
     // Podium Base
-    const podium = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 1.6, towerDepth * 1.5, 14), facadeMat);
+    const podium = new THREE.Mesh(new THREE.BoxGeometry(95, 75, 14), podiumMat);
     podium.position.set(0, 0, 7);
     group.add(podium);
 
-    // Main Tower 1
-    const tower1 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth, towerDepth, baseHeight), facadeMat);
-    tower1.position.set(-8, 0, baseHeight / 2 + 10);
+    // Tower 1
+    const towerWidth = isUltra ? 36 : 28;
+    const towerDepth = isUltra ? 28 : 22;
+    const tower1 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth, towerDepth, totalHeight), glassMat);
+    tower1.position.set(-16, 0, totalHeight / 2 + 14);
     group.add(tower1);
 
-    // Glass Facade Strip
-    const glassStrip = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.7, towerDepth + 2, baseHeight - 15), glassMat);
-    glassStrip.position.set(-8, 0, baseHeight / 2 + 12);
-    group.add(glassStrip);
-
-    // Tower 2 (Twin Tower configuration for luxury properties)
-    const tower2Height = baseHeight * 0.88;
-    const tower2 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.85, towerDepth * 0.85, tower2Height), facadeMat);
-    tower2.position.set(28, 12, tower2Height / 2 + 10);
-    group.add(tower2);
-
-    // Sky Bridge connecting towers
-    const bridge = new THREE.Mesh(new THREE.BoxGeometry(32, 14, 12), glassMat);
-    bridge.position.set(10, 6, baseHeight * 0.7);
-    group.add(bridge);
-
-    // Crown / Spire Architectural Feature
-    if (isUltra) {
-      const crown = new THREE.Mesh(new THREE.ConeGeometry(18, 32, 4), crownMat);
-      crown.rotateZ(Math.PI / 4);
-      crown.position.set(-8, 0, baseHeight + 24);
-      group.add(crown);
-    } else {
-      const crown = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.6, towerDepth * 0.6, 12), crownMat);
-      crown.position.set(-8, 0, baseHeight + 15);
-      group.add(crown);
+    // Balcony Bands
+    const numBands = Math.floor(floors / 2);
+    for (let i = 1; i <= numBands; i++) {
+      const zPos = 14 + (i * 7.6);
+      const band = new THREE.Mesh(new THREE.BoxGeometry(towerWidth + 4, towerDepth + 4, 1.2), balconyMat);
+      band.position.set(-16, 0, zPos);
+      group.add(band);
     }
 
+    // Twin Tower
+    const tower2Height = totalHeight * 0.9;
+    const tower2 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.9, towerDepth * 0.9, tower2Height), glassMat);
+    tower2.position.set(22, 10, tower2Height / 2 + 14);
+    group.add(tower2);
+
+    // Crown / Helipad for Ultra Luxury
+    if (isUltra) {
+      const crown = new THREE.Mesh(new THREE.BoxGeometry(towerWidth + 6, towerDepth + 6, 8), frameMat);
+      crown.position.set(-16, 0, totalHeight + 17);
+      group.add(crown);
+
+      const helipad = new THREE.Mesh(new THREE.CylinderGeometry(8, 8, 2, 16), frameMat);
+      helipad.rotation.x = Math.PI / 2;
+      helipad.position.set(-16, 0, totalHeight + 22);
+      group.add(helipad);
+    }
+
+    group.scale.set(0.65, 0.65, 0.65);
     return group;
   }
 
   // ==========================================
-  // INITIALIZE 3D MAPLIBRE ENGINE
+  // MAPLIBRE 3D ENGINE & STATE
   // ==========================================
-  
+  let selectedRadiusKm = 4;
+  let activeThreeScene = null;
+  let activeThreeCamera = null;
+  let activeThreeRenderer = null;
+  let activeThreeGroup = new THREE.Group();
+  let activeHtmlMarkers = [];
+
+  // Center initially near Sector 59 / 60 (GCER)
   const map = new maplibregl.Map({
     container: 'map',
-    style: 'https://tiles.openfreemap.org/styles/positron', // High-precision 3D vector tiles
-    center: [77.0847, 28.4410], // Golf Course Road & Extension corridor
-    zoom: 12.8,
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+    center: [77.071684, 28.389659], // Shriram Millennium School (GCER)
+    zoom: 13.8,
     pitch: 58,
-    bearing: -15,
+    bearing: -20,
     antialias: true
   });
 
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
-  map.addControl(new maplibregl.FullscreenControl(), 'top-right');
 
-  let activeThreeGroup = new THREE.Group();
-  let threeRenderer, threeScene, threeCamera;
-  let activeHtmlMarkers = [];
-  let currentMatchedProjects = [];
-  let selectedRadiusKm = 4;
-  let isOrbiting = false;
-  let orbitAnimId = null;
-
-  // Custom Three.js Layer for True 3D Architectural Meshes
-  const custom3DLayer = {
+  // Custom 3D Layer for Three.js Meshes
+  const threeCustomLayer = {
     id: 'threejs-3d-models',
     type: 'custom',
     renderingMode: '3d',
     onAdd: function (mapInstance, gl) {
-      threeCamera = new THREE.Camera();
-      threeScene = new THREE.Scene();
+      activeThreeCamera = new THREE.Camera();
+      activeThreeScene = new THREE.Scene();
 
-      // Cinematic Directional & Ambient Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
-      threeScene.add(ambientLight);
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
+      activeThreeScene.add(ambientLight);
 
-      const sunLight = new THREE.DirectionalLight(0xfffaed, 1.4);
-      sunLight.position.set(150, -200, 300);
-      threeScene.add(sunLight);
+      const sunLight = new THREE.DirectionalLight(0xfffaed, 1.5);
+      sunLight.position.set(200, 350, 500);
+      activeThreeScene.add(sunLight);
 
-      const fillLight = new THREE.DirectionalLight(0x818cf8, 0.6);
-      fillLight.position.set(-150, 200, 100);
-      threeScene.add(fillLight);
+      activeThreeScene.add(activeThreeGroup);
 
-      threeScene.add(activeThreeGroup);
-
-      threeRenderer = new THREE.WebGLRenderer({
+      activeThreeRenderer = new THREE.WebGLRenderer({
         canvas: mapInstance.getCanvas(),
         context: gl,
         antialias: true
       });
-      threeRenderer.autoClear = false;
+      activeThreeRenderer.autoClear = false;
     },
     render: function (gl, matrix) {
+      if (!activeThreeCamera || !activeThreeRenderer) return;
+
       const m = new THREE.Matrix4().fromArray(matrix);
-      threeCamera.projectionMatrix = m;
-      threeRenderer.state.reset();
-      threeRenderer.render(threeScene, threeCamera);
+      activeThreeCamera.projectionMatrix = m;
+
+      activeThreeRenderer.resetState();
+      activeThreeRenderer.render(activeThreeScene, activeThreeCamera);
       map.triggerRepaint();
     }
   };
 
-  // Convert LngLat into Three.js MapLibre coordinate space
-  function placeMeshAtLngLat(mesh, lng, lat, altitude = 0) {
-    const coord = maplibregl.MercatorCoordinate.fromLngLat([lng, lat], altitude);
-    const scale = coord.meterInMercatorCoordinateUnits();
-    mesh.position.set(coord.x, coord.y, coord.z);
-    mesh.scale.set(scale, -scale, scale);
-  }
+  map.on('load', () => {
+    // Style 3D Extruded Buildings
+    if (map.getLayer('building-3d')) {
+      map.setPaintProperty('building-3d', 'fill-extrusion-color', '#334155');
+      map.setPaintProperty('building-3d', 'fill-extrusion-opacity', 0.65);
+    }
 
-  map.on('style.load', () => {
-    // 3D Terrain & Building Extrusions from OpenMapTiles
-    map.addLayer(custom3DLayer);
+    map.addLayer(threeCustomLayer);
 
-    // Circular Proximity GeoJSON Source
+    // Radius buffer GeoJSON
     map.addSource('radius-buffer', {
       type: 'geojson',
       data: { type: 'FeatureCollection', features: [] }
     });
 
-    // 1. Semi-transparent Cyan Radial Glow
     map.addLayer({
       id: 'radius-buffer-fill',
       type: 'fill',
       source: 'radius-buffer',
       paint: {
-        'fill-color': '#6366f1',
+        'fill-color': '#4f46e5',
         'fill-opacity': 0.12
       }
     });
 
-    // 2. Pulsing Radial Border
     map.addLayer({
-      id: 'radius-buffer-outline',
+      id: 'radius-buffer-line',
       type: 'line',
       source: 'radius-buffer',
       paint: {
@@ -1101,143 +800,113 @@
       }
     });
 
-    // Initialize UI Selectors and initial render
     initSchoolDropdown();
     handleFilterChange();
 
-    // Attach dynamic anti-overlap updater on map movement
-    map.on('move', updateMarkerCollisionOffsets);
-    map.on('zoom', updateMarkerCollisionOffsets);
+    map.on("move", updateLabelStaggering);
+    map.on("zoom", updateLabelStaggering);
   });
 
-  // Populate School Dropdown
-  function initSchoolDropdown() {
-    const select = document.getElementById('schoolSelect');
-    select.innerHTML = '';
+  function initSchoolDropdown(filterText = '') {
+    const sel = document.getElementById('schoolSelect');
+    const term = filterText.toLowerCase().trim();
 
-    SCHOOLS.forEach((sch, i) => {
-      const opt = document.createElement('option');
-      opt.value = sch.id;
-      opt.innerText = `${sch.name} (${sch.corridor})`;
-      if (sch.name.includes('Heritage') || sch.name.includes('Amity')) {
-        if (!select.value) opt.selected = true;
-      }
-      select.appendChild(opt);
-    });
+    const filtered = SCHOOLS.filter(s => 
+      !term || s.name.toLowerCase().includes(term) || s.corridor.toLowerCase().includes(term)
+    );
 
-    if (!select.value && SCHOOLS.length > 0) {
-      select.selectedIndex = 0;
-    }
+    // Prefer Shriram Millennium or DPS International if present
+    const defaultSchool = filtered.find(s => s.name.includes('Shriram Millennium')) || filtered[0];
+
+    sel.innerHTML = filtered.map(s => 
+      `<option value="${s.id}" ${s.id === defaultSchool?.id ? 'selected' : ''}>${s.name} (${s.corridor})</option>`
+    ).join('');
   }
 
-  // Filter school dropdown via search input
   function filterSchoolOptions() {
-    const q = document.getElementById('schoolSearch').value.toLowerCase();
-    const select = document.getElementById('schoolSelect');
-    select.innerHTML = '';
-
-    const filtered = SCHOOLS.filter(s => s.name.toLowerCase().includes(q) || s.corridor.toLowerCase().includes(q));
-    filtered.forEach(sch => {
-      const opt = document.createElement('option');
-      opt.value = sch.id;
-      opt.innerText = `${sch.name} (${sch.corridor})`;
-      select.appendChild(opt);
-    });
-
-    if (filtered.length > 0) {
-      handleFilterChange();
-    }
-  }
-
-  function setRadius(r) {
-    selectedRadiusKm = r;
-    document.querySelectorAll('.radius-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.innerText.includes(`${r} KM`));
-    });
-    document.getElementById('radiusDisplay').innerText = `${r} km`;
+    const text = document.getElementById('schoolSearch').value;
+    initSchoolDropdown(text);
     handleFilterChange();
   }
 
-  // Main Dynamic Filter Computation
+  function setRadius(km) {
+    selectedRadiusKm = km;
+    document.getElementById('radiusDisplay').innerText = `${km} km`;
+    document.querySelectorAll('.radius-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.innerText.includes(`${km} KM`));
+    });
+    handleFilterChange();
+  }
+
+  // ==========================================
+  // REAL-TIME FILTERING & 3D MESH GENERATION
+  // ==========================================
   function handleFilterChange() {
     const schoolId = document.getElementById('schoolSelect').value;
     const selectedSchool = SCHOOLS.find(s => s.id === schoolId) || SCHOOLS[0];
     if (!selectedSchool) return;
 
-    // Target Market Selection
-    const marketCheckboxes = Array.from(document.querySelectorAll('.pill-checkbox input[value="Ultra Luxury"], .pill-checkbox input[value="Luxury"], .pill-checkbox input[value="Premium"], .pill-checkbox input[value="Mid Segment"]'));
-    const selectedMarkets = marketCheckboxes.filter(c => c.checked).map(c => c.value);
+    const targetMarkets = Array.from(
+      document.querySelectorAll('.pills-group input[type="checkbox"]:checked')
+    ).map(cb => cb.value).filter(v => ['Ultra Luxury', 'Luxury', 'Premium', 'Mid Segment'].includes(v));
 
-    // Configuration Selection
-    const configCheckboxes = Array.from(document.querySelectorAll('.pill-checkbox input[value="2 BHK"], .pill-checkbox input[value="3 BHK"], .pill-checkbox input[value="4 BHK"], .pill-checkbox input[value="Penthouse"]'));
-    const selectedConfigs = configCheckboxes.filter(c => c.checked).map(c => c.value);
+    const selectedConfigs = Array.from(
+      document.querySelectorAll('.pills-group input[type="checkbox"]:checked')
+    ).map(cb => cb.value).filter(v => ['2 BHK', '3 BHK', '4 BHK', 'Penthouse'].includes(v));
 
-    // Corridor Selection
     const selectedCorridor = document.getElementById('corridorSelect').value;
 
-    // Filter projects from PropertyAI database
-    const matched = [];
+    // Filter from 405 Real Projects
+    const matchingProjects = [];
     PROJECTS.forEach(proj => {
-      // 1. Distance from center school
       const dist = calculateDistanceKm(selectedSchool.lat, selectedSchool.lng, proj.lat, proj.lng);
       if (dist > selectedRadiusKm) return;
+      if (targetMarkets.length > 0 && !targetMarkets.includes(proj.target_market)) return;
+      if (selectedConfigs.length > 0 && !proj.configurations.some(c => selectedConfigs.includes(c))) return;
+      if (selectedCorridor !== 'ALL' && proj.corridor !== selectedCorridor) return;
 
-      // 2. Target Market Match
-      if (selectedMarkets.length > 0) {
-        const matchesMarket = selectedMarkets.some(m => (proj.target_market || '').toLowerCase() === m.toLowerCase());
-        if (!matchesMarket) return;
-      }
-
-      // 3. Configuration Match
-      if (selectedConfigs.length > 0) {
-        const projConfigs = proj.configurations || [];
-        const matchesConfig = selectedConfigs.some(cfg => projConfigs.some(pc => pc.toLowerCase().includes(cfg.toLowerCase())));
-        if (!matchesConfig) return;
-      }
-
-      // 4. Corridor Match
-      if (selectedCorridor !== 'ALL') {
-        const c1 = (proj.corridor || '').toLowerCase();
-        const c2 = selectedCorridor.toLowerCase();
-        if (!c1.includes(c2) && !c2.includes(c1)) return;
-      }
-
-      matched.push({
-        ...proj,
-        distanceFromSchool: dist
-      });
+      matchingProjects.push({ ...proj, distanceFromSchool: dist });
     });
 
-    // Sort by proximity to school
-    matched.sort((a, b) => a.distanceFromSchool - b.distanceFromSchool);
-    currentMatchedProjects = matched;
+    matchingProjects.sort((a, b) => a.distanceFromSchool - b.distanceFromSchool);
 
-    // Update 3D Proximity Circle
-    const circleFeature = createGeoJsonCircle([selectedSchool.lng, selectedSchool.lat], selectedRadiusKm);
+    // 1. Draw 3D Radius Circle
+    const circleGeo = createGeoJsonCircle([selectedSchool.lng, selectedSchool.lat], selectedRadiusKm);
     if (map.getSource('radius-buffer')) {
-      map.getSource('radius-buffer').setData({
-        type: 'FeatureCollection',
-        features: [circleFeature]
-      });
+      map.getSource('radius-buffer').setData(circleGeo);
     }
 
-    // Render 3D Meshes & Labels
-    render3DArchitecture(selectedSchool, matched);
-    renderHtmlLabels(selectedSchool, matched);
-    renderProjectsSidebar(matched, selectedSchool);
-
-    // Smooth Camera Framing
+    // 2. Camera FlyTo in 3D
     map.flyTo({
       center: [selectedSchool.lng, selectedSchool.lat],
-      zoom: selectedRadiusKm <= 2 ? 14.5 : selectedRadiusKm <= 4 ? 13.5 : 12.3,
+      zoom: selectedRadiusKm <= 2 ? 14.8 : selectedRadiusKm <= 3 ? 14.1 : 13.5,
       pitch: 58,
-      bearing: -15,
-      duration: 1200
+      bearing: -20,
+      speed: 1.2,
+      curve: 1.3,
+      essential: true
     });
+
+    // 3. Rebuild 3D Meshes in Three.js
+    rebuild3DModels(selectedSchool, matchingProjects);
+
+    // 4. Update 3D Floating HTML Labels & Sidebar
+    renderHtmlLabels(selectedSchool, matchingProjects);
+    renderProjectsSidebar(matchingProjects, selectedSchool);
   }
 
-  // Render Procedural 3D Three.js Meshes
-  function render3DArchitecture(school, projects) {
+  function placeMeshAtLngLat(mesh, lng, lat, altitude = 0) {
+    const coord = maplibregl.MercatorCoordinate.fromLngLat([lng, lat], altitude);
+    const scale = coord.meterInMercatorCoordinateUnits();
+
+    mesh.position.set(coord.x, coord.y, coord.z);
+    mesh.scale.set(scale, -scale, scale);
+    mesh.rotation.x = Math.PI / 2;
+  }
+
+  function rebuild3DModels(school, projects) {
+    if (!activeThreeScene) return;
+
     while (activeThreeGroup.children.length > 0) {
       const obj = activeThreeGroup.children[0];
       activeThreeGroup.remove(obj);
@@ -1258,153 +927,95 @@
     map.triggerRepaint();
   }
 
-  // ==========================================================================
-  // RENDER SLEEK ANTI-OVERLAP HTML MARKERS
-  // ==========================================================================
   function renderHtmlLabels(school, projects) {
-    activeHtmlMarkers.forEach(({ marker }) => marker.remove());
+    activeHtmlMarkers.forEach(m => (m.marker ? m.marker.remove() : m.remove()));
     activeHtmlMarkers = [];
 
-    // 1. Center School Pin
+    // School Pin
     const schoolEl = document.createElement('div');
     schoolEl.className = 'model-label-school';
-    schoolEl.innerHTML = `<i class="ph-bold ph-graduation-cap" style="font-size: 15px;"></i> <span>${school.name}</span>`;
+    schoolEl.innerHTML = `<i class="ph-bold ph-graduation-cap" style="font-size: 16px;"></i> ${school.name}`;
     schoolEl.title = `3D School Campus • ${school.corridor}`;
 
     const schoolMarker = new maplibregl.Marker({ element: schoolEl, anchor: 'bottom' })
       .setLngLat([school.lng, school.lat])
       .addTo(map);
+    activeHtmlMarkers.push({ marker: schoolMarker });
 
-    schoolEl.addEventListener('click', () => {
-      focusProject(school.lng, school.lat, 16);
-    });
-
-    // 2. Project Pins with Anti-Overlap Staggering and Rich Hover Card
-    projects.slice(0, 25).forEach((proj, idx) => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'project-marker-wrapper';
-      wrapper.id = `map-marker-${proj.id || idx}`;
-
+    // Project Pins
+    projects.slice(0, 25).forEach(proj => {
+      const el = document.createElement('div');
       const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
       const is4S = proj.name.toLowerCase().includes('4s');
-      const pillClass = isUltra ? 'ultra' : is4S ? 'featured' : '';
-
-      wrapper.innerHTML = `
-        <!-- Rich Hover Card -->
-        <div class="marker-hover-card">
-          <div class="hover-card-title">
-            <span>${proj.name}</span>
-            <span class="tag-market ${isUltra ? 'ultra' : 'luxury'}">${proj.target_market}</span>
-          </div>
-          <div class="hover-card-dev">by ${proj.developer}</div>
-
-          <div class="hover-card-grid">
-            <div class="hover-stat-box">
-              <div class="hover-stat-label">📍 Distance</div>
-              <div class="hover-stat-val" style="color: var(--accent-cyan); font-family: 'JetBrains Mono';">${proj.distanceFromSchool.toFixed(2)} km</div>
-            </div>
-            <div class="hover-stat-box">
-              <div class="hover-stat-label">📐 Land Area</div>
-              <div class="hover-stat-val">${proj.total_area_acres ? `${proj.total_area_acres} Acres` : '10+ Acres'}</div>
-            </div>
-          </div>
-
-          <div class="hover-stat-label" style="margin-bottom: 3px;">Units Available</div>
-          <div class="hover-units-row">
-            ${(proj.configurations || ['2 BHK', '3 BHK']).map(cfg => `<span class="unit-chip">${cfg}</span>`).join('')}
-          </div>
-
-          <div style="font-size: 10.5px; color: #a5b4fc; margin-bottom: 8px;">
-            <b>Location:</b> ${proj.sector || proj.address || proj.corridor}
-          </div>
-
-          <button class="hover-action-btn" onclick="focusProject(${proj.lng}, ${proj.lat}, 16.8)">
-            <i class="ph-bold ph-binoculars"></i> Inspect 3D Tower
-          </button>
+      el.className = `model-label-building ${isUltra ? 'ultra-label' : ''} ${is4S ? 'featured-label' : ''}`;
+      
+      el.innerHTML = `
+        <div class="label-top-row">
+          <i class="ph-bold ph-buildings" style="color: ${isUltra ? 'var(--accent-gold)' : 'var(--accent-cyan)'}"></i>
+          <b>${proj.name}</b>
         </div>
-
-        <!-- Sleek Compact Pill Badge -->
-        <div class="marker-pill ${pillClass}">
-          <i class="ph-bold ph-buildings" style="color: ${isUltra ? 'var(--accent-gold)' : 'var(--accent-cyan)'}; font-size: 13px;"></i>
-          <span class="marker-pill-title">${proj.name}</span>
-          <span class="marker-pill-dist">${proj.distanceFromSchool.toFixed(1)} km</span>
+        <div class="label-sub-row">
+          <span style="color: var(--accent-cyan); font-weight: 800;">📍 ${proj.distanceFromSchool.toFixed(1)} km</span>
+          <span>•</span>
+          <span>${proj.configurations.join(', ')}</span>
         </div>
-
-        <!-- Leader Stem for elevated tiers -->
-        <div class="marker-stem ${isUltra ? 'ultra' : ''}"></div>
-
-        <!-- Ground Pin Dot -->
-        <div class="marker-ground-dot ${isUltra ? 'ultra' : ''}"></div>
       `;
 
-      const marker = new maplibregl.Marker({ element: wrapper, anchor: 'bottom' })
+      const popup = new maplibregl.Popup({ offset: 35, closeButton: false }).setHTML(`
+        <div style="font-family: inherit; color: #0f172a; padding: 6px; min-width: 220px;">
+          <b style="font-size: 14px; color: #0f172a;">${proj.name}</b>
+          <div style="font-size: 11px; color: #64748b; margin-top: 2px;">by ${proj.developer}</div>
+          <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 6px 0;">
+          <div style="font-size: 12px; margin-bottom: 3px;"><b>📍 Distance:</b> <span style="color: #4f46e5; font-weight: 800;">${proj.distanceFromSchool.toFixed(2)} km</span> from ${school.name}</div>
+          <div style="font-size: 12px; margin-bottom: 3px;"><b>🏷️ Segment:</b> <span style="color: ${isUltra ? '#b45309' : '#3730a3'}; font-weight: 800;">${proj.target_market}</span></div>
+          <div style="font-size: 12px; margin-bottom: 3px;"><b>🛏️ Units:</b> ${proj.configurations.join(', ')}</div>
+          <div style="font-size: 12px; margin-bottom: 3px;"><b>📍 Location:</b> ${proj.sector || proj.address || proj.corridor}</div>
+          ${proj.total_area_acres ? `<div style="font-size: 12px; margin-bottom: 3px;"><b>📐 Land Area:</b> ${proj.total_area_acres} Acres (${proj.open_area_percent || 65}% Open Area)</div>` : ''}
+          <div style="font-size: 11.5px; color: #16a34a; font-weight: 800; margin-top: 4px;">Status: ${proj.status} (Possession ${proj.possession_year || 'Under Construction'})</div>
+        </div>
+      `);
+
+      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
         .setLngLat([proj.lng, proj.lat])
+        .setPopup(popup)
         .addTo(map);
 
-      // Click to focus
-      wrapper.addEventListener('click', (e) => {
-        e.stopPropagation();
-        focusProject(proj.lng, proj.lat, 16.6);
-        highlightProject(proj.id || idx);
+      el.addEventListener('click', () => {
+        focusProject(proj.lng, proj.lat);
       });
 
-      // Hover sync with sidebar
-      wrapper.addEventListener('mouseenter', () => {
-        syncSidebarHighlight(proj.id || idx, true);
-      });
-      wrapper.addEventListener('mouseleave', () => {
-        syncSidebarHighlight(proj.id || idx, false);
-      });
-
-      activeHtmlMarkers.push({
-        marker,
-        wrapper,
-        proj,
-        id: proj.id || idx
-      });
+      activeHtmlMarkers.push({ marker, el, proj });
     });
 
-    // Run initial collision calculation
-    updateMarkerCollisionOffsets();
+    updateLabelStaggering();
   }
 
-  // ==========================================================================
-  // DYNAMIC SCREEN-SPACE COLLISION AVOIDANCE & STAGGERING
-  // ==========================================================================
-  function updateMarkerCollisionOffsets() {
-    if (activeHtmlMarkers.length === 0) return;
-
+  // Dynamic anti-overlap staggering so cards never occlude each other
+  function updateLabelStaggering() {
+    if (!activeHtmlMarkers || activeHtmlMarkers.length <= 1) return;
     const placed = [];
-    activeHtmlMarkers.forEach(({ wrapper, proj }) => {
-      const pt = map.project([proj.lng, proj.lat]);
+    activeHtmlMarkers.forEach(item => {
+      if (!item.proj) return;
+      const pt = map.project([item.proj.lng, item.proj.lat]);
       let tier = 0;
-
-      // Check collision against already placed markers in screen coordinates
       for (const p of placed) {
         const dx = Math.abs(pt.x - p.x);
         const dy = Math.abs(pt.y - p.y);
-        // If markers are closer than 135px horizontally and 36px vertically
-        if (dx < 135 && dy < 36 && p.tier === tier) {
+        if (dx < 170 && dy < 48 && p.tier === tier) {
           tier++;
         }
       }
-
-      placed.push({ x: pt.x, y: pt.y - tier * 32, tier });
-
-      // Apply vertical elevation & leader stem to avoid overlapping
-      const pill = wrapper.querySelector('.marker-pill');
-      const stem = wrapper.querySelector('.marker-stem');
-      const stemHeight = tier * 30;
-
-      if (stem) stem.style.height = `${stemHeight}px`;
-      if (pill) {
-        pill.style.transform = `translateY(-${stemHeight > 0 ? 0 : 0}px)`;
+      placed.push({ x: pt.x, y: pt.y - tier * 48, tier });
+      if (tier > 0) {
+        item.el.style.transform = 'translateY(-' + (tier * 48) + 'px)';
+        item.el.style.zIndex = '' + (1000 + tier * 10);
+      } else {
+        item.el.style.transform = '';
+        item.el.style.zIndex = '';
       }
-      wrapper.style.zIndex = 1000 + (25 - tier);
     });
   }
 
-  // Render Matching Projects in Sidebar
   function renderProjectsSidebar(projects, school) {
     const listEl = document.getElementById('projectsList');
     const badgeEl = document.getElementById('matchBadge');
@@ -1415,8 +1026,8 @@
 
     if (projects.length === 0) {
       listEl.innerHTML = `
-        <div style="text-align: center; padding: 22px 10px; color: var(--text-muted); font-size: 11.5px;">
-          <i class="ph-bold ph-warning-circle" style="font-size: 24px; color: var(--accent-gold); display: block; margin-bottom: 6px;"></i>
+        <div style="text-align: center; padding: 25px 10px; color: var(--text-muted); font-size: 12px;">
+          <i class="ph-bold ph-warning-circle" style="font-size: 26px; color: var(--accent-gold); display: block; margin-bottom: 6px;"></i>
           No 3D projects found within <b>${selectedRadiusKm} km</b> of ${school.name} matching selected filters.<br>
           <span style="color: #818cf8; cursor: pointer; text-decoration: underline; margin-top: 6px; display: inline-block; font-weight: 700;" onclick="setRadius(5)">Expand radius to 5 KM</span>
         </div>
@@ -1424,25 +1035,19 @@
       return;
     }
 
-    listEl.innerHTML = projects.map((p, idx) => {
+    listEl.innerHTML = projects.map(p => {
       const isUltra = (p.target_market || '').toLowerCase().includes('ultra');
       const is4S = p.name.toLowerCase().includes('4s');
       const badgeClass = isUltra ? 'ultra' : p.target_market === 'Luxury' ? 'luxury' : 'premium';
-      const pid = p.id || idx;
-
       return `
-        <div class="project-card ${is4S ? 'featured-card' : ''}" 
-             id="sidebar-card-${pid}"
-             onclick="focusProject(${p.lng}, ${p.lat}, 16.5); highlightProject('${pid}')"
-             onmouseenter="highlightMarkerOnMap('${pid}', true)"
-             onmouseleave="highlightMarkerOnMap('${pid}', false)">
+        <div class="project-card ${is4S ? 'featured-card' : ''}" onclick="focusProject(${p.lng}, ${p.lat})">
           <div class="project-card-header">
             <span class="project-title">${p.name}</span>
             <span class="project-distance">${p.distanceFromSchool.toFixed(1)} km</span>
           </div>
           <div class="project-meta">
             <span class="tag-market ${badgeClass}">${p.target_market}</span>
-            <span>${(p.configurations || []).slice(0, 2).join(', ')}</span>
+            <span>${p.configurations.join(', ')}</span>
             <span style="margin-left: auto; color: var(--text-muted);">${p.sector || p.corridor}</span>
           </div>
         </div>
@@ -1450,90 +1055,16 @@
     }).join('');
   }
 
-  // Two-way highlight functions
-  function highlightMarkerOnMap(pid, active) {
-    const el = document.getElementById(`map-marker-${pid}`);
-    if (el) {
-      el.classList.toggle('is-highlighted', active);
-    }
-  }
-
-  function syncSidebarHighlight(pid, active) {
-    const card = document.getElementById(`sidebar-card-${pid}`);
-    if (card) {
-      card.classList.toggle('active-hover', active);
-      if (active) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }
-
-  function highlightProject(pid) {
-    document.querySelectorAll('.project-card').forEach(c => c.classList.remove('active-hover'));
-    const card = document.getElementById(`sidebar-card-${pid}`);
-    if (card) {
-      card.classList.add('active-hover');
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }
-
-  // Camera Controls
-  function focusProject(lng, lat, zoom = 16.5) {
+  function focusProject(lng, lat) {
     map.flyTo({
       center: [lng, lat],
-      zoom: zoom,
+      zoom: 16.4,
       pitch: 65,
       bearing: -15,
-      speed: 1.2,
+      speed: 1.3,
       curve: 1.2,
       essential: true
     });
-  }
-
-  function resetSchoolView() {
-    const schoolId = document.getElementById('schoolSelect').value;
-    const school = SCHOOLS.find(s => s.id === schoolId) || SCHOOLS[0];
-    if (school) {
-      focusProject(school.lng, school.lat, selectedRadiusKm <= 2 ? 14.5 : selectedRadiusKm <= 4 ? 13.5 : 12.3);
-    }
-  }
-
-  function setCameraMode(mode) {
-    document.getElementById('btn3d').classList.toggle('active', mode === '3d');
-    document.getElementById('btnTop').classList.toggle('active', mode === 'top');
-
-    if (mode === 'top') {
-      map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
-    } else {
-      map.easeTo({ pitch: 62, bearing: -20, duration: 800 });
-    }
-  }
-
-  function toggleOrbit() {
-    isOrbiting = !isOrbiting;
-    document.getElementById('btnOrbit').classList.toggle('active', isOrbiting);
-
-    if (isOrbiting) {
-      function orbitStep() {
-        if (!isOrbiting) return;
-        map.setBearing(map.getBearing() + 0.18);
-        orbitAnimId = requestAnimationFrame(orbitStep);
-      }
-      orbitStep();
-    } else {
-      cancelAnimationFrame(orbitAnimId);
-    }
-  }
-
-  // Sidebar toggle
-  function toggleSidebar(open) {
-    const panel = document.getElementById('filterPanel');
-    const openBtn = document.getElementById('openSidebarBtn');
-    if (open) {
-      panel.classList.remove('collapsed');
-      openBtn.style.display = 'none';
-    } else {
-      panel.classList.add('collapsed');
-      openBtn.style.display = 'flex';
-    }
   }
 </script>
 </body>
