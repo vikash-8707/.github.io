@@ -62,11 +62,54 @@
       left: 0;
     }
 
+    /* Top-Right Cinematic Camera Controls Bar */
+    .camera-hud-bar {
+      position: absolute;
+      top: 18px;
+      right: 58px;
+      z-index: 28;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .cam-btn {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cam-btn:hover {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .cam-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
     /* Floating Filter Trigger Button (Visible when panel is collapsed) */
     .floating-filter-trigger {
       position: fixed;
-      top: 20px;
-      left: 20px;
+      top: 18px;
+      left: 18px;
       z-index: 999;
       display: none;
       align-items: center;
@@ -109,10 +152,10 @@
     /* Floating Glassmorphic Filter Sidebar Panel */
     .filter-panel {
       position: fixed;
-      top: 20px;
-      left: 20px;
+      top: 18px;
+      left: 18px;
       width: 400px;
-      max-height: calc(100vh - 40px);
+      max-height: calc(100vh - 36px);
       background: rgba(15, 23, 42, 0.96);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
@@ -801,6 +844,22 @@
 <!-- Map Container -->
 <div id="map"></div>
 
+<!-- Top-Right Cinematic Camera Controls Bar -->
+<div class="camera-hud-bar">
+  <button class="cam-btn active" id="btn3d" onclick="setCameraMode('3d')">
+    <i class="ph-bold ph-cube"></i> 3D View
+  </button>
+  <button class="cam-btn" id="btnTop" onclick="setCameraMode('top')">
+    <i class="ph-bold ph-compass"></i> Top 2D
+  </button>
+  <button class="cam-btn" id="btnOrbit" onclick="toggleOrbit()">
+    <i class="ph-bold ph-arrows-clockwise"></i> Orbit 360°
+  </button>
+  <button class="cam-btn" onclick="resetSchoolView()">
+    <i class="ph-bold ph-crosshair"></i> Reset
+  </button>
+</div>
+
 <!-- Floating Trigger Button (appears when sidebar is collapsed) -->
 <div class="floating-filter-trigger" id="floatingTrigger" onclick="toggleFilterPanel(true)">
   <i class="ph-bold ph-sliders-horizontal"></i>
@@ -1038,6 +1097,8 @@
   let currentSelectedSchool = null;
   let currentMatchingProjects = [];
   let currentModalProject = null;
+  let isOrbiting = false;
+  let orbitAnimId = null;
 
   // ==========================================
   // HAVERSINE DISTANCE (KM)
@@ -1151,14 +1212,12 @@
     const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
 
     // Consistent, realistic architectural materials across all residential towers (NO BLUE)
-    // Warm architectural concrete/limestone facade
     const facadeMat = new THREE.MeshStandardMaterial({
       color: 0xdcd8d4,
       roughness: 0.65,
       metalness: 0.1
     });
 
-    // Tinted architectural neutral glass (dark charcoal tint, reflective, NO BLUE)
     const glassMat = new THREE.MeshPhysicalMaterial({
       color: 0x222c38,
       metalness: 0.85,
@@ -1167,20 +1226,17 @@
       opacity: 0.92
     });
 
-    // Sleek architectural frame / mullions
     const frameMat = new THREE.MeshStandardMaterial({
       color: 0x64748b,
       metalness: 0.5,
       roughness: 0.35
     });
 
-    // Dark slate podium base
     const podiumMat = new THREE.MeshStandardMaterial({
       color: 0x1e293b,
       roughness: 0.85
     });
 
-    // Crisp white architectural balconies
     const balconyMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       roughness: 0.25
@@ -1378,6 +1434,55 @@
   map.on('move', () => {
     updateLabelStaggering();
   });
+
+  // ==========================================
+  // CAMERA CONTROLS (3D View, Top 2D, Orbit 360, Reset)
+  // ==========================================
+  function setCameraMode(mode) {
+    if (isOrbiting) toggleOrbit();
+
+    document.getElementById('btn3d').classList.toggle('active', mode === '3d');
+    document.getElementById('btnTop').classList.toggle('active', mode === 'top');
+
+    if (mode === 'top') {
+      map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
+    } else {
+      map.easeTo({ pitch: 58, bearing: -20, duration: 800 });
+    }
+  }
+
+  function toggleOrbit() {
+    isOrbiting = !isOrbiting;
+    document.getElementById('btnOrbit').classList.toggle('active', isOrbiting);
+
+    if (isOrbiting) {
+      function orbitStep() {
+        if (!isOrbiting) return;
+        map.setBearing(map.getBearing() + 0.18);
+        orbitAnimId = requestAnimationFrame(orbitStep);
+      }
+      orbitStep();
+    } else {
+      if (orbitAnimId) cancelAnimationFrame(orbitAnimId);
+    }
+  }
+
+  function resetSchoolView() {
+    if (isOrbiting) toggleOrbit();
+    if (!currentSelectedSchool) return;
+
+    map.flyTo({
+      center: [currentSelectedSchool.lng, currentSelectedSchool.lat],
+      zoom: selectedRadiusKm <= 2 ? 14.8 : selectedRadiusKm <= 3 ? 14.1 : 13.5,
+      pitch: 58,
+      bearing: -20,
+      speed: 1.2,
+      curve: 1.2,
+      essential: true
+    });
+    document.getElementById('btn3d').classList.add('active');
+    document.getElementById('btnTop').classList.remove('active');
+  }
 
   // ==========================================
   // PANEL COLLAPSE & AUTO-HIDE LOGIC

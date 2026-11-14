@@ -1,1625 +1,1880 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
+  <title>Propium 3D — Real Estate & School Proximity Explorer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Universal Visual Analytics Hub — 4-Block Row Layout (Chart, Blank, Chart, Blank)</title>
-  <meta name="description" content="All-in-one interactive visualization dashboard with 4 blocks per row: Chart, Blank, Chart, Blank.">
+  
+  <!-- MapLibre GL 3D Vector Map Engine -->
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
-  <!-- Google Fonts -->
+  <!-- Three.js for 3D Architectural Meshes -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Google Fonts & Phosphor Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <!-- Phosphor Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+  <!-- Real PropertyAI Database (405 Projects, 39 Schools) -->
+  <script src="data.js"></script>
+
   <style>
-    /* ==========================================================================
-       CSS VARIABLES & THEME DEFINITIONS
-       ========================================================================== */
     :root {
-      /* Dark Theme (Default) */
-      --bg-page: #080c14;
-      --bg-surface: #0f172a;
-      --bg-card: rgba(15, 23, 42, 0.78);
-      --bg-card-hover: rgba(30, 41, 59, 0.88);
-      --bg-blank: rgba(15, 23, 42, 0.22);
-      --border-blank: rgba(255, 255, 255, 0.08);
-      --bg-input: #1e293b;
-      --border-color: rgba(255, 255, 255, 0.08);
-      --border-focus: rgba(99, 102, 241, 0.5);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.45);
+      --surface: rgba(15, 23, 42, 0.94);
+      --surface-card: rgba(30, 41, 59, 0.85);
+      --border: rgba(255, 255, 255, 0.10);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      --accent-primary: #6366f1;
-      --accent-glow: rgba(99, 102, 241, 0.35);
-      --accent-cyan: #06b6d4;
+      --accent-gold: #f59e0b;
       --accent-emerald: #10b981;
-      --accent-amber: #f59e0b;
-      --accent-rose: #f43f5e;
-      --accent-purple: #a855f7;
-      --card-radius: 16px;
-      --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
-      --shadow-hover: 0 20px 40px -10px rgba(99, 102, 241, 0.22), 0 0 0 1px rgba(99, 102, 241, 0.3);
-      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      --header-height: 72px;
+      --accent-cyan: #38bdf8;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
     }
 
-    [data-theme="light"] {
-      --bg-page: #f1f5f9;
-      --bg-surface: #ffffff;
-      --bg-card: rgba(255, 255, 255, 0.90);
-      --bg-card-hover: #ffffff;
-      --bg-blank: rgba(241, 245, 249, 0.5);
-      --border-blank: rgba(0, 0, 0, 0.08);
-      --bg-input: #e2e8f0;
-      --border-color: rgba(0, 0, 0, 0.08);
-      --border-focus: rgba(99, 102, 241, 0.5);
-      --text-main: #0f172a;
-      --text-muted: #475569;
-      --text-dim: #94a3b8;
-      --accent-primary: #4f46e5;
-      --accent-glow: rgba(79, 70, 229, 0.2);
-      --card-radius: 16px;
-      --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.05);
-      --shadow-hover: 0 20px 35px -10px rgba(79, 70, 229, 0.15), 0 0 0 1px rgba(79, 70, 229, 0.3);
-    }
-
-    *, *::before, *::after {
+    * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-page);
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: #020617;
       color: var(--text-main);
-      min-height: 100vh;
-      line-height: 1.5;
-      overflow-x: hidden;
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.09) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.07) 0px, transparent 50%);
-      background-attachment: fixed;
     }
 
-    /* ==========================================================================
-       TOP APP HEADER
-       ========================================================================== */
-    .app-header {
-      position: sticky;
+    #map {
+      width: 100%;
+      height: 100%;
+      position: absolute;
       top: 0;
-      z-index: 100;
-      height: var(--header-height);
-      background: rgba(15, 23, 42, 0.88);
+      left: 0;
+    }
+
+    /* Top-Right Cinematic Camera Controls Bar */
+    .camera-hud-bar {
+      position: absolute;
+      top: 18px;
+      right: 58px;
+      z-index: 28;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.92);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      transition: var(--transition);
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
-
-    [data-theme="light"] .app-header {
-      background: rgba(255, 255, 255, 0.90);
-    }
-
-    .brand-section {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .brand-logo-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      color: #ffffff;
-      box-shadow: 0 4px 14px var(--accent-glow);
-    }
-
-    .brand-text h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .brand-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 20px;
-      background: rgba(99, 102, 241, 0.15);
-      color: #818cf8;
-      border: 1px solid rgba(99, 102, 241, 0.3);
-    }
-
-    .brand-text p {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .status-pill {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      border-radius: 30px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #34d399;
-    }
-
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 10px #10b981;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-    }
-
-    .btn-header {
-      height: 38px;
-      padding: 0 14px;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-surface);
+    .cam-btn {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border);
       color: var(--text-main);
-      font-size: 13px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      cursor: pointer;
-      transition: var(--transition);
-      text-decoration: none;
-    }
-
-    .btn-header:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--accent-primary);
-      transform: translateY(-1px);
-    }
-
-    .btn-icon-only {
-      width: 38px;
-      height: 38px;
-      padding: 0;
-      justify-content: center;
-      font-size: 18px;
-    }
-
-    /* ==========================================================================
-       SUB-TOOLBAR: CATEGORY FILTERS & LAYOUT CONTROLS
-       ========================================================================== */
-    .sub-toolbar {
-      padding: 16px 28px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      border-bottom: 1px solid var(--border-color);
-      background: rgba(15, 23, 42, 0.45);
-      backdrop-filter: blur(8px);
-    }
-
-    [data-theme="light"] .sub-toolbar {
-      background: rgba(255, 255, 255, 0.65);
-    }
-
-    .filter-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .filter-btn {
-      padding: 7px 16px;
-      border-radius: 20px;
-      font-size: 12.5px;
-      font-weight: 600;
-      border: 1px solid var(--border-color);
-      background: var(--bg-surface);
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: var(--transition);
-    }
-
-    .filter-btn:hover {
-      color: var(--text-main);
-      border-color: rgba(99, 102, 241, 0.4);
-    }
-
-    .filter-btn.active {
-      background: var(--accent-primary);
-      color: #ffffff;
-      border-color: transparent;
-      box-shadow: 0 2px 10px var(--accent-glow);
-    }
-
-    .filter-count {
-      font-size: 10px;
-      padding: 1px 6px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .toolbar-tools {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .search-box {
-      position: relative;
-      width: 240px;
-    }
-
-    .search-box input {
-      width: 100%;
-      height: 36px;
-      padding: 0 12px 0 34px;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-surface);
-      color: var(--text-main);
-      font-size: 13px;
-      outline: none;
-      transition: var(--transition);
-    }
-
-    .search-box input:focus {
-      border-color: var(--accent-primary);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    .search-box i {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-dim);
-      font-size: 16px;
-    }
-
-    /* Layout Toggle */
-    .view-mode-group {
-      display: flex;
-      border-radius: 10px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      padding: 3px;
-    }
-
-    .view-btn {
-      padding: 4px 10px;
-      border: none;
-      background: transparent;
-      border-radius: 7px;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 12px;
-      font-weight: 600;
-      transition: var(--transition);
-    }
-
-    .view-btn.active {
-      background: var(--accent-primary);
-      color: #ffffff;
-    }
-
-    /* Quick Jump Anchor Bar */
-    .quick-jump-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 10px 28px;
-      border-bottom: 1px solid var(--border-color);
-      background: rgba(15, 23, 42, 0.2);
-    }
-
-    .quick-jump-item {
-      padding: 5px 12px;
+      padding: 6px 12px;
       border-radius: 8px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
-      white-space: nowrap;
-      text-decoration: none;
+      font-size: 11.5px;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: var(--transition);
-    }
-
-    .quick-jump-item:hover {
-      color: var(--text-main);
-      border-color: var(--accent-primary);
-    }
-
-    .quick-jump-item.highlight-purple {
-      border-color: #a855f7;
-      color: #c084fc;
-      background: rgba(168, 85, 247, 0.1);
-    }
-
-    /* ==========================================================================
-       MAIN DASHBOARD GRID (4 BLOCKS PER ROW: CHART, BLANK, CHART, BLANK)
-       ========================================================================== */
-    .dashboard-container {
-      max-width: 1860px;
-      margin: 0 auto;
-      padding: 24px;
-    }
-
-    /* 4 Blocks Per Row: [Chart] [Blank] [Chart] [Blank] */
-    .charts-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      transition: var(--transition);
-    }
-
-    /* Optional 2-Column Mode */
-    .charts-grid.view-two-col {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    /* Optional 1-Column Stack Mode */
-    .charts-grid.view-stack {
-      grid-template-columns: 1fr;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    @media (max-width: 1400px) {
-      .charts-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 768px) {
-      .charts-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Single Chart Card (Perfect 1:1 Square) */
-    .chart-card {
-      background: var(--bg-card);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border-color);
-      border-radius: var(--card-radius);
-      box-shadow: var(--shadow-card);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      aspect-ratio: 1 / 1;
-      width: 100%;
-      transition: var(--transition);
-      position: relative;
-    }
-
-    .chart-card:hover {
-      box-shadow: var(--shadow-hover);
-      border-color: rgba(99, 102, 241, 0.4);
-      transform: translateY(-2px);
-    }
-
-    /* ==========================================================================
-       BLANK BLOCK STYLING (Perfect 1:1 Square Empty Clean Placeholders)
-       ========================================================================== */
-    .blank-card {
-      background: var(--bg-blank);
-      border: 1px dashed var(--border-blank);
-      border-radius: var(--card-radius);
-      aspect-ratio: 1 / 1;
-      width: 100%;
-      transition: var(--transition);
-      user-select: none;
-    }
-
-    .blank-card:hover {
-      border-color: rgba(99, 102, 241, 0.25);
-      background: rgba(99, 102, 241, 0.02);
-    }
-
-
-    /* ==========================================================================
-       CARD HEADER & FOOTER REMOVED (Only pure image on card)
-       ========================================================================== */
-    .card-header,
-    .card-footer,
-    .thumb-overlay,
-    .card-title,
-    .card-subtitle,
-    .card-desc,
-    .footer-pills,
-    .chart-badge-row,
-    .card-actions {
-      display: none !important;
-    }
-
-    /* Thumbnail Chart Stage (Pure Full Image on Card) */
-    .chart-stage {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      flex: 1 1 100%;
-      min-height: 0;
-      background: #ffffff;
-      overflow: hidden;
       cursor: pointer;
-      display: flex;
+      transition: all 0.2s;
+    }
+    .cam-btn:hover {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .cam-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    /* Floating Filter Trigger Button (Visible when panel is collapsed) */
+    .floating-filter-trigger {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 999;
+      display: none;
       align-items: center;
-      justify-content: center;
-      padding: 0;
-      margin: 0;
-    }
-
-    [data-theme="light"] .chart-stage {
-      background: #ffffff;
-    }
-
-    .chart-thumb {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      border-radius: var(--card-radius);
-      display: block;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
-    }
-
-    .chart-card:hover .chart-thumb {
-      transform: scale(1.05);
-      filter: brightness(1.03);
-    }
-
-    .thumb-action-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 18px;
-      border-radius: 30px;
-      background: rgba(99, 102, 241, 0.95);
-      color: #ffffff;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(99, 102, 241, 0.6);
+      border-radius: 9999px;
+      padding: 10px 18px;
+      color: #fff;
       font-size: 13px;
       font-weight: 700;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
-      transform: translateY(6px);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.35);
       cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+    .floating-filter-trigger:hover {
+      transform: translateY(-2px) scale(1.02);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.5);
+    }
+    .floating-filter-trigger.visible {
+      display: flex;
+    }
+    .floating-filter-trigger i {
+      font-size: 17px;
+      color: var(--accent-cyan);
+    }
+    .floating-filter-badge {
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-weight: 800;
     }
 
-    .thumb-action-pill svg {
-      width: 15px;
-      height: 15px;
-      stroke: currentColor;
-    }
-
-    .chart-card:hover .thumb-action-pill {
-      transform: translateY(0);
-    }
-
-    .thumb-action-pill:hover {
-      background: #4f46e5;
-      transform: translateY(-2px) scale(1.04);
-      box-shadow: 0 12px 28px rgba(99, 102, 241, 0.7);
-    }
-
-    .stage-loader {
-      position: absolute;
-      inset: 0;
-      background: var(--bg-surface);
+    /* Floating Glassmorphic Filter Sidebar Panel */
+    .filter-panel {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      width: 400px;
+      max-height: calc(100vh - 36px);
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-lg);
+      z-index: 1000;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      z-index: 10;
-      transition: opacity 0.4s ease, visibility 0.4s ease;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(0, 0, 0, 0.3);
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
     }
-
-    .stage-loader.hidden {
+    .filter-panel.collapsed {
+      transform: translateX(-430px);
       opacity: 0;
-      visibility: hidden;
       pointer-events: none;
     }
 
-    .spinner {
-      width: 30px;
-      height: 30px;
-      border: 3px solid rgba(99, 102, 241, 0.15);
-      border-top-color: var(--accent-primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .loader-text {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .card-footer {
-      padding: 8px 16px;
+    .panel-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-top: 1px solid var(--border-color);
-      background: rgba(15, 23, 42, 0.25);
-      font-size: 11px;
-      color: var(--text-dim);
-      flex-shrink: 0;
-    }
-
-    [data-theme="light"] .card-footer {
-      background: rgba(248, 250, 252, 0.6);
-    }
-
-    .card-desc {
-      flex: 1;
-      margin-right: 8px;
-      line-height: 1.35;
-      color: var(--text-muted);
-      font-size: 11px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .footer-pills {
-      display: flex;
-      gap: 5px;
-      flex-shrink: 0;
-    }
-
-    /* ==========================================================================
-       FULLSCREEN MODAL OVERLAY
-       ========================================================================== */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      opacity: 0;
-      visibility: hidden;
-      transition: var(--transition);
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-dialog {
-      width: 96vw;
-      height: 94vh;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.7);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      transform: scale(0.96);
-      transition: var(--transition);
-    }
-
-    .modal-overlay.active .modal-dialog {
-      transform: scale(1);
-    }
-
-    .modal-header {
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .modal-header h2 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
       gap: 10px;
     }
-
-    .modal-actions {
+    .panel-header h1 {
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.3px;
+    }
+    .panel-header h1 i {
+      color: var(--accent-cyan);
+      font-size: 20px;
+    }
+    .panel-header-actions {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-
-    .modal-body {
-      flex: 1;
-      position: relative;
-      background: #ffffff;
+    .badge-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: rgba(99, 102, 241, 0.25);
+      border: 1px solid rgba(99, 102, 241, 0.5);
+      color: #c7d2fe;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      font-weight: 700;
+    }
+    .panel-close-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.2s ease;
+    }
+    .panel-close-btn:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
     }
 
-    .modal-body iframe {
+    .panel-body {
+      padding: 16px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .panel-body::-webkit-scrollbar {
+      width: 4px;
+    }
+    .panel-body::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+    .filter-group-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-input {
       width: 100%;
-      height: 100%;
-      border: none;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 8px;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
     }
 
-    .app-footer {
-      text-align: center;
-      padding: 32px;
-      color: var(--text-dim);
+    .custom-select {
+      width: 100%;
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      color: var(--text-main);
       font-size: 13px;
-      border-top: 1px solid var(--border-color);
-      margin-top: 40px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .custom-select:focus {
+      border-color: var(--primary);
+    }
+    .custom-select option {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    .radius-selector {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+    .radius-btn {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 4px;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .radius-btn:hover {
+      background: rgba(99, 102, 241, 0.15);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .radius-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .pills-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .pill-checkbox {
+      display: inline-flex;
+      cursor: pointer;
+      user-select: none;
+    }
+    .pill-checkbox input {
+      display: none;
+    }
+    .pill-content {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .pill-checkbox:hover .pill-content {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+    .pill-checkbox input:checked + .pill-content {
+      background: rgba(99, 102, 241, 0.25);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+    .pill-checkbox.gold input:checked + .pill-content {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--accent-gold);
+      color: #fbbf24;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+
+    .apply-map-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+      margin-top: 4px;
+    }
+    .apply-map-btn:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+    }
+
+    .projects-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+    .projects-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .projects-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+    .project-card {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .project-card:hover {
+      background: rgba(49, 65, 96, 0.85);
+      border-color: var(--primary);
+      transform: translateX(4px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    .project-card.featured-card {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .project-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .project-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .project-distance {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.15);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .project-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .tag-market {
+      font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .tag-market.ultra {
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .tag-market.luxury {
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+    .tag-market.premium {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    /* 3D School Landmark Label */
+    .model-label-school {
+      pointer-events: auto;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: linear-gradient(135deg, #b91c1c, #dc2626);
+      border: 2px solid #fff;
+      border-radius: 9999px;
+      padding: 7px 15px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 10px 30px rgba(220, 38, 38, 0.65), 0 0 25px rgba(239, 68, 68, 0.8);
+      white-space: nowrap;
+      user-select: none;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 5000 !important;
+    }
+    .model-label-school:hover {
+      transform: scale(1.12) translateY(-4px);
+    }
+
+    /* 3D High-Rise Real Estate Marker Card */
+    .model-label-building {
+      pointer-events: auto;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid var(--primary);
+      border-radius: 9px;
+      padding: 5px 10px;
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      white-space: nowrap;
+      user-select: none;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .model-label-building.ultra-label {
+      border-color: var(--accent-gold);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+    }
+    .model-label-building.featured-label {
+      border-color: #38bdf8;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+    }
+    .model-label-building:hover {
+      transform: scale(1.15) translateY(-4px);
+      z-index: 9999 !important;
+    }
+    .label-top-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .label-sub-row {
+      font-size: 10px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* 3D Legend & HUD at Bottom Right */
+    .hud-controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+    .hud-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .legend-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+    }
+
+    /* Glassmorphic View Details Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(8, 12, 24, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .modal-backdrop.active {
+      display: flex;
+      opacity: 1;
+    }
+    .modal-card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 20px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 50px rgba(99, 102, 241, 0.25);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transform: scale(0.94);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal-backdrop.active .modal-card {
+      transform: scale(1);
+    }
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 14px;
+    }
+    .modal-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .modal-badge-market {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+    .modal-badge-market.ultra {
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      border-color: rgba(245, 158, 11, 0.5);
+    }
+    .modal-badge-market.luxury {
+      background: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .modal-badge-status {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .modal-badge-sector {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: rgba(148, 163, 184, 0.15);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+    .modal-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.25;
+      margin: 0;
+    }
+    .modal-developer {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+    .modal-close-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .modal-close-btn:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+    }
+    .modal-distance-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: 12px;
+      padding: 11px 15px;
+      color: #c7d2fe;
+      font-size: 13px;
+    }
+    .modal-distance-banner i {
+      font-size: 18px;
+      color: var(--accent-cyan);
+      flex-shrink: 0;
+    }
+    .modal-distance-banner b {
+      color: #ffffff;
+    }
+    .modal-specs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .spec-card {
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .spec-label {
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .spec-label i {
+      font-size: 14px;
+      color: var(--accent-cyan);
+    }
+    .spec-value {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .modal-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .modal-section-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .modal-section-title i {
+      color: var(--accent-gold);
+    }
+    .modal-config-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .config-chip {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      color: #e0e7ff;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .modal-address {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.5;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .modal-btn-zoom {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      transition: all 0.2s ease;
+    }
+    .modal-btn-zoom:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+    }
+    .modal-btn-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .modal-btn-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
     }
   </style>
 </head>
 <body>
 
-  <!-- ==========================================================================
-       TOP APP HEADER
-       ========================================================================== */ -->
-  <header class="app-header">
-    <div class="brand-section">
-      <div class="brand-logo-icon">
-        <i class="ph-bold ph-chart-polar"></i>
-      </div>
-      <div class="brand-text">
-        <h1>
-          Universal Visual Analytics Hub 
-          <span class="brand-badge">Alternating Format</span>
-        </h1>
-      </div>
-    </div>
+<!-- Map Container -->
+<div id="map"></div>
 
-    <div class="header-actions">
-      <div class="status-pill">
-        <span class="pulse-dot"></span>
-        <span>14 Visualizations Live</span>
-      </div>
+<!-- Top-Right Cinematic Camera Controls Bar -->
+<div class="camera-hud-bar">
+  <button class="cam-btn active" id="btn3d" onclick="setCameraMode('3d')">
+    <i class="ph-bold ph-cube"></i> 3D View
+  </button>
+  <button class="cam-btn" id="btnTop" onclick="setCameraMode('top')">
+    <i class="ph-bold ph-compass"></i> Top 2D
+  </button>
+  <button class="cam-btn" id="btnOrbit" onclick="toggleOrbit()">
+    <i class="ph-bold ph-arrows-clockwise"></i> Orbit 360°
+  </button>
+  <button class="cam-btn" onclick="resetSchoolView()">
+    <i class="ph-bold ph-crosshair"></i> Reset
+  </button>
+</div>
 
-      <button class="btn-header" id="btn-reload-all" title="Reload and re-animate all charts">
-        <i class="ph-bold ph-arrow-clockwise"></i> Reload All
-      </button>
+<!-- Floating Trigger Button (appears when sidebar is collapsed) -->
+<div class="floating-filter-trigger" id="floatingTrigger" onclick="toggleFilterPanel(true)">
+  <i class="ph-bold ph-sliders-horizontal"></i>
+  <span id="floatingTriggerText">Filters • Heritage Xperential Learning School</span>
+  <span class="floating-filter-badge" id="floatingTriggerBadge">9 Projects</span>
+</div>
 
-      <button class="btn-header btn-icon-only" id="theme-toggle-btn" title="Toggle Light / Dark Mode">
-        <i class="ph-bold ph-sun" id="theme-icon"></i>
-      </button>
-    </div>
-  </header>
+<!-- 3D HUD / Navigation Legend (Updated: Realistic Architectural Materials, zero blue) -->
+<div class="hud-controls">
+  <div style="font-weight: 800; color: #fff; font-size: 12px; margin-bottom: 2px;">
+    🏙️ 3D PropertyAI Models (Gurgaon)
+  </div>
+  <div class="hud-legend-item">
+    <div class="legend-box" style="background: #ef4444; border: 1px solid #fff;"></div>
+    <span>3D School Campus (Pitched Red Roof &amp; Clock Tower)</span>
+  </div>
+  <div class="hud-legend-item">
+    <div class="legend-box" style="background: #dcd8d4; border: 1px solid #64748b;"></div>
+    <span>3D High-Rise Residential Towers (Architectural Concrete &amp; Tinted Glass)</span>
+  </div>
+  <div class="hud-legend-item">
+    <div class="legend-box" style="background: #f59e0b; border: 1px solid #fff;"></div>
+    <span>3D Ultra Luxury Skyscraper (Gold Glass Crown)</span>
+  </div>
+  <hr style="border: 0; border-top: 1px solid var(--border); margin: 4px 0;">
+  <div style="font-size: 10.5px;">
+    <b>3D Controls:</b> Right-Click + Drag to rotate/tilt • Scroll to zoom
+  </div>
+</div>
 
-  <!-- ==========================================================================
-       SUB-TOOLBAR: CATEGORY FILTERS & LAYOUT CONTROLS
-       ========================================================================== */ -->
-  <div class="sub-toolbar">
-    <!-- Category Filter Buttons -->
-    <div class="filter-group">
-      <button class="filter-btn active" data-category="all">
-        <i class="ph-bold ph-squares-four"></i> All Blocks
+<!-- Floating Filter Panel -->
+<div class="filter-panel" id="filterPanel">
+  <div class="panel-header">
+    <h1><i class="ph-bold ph-buildings"></i> 3D Real Estate Explorer</h1>
+    <div class="panel-header-actions">
+      <span class="badge-count" id="matchBadge">0 Projects</span>
+      <button class="panel-close-btn" onclick="toggleFilterPanel(false)" title="Hide Filter Panel & View 3D Map">
+        <i class="ph-bold ph-x"></i>
       </button>
-      <button class="filter-btn" data-category="hierarchical-flow">
-        <i class="ph-bold ph-tree-structure"></i> Hierarchies & Flows
-      </button>
-      <button class="filter-btn" data-category="3d-webgl">
-        <i class="ph-bold ph-cube"></i> 3D & WebGL
-      </button>
-      <button class="filter-btn" data-category="distributions">
-        <i class="ph-bold ph-chart-scatter"></i> Distributions & Stats
-      </button>
-      <button class="filter-btn" data-category="maps-inventory">
-        <i class="ph-bold ph-map-pin"></i> Maps & Inventory
-      </button>
-    </div>
-
-    <!-- Search & Layout Tools -->
-    <div class="toolbar-tools">
-      <div class="search-box">
-        <i class="ph-bold ph-magnifying-glass"></i>
-        <input type="text" id="chart-search-input" placeholder="Search charts by name or tag...">
-      </div>
-
-      <div class="view-mode-group">
-        <button class="view-btn active" id="view-four-btn" title="4-Block Alternating Layout [Chart] [Blank] [Chart] [Blank]">
-          <i class="ph-bold ph-squares-four"></i> 4 Blocks
-        </button>
-        <button class="view-btn" id="view-two-btn" title="2-Column Grid View">
-          <i class="ph-bold ph-grid-four"></i> 2 Cols
-        </button>
-        <button class="view-btn" id="view-stack-btn" title="1-Column Full-Width Stack">
-          <i class="ph-bold ph-rows"></i> Stack
-        </button>
-      </div>
     </div>
   </div>
 
-  <!-- Quick Jump Anchor Bar -->
-  <nav class="quick-jump-bar" aria-label="Jump directly to chart">
-    <span style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Jump to:</span>
-    <a href="#card-treemap" class="quick-jump-item highlight-purple"><i class="ph-bold ph-squares-four"></i> Treemap</a>
-    <a href="#card-sunburst" class="quick-jump-item highlight-purple"><i class="ph-bold ph-sun"></i> Sunburst</a>
-    <a href="#card-desktop-chart" class="quick-jump-item"><i class="ph-bold ph-map-pin"></i> 3D Map (chart)</a>
-    <a href="#card-desktop-chart2" class="quick-jump-item"><i class="ph-bold ph-chart-polar"></i> Altair Violin (chart2)</a>
-    <a href="#card-desktop-chart3" class="quick-jump-item"><i class="ph-bold ph-chart-bar-horizontal"></i> 3D Bar (chart3)</a>
-    <a href="#card-chart-2" class="quick-jump-item"><i class="ph-bold ph-gauge"></i> Chart 2 (Gauge)</a>
-    <a href="#card-chart-3" class="quick-jump-item"><i class="ph-bold ph-circle-dashed"></i> Chart 3 (Bubble)</a>
-    <a href="#card-chart-4" class="quick-jump-item"><i class="ph-bold ph-circle-notch"></i> Chart 4 (Chord)</a>
-    <a href="#card-chart-5" class="quick-jump-item"><i class="ph-bold ph-chart-line-up"></i> Chart 5 (Area)</a>
-    <a href="#card-chart-6" class="quick-jump-item"><i class="ph-bold ph-arrows-split"></i> Chart 6 (Sankey)</a>
-    <a href="#card-chart-7" class="quick-jump-item"><i class="ph-bold ph-buildings"></i> Chart 7 (Isotype)</a>
-    <a href="#card-chart-8" class="quick-jump-item"><i class="ph-bold ph-map-trifold"></i> Chart 8 (India Map)</a>
-    <a href="#card-chart-9" class="quick-jump-item"><i class="ph-bold ph-mountains"></i> Chart 9 (3D Ridgeline)</a>
-  </nav>
+  <div class="panel-body">
+    <!-- 1. School Landmark -->
+    <div>
+      <div class="filter-group-label">
+        <span>1. Center School (3D Campus)</span>
+        <i class="ph-bold ph-graduation-cap"></i>
+      </div>
+      <input type="text" class="search-input" id="schoolSearch" placeholder="🔍 Search school..." oninput="filterSchoolOptions()" />
+      <select class="custom-select" id="schoolSelect" onchange="handleSchoolSelectChange()">
+        <!-- Populated from data.js -->
+      </select>
+    </div>
 
-  <!-- ==========================================================================
-       MAIN DASHBOARD: 4 BLOCKS PER ROW
-       Pattern: [BLANK] [CHART] [BLANK] [CHART]
-       ========================================================================== */ -->
-  <main class="dashboard-container">
-    <div class="charts-grid" id="charts-grid">
+    <!-- 2. Radius Selection -->
+    <div>
+      <div class="filter-group-label">
+        <span>2. Proximity Radius (KM)</span>
+        <span id="radiusDisplay" style="color: var(--accent-cyan); font-family: 'JetBrains Mono'; font-weight: 800;">4 km</span>
+      </div>
+      <div class="radius-selector">
+        <button class="radius-btn" onclick="setRadius(2)">2 KM</button>
+        <button class="radius-btn" onclick="setRadius(3)">3 KM</button>
+        <button class="radius-btn active" onclick="setRadius(4)">4 KM</button>
+        <button class="radius-btn" onclick="setRadius(5)">5 KM</button>
+        <button class="radius-btn" onclick="setRadius(8)">8 KM</button>
+      </div>
+    </div>
 
-      <!-- ====================================================================
-           ROW 1: [CHART] [BLANK] [CHART] [BLANK] (Start with Chart)
-           ==================================================================== -->
+    <!-- 3. Target Market -->
+    <div>
+      <div class="filter-group-label">
+        <span>3. Target Market</span>
+        <i class="ph-bold ph-crown"></i>
+      </div>
+      <div class="pills-group">
+        <label class="pill-checkbox gold">
+          <input type="checkbox" value="Ultra Luxury" checked onchange="handleFilterChange(false)">
+          <span class="pill-content"><i class="ph-bold ph-sparkle"></i> Ultra Luxury</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="Luxury" checked onchange="handleFilterChange(false)">
+          <span class="pill-content"><i class="ph-bold ph-gem"></i> Luxury</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="Premium" checked onchange="handleFilterChange(false)">
+          <span class="pill-content">Premium</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="Mid Segment" onchange="handleFilterChange(false)">
+          <span class="pill-content">Mid Segment</span>
+        </label>
+      </div>
+    </div>
 
-      <!-- Block 1: Chart -->
-      <article class="chart-card" id="card-treemap" data-category="hierarchical-flow distributions" data-keywords="treemap gapminder hierarchy world continent country population">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge badge-purple">TREEMAP</span>
-              <span class="chart-tag">Plotly Express</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="treemap" data-title="Gapminder Treemap Studio">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="treemap" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="treemap" data-title="Gapminder Treemap Studio">
-          <img class="chart-thumb" src="static/thumbnails/treemap.png?v=5" alt="Gapminder Treemap Studio" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="treemap" data-title="Gapminder Treemap Studio">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">Nested rectangles sized by Population with continuous color scale.</div>
-          <div class="footer-pills"><span class="chart-tag">Treemap</span></div>
-        </footer>
-      </article>
+    <!-- 4. Unit Configuration -->
+    <div>
+      <div class="filter-group-label">
+        <span>4. Unit Configuration</span>
+        <i class="ph-bold ph-house-line"></i>
+      </div>
+      <div class="pills-group">
+        <label class="pill-checkbox">
+          <input type="checkbox" value="2 BHK" onchange="handleFilterChange(false)">
+          <span class="pill-content">2 BHK</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="3 BHK" checked onchange="handleFilterChange(false)">
+          <span class="pill-content">3 BHK</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="4 BHK" checked onchange="handleFilterChange(false)">
+          <span class="pill-content">4 BHK</span>
+        </label>
+        <label class="pill-checkbox">
+          <input type="checkbox" value="Penthouse" onchange="handleFilterChange(false)">
+          <span class="pill-content">Penthouse</span>
+        </label>
+      </div>
+    </div>
 
-      <!-- Block 2: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
+    <!-- 5. Corridor Filter -->
+    <div>
+      <div class="filter-group-label">
+        <span>5. Corridor</span>
+        <i class="ph-bold ph-path"></i>
+      </div>
+      <select class="custom-select" id="corridorSelect" onchange="handleCorridorSelectChange()">
+        <option value="ALL">All Corridors (Entire Gurgaon)</option>
+        <option value="Golf Course Extension Road" selected>Golf Course Extension Road (GCER)</option>
+        <option value="Golf Course Road">Golf Course Road (GCR)</option>
+        <option value="Dwarka Expressway">Dwarka Expressway (DXE)</option>
+        <option value="Central Gurgaon">Central Gurgaon (CG)</option>
+        <option value="Sohna Road">Sohna Road</option>
+        <option value="Southern Peripheral Road">Southern Peripheral Road (SPR)</option>
+        <option value="New Gurgaon">New Gurgaon</option>
+      </select>
+    </div>
 
-      <!-- Block 3: Chart -->
-      <article class="chart-card" id="card-sunburst" data-category="hierarchical-flow distributions" data-keywords="sunburst radial rings gapminder hierarchy world continent country population">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge badge-rose">SUNBURST</span>
-              <span class="chart-tag">Plotly Express</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="sunburst" data-title="Gapminder Sunburst Chart">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="sunburst" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="sunburst" data-title="Gapminder Sunburst Chart">
-          <img class="chart-thumb" src="static/thumbnails/sunburst.png?v=5" alt="Gapminder Sunburst Chart" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="sunburst" data-title="Gapminder Sunburst Chart">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">Concentric radial rings hierarchy with sector angles proportional to Population.</div>
-          <div class="footer-pills"><span class="chart-tag">Sunburst</span></div>
-        </footer>
-      </article>
+    <!-- Apply & View Full 3D Map Button -->
+    <button class="apply-map-btn" onclick="toggleFilterPanel(false)">
+      <i class="ph-bold ph-eye"></i> Apply &amp; Explore 3D Map
+    </button>
 
-      <!-- Block 4: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- ====================================================================
-           ROW 2: [BLANK] [CHART] [BLANK] [CHART] (Start with Blank)
-           ==================================================================== -->
-
-      <!-- Block 5: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- Block 6: Chart -->
-      <article class="chart-card" id="card-desktop-chart" data-category="3d-webgl maps-inventory" data-keywords="chart 3d map maplibre pydeck gurgaon dlf cyberhub extruded buildings vector tiles">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge badge-amber">3D MAP</span>
-              <span class="chart-tag">MapLibre GL 3D</span>
-              <span class="chart-tag">Gurgaon</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="chart" data-title="Dynamic 3D Marker Map (Gurgaon)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="chart" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="chart" data-title="Dynamic 3D Marker Map (Gurgaon)">
-          <img class="chart-thumb" src="static/thumbnails/chart_map.png?v=5" alt="Dynamic 3D Marker Map (Gurgaon)" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="chart" data-title="Dynamic 3D Marker Map (Gurgaon)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">3D building heights, DLF CyberHub landmarks with smooth 3D camera controls.</div>
-          <div class="footer-pills"><span class="chart-tag">3D Map</span></div>
-        </footer>
-      </article>
-
-      <!-- Block 7: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- Block 8: Chart -->
-      <article class="chart-card" id="card-desktop-chart2" data-category="distributions" data-keywords="chart2 altair violin density kernel kde vega vega-lite cars miles per gallon origin cylinders">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge badge-cyan">VIOLIN</span>
-              <span class="chart-tag">Vega-Lite / Altair</span>
-              <span class="chart-tag">KDE Violin</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="chart2" data-title="Altair Density & Violin Studio">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="chart2" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="chart2" data-title="Altair Density & Violin Studio">
-          <img class="chart-thumb" src="static/thumbnails/chart_violin.png?v=5" alt="Altair Density & Violin Studio" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="chart2" data-title="Altair Density & Violin Studio">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">Vega-Lite kernel density estimation with custom bandwidth smoothing.</div>
-          <div class="footer-pills"><span class="chart-tag">Altair</span></div>
-        </footer>
-      </article>
-
-      <!-- ====================================================================
-           ROW 3: [CHART] [BLANK] [CHART] [BLANK] (Start with Chart)
-           ==================================================================== -->
-
-      <!-- Block 9: Chart -->
-      <article class="chart-card" id="card-desktop-chart3" data-category="3d-webgl distributions" data-keywords="chart3 3d bivariate bar chart postgresql histogram plotly voxels bars horsepower mpg">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge badge-emerald">3D BARS</span>
-              <span class="chart-tag">Plotly 3D WebGL</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="chart3" data-title="3D Bivariate Bar Studio">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="chart3" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="chart3" data-title="3D Bivariate Bar Studio">
-          <img class="chart-thumb" src="static/thumbnails/chart_bivariate.png?v=5" alt="3D Bivariate Bar Studio" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="chart3" data-title="3D Bivariate Bar Studio">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">Bivariate 2D histogram bins rendered as 3D extruded voxels.</div>
-          <div class="footer-pills"><span class="chart-tag">3D Bars</span></div>
-        </footer>
-      </article>
-
-      <!-- Block 10: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- Block 11: Chart -->
-      <article class="chart-card" id="card-chart-2" data-category="3d-webgl" data-keywords="gauge speedometer meter flourish needle chart_2 speed instrument automotive">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge">GAUGE</span>
-              <span class="chart-tag">Speedometer</span>
-              <span class="chart-tag">0–200 km/h</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="2" data-title="Flourish Precision Speedometer">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="2" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="2" data-title="Flourish Speedo Meter">
-          <img class="chart-thumb" src="static/thumbnails/chart_gauge.png?v=6" alt="Flourish Speedo Meter" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="2" data-title="Flourish Precision Speedometer">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">High-precision sports speedometer with 0–200 km/h scale, dynamic redline, and digital HUD.</div>
-          <div class="footer-pills"><span class="chart-tag">Speedometer</span><span class="chart-tag">Instrument</span></div>
-        </footer>
-      </article>
-
-      <!-- Block 12: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- ====================================================================
-           ROW 4: [BLANK] [CHART] [BLANK] [CHART] (Start with Blank)
-           ==================================================================== -->
-
-      <!-- Block 13: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- Block 14: Chart -->
-      <article class="chart-card" id="card-chart-3" data-category="distributions" data-keywords="bubble cluster force simulation d3 countries population gdp flourish chart_3">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge">BUBBLE</span>
-              <span class="chart-tag">Flourish v26.1.1</span>
-              <span class="chart-tag">D3 Force</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="3" data-title="Data Explorer Bubble Cluster">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="3" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="3" data-title="Data Explorer Bubble Cluster">
-          <img class="chart-thumb" src="static/thumbnails/chart_bubble.png?v=5" alt="Data Explorer Bubble Cluster" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="3" data-title="Data Explorer Bubble Cluster">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">Collision physics pack with size scaling by Population/GDP.</div>
-          <div class="footer-pills"><span class="chart-tag">D3 Physics</span></div>
-        </footer>
-      </article>
-
-      <!-- Block 15: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- Block 16: Chart -->
-      <article class="chart-card" id="card-chart-4" data-category="hierarchical-flow" data-keywords="chord diagram friends relations ribbons d3 matrix flourish network chart_4">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge">CHORD</span>
-              <span class="chart-tag">Flourish v11.0.1</span>
-              <span class="chart-tag">D3 Chord</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="4" data-title="Friends Chord Diagram">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="4" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="4" data-title="Friends Chord Diagram">
-          <img class="chart-thumb" src="static/thumbnails/chart_chord.png?v=5" alt="Friends Chord Diagram" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="4" data-title="Friends Chord Diagram">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">Circular relational chord matrix with hover focus and dimming.</div>
-          <div class="footer-pills"><span class="chart-tag">Chord</span></div>
-        </footer>
-      </article>
-
-      <!-- ====================================================================
-           ROW 5: [CHART] [BLANK] [CHART] [BLANK] (Start with Chart)
-           ==================================================================== -->
-
-      <!-- Block 17: Chart -->
-      <article class="chart-card" id="card-chart-5" data-category="distributions" data-keywords="stacked area migration timeline d3 monotone scrubber plotset us immigration chart_5">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge">STREAM</span>
-              <span class="chart-tag">PlotSet Design</span>
-              <span class="chart-tag">190-Yr Timeline</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="5" data-title="US Migration Stacked Area Timeline">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="5" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="5" data-title="US Migration Stacked Area Timeline">
-          <img class="chart-thumb" src="static/thumbnails/chart_stream.png?v=5" alt="US Migration Stacked Area Timeline" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="5" data-title="US Migration Stacked Area Timeline">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">190 years of US immigration with decade scrubber.</div>
-          <div class="footer-pills"><span class="chart-tag">Stacked Area</span></div>
-        </footer>
-      </article>
-
-      <!-- Block 18: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- Block 19: Chart -->
-      <article class="chart-card" id="card-chart-6" data-category="hierarchical-flow" data-keywords="sankey diagram energy llnl petroleum flow flourish d3 chart_6">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge">SANKEY</span>
-              <span class="chart-tag">Flourish v13.0.1</span>
-              <span class="chart-tag">d3-sankey</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="6" data-title="US Energy Flow Sankey Diagram">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="6" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="6" data-title="US Energy Flow Sankey Diagram">
-          <img class="chart-thumb" src="static/thumbnails/chart_sankey.png?v=5" alt="US Energy Flow Sankey Diagram" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="6" data-title="US Energy Flow Sankey Diagram">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">Energy flow from sources to sectors highlighting Petroleum (8.38 quads).</div>
-          <div class="footer-pills"><span class="chart-tag">Sankey</span></div>
-        </footer>
-      </article>
-
-      <!-- Block 20: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- ====================================================================
-           ROW 6: [BLANK] [CHART] [BLANK] [CHART] (Start with Blank)
-           ==================================================================== -->
-
-      <!-- Block 21: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- Block 22: Chart -->
-      <article class="chart-card" id="card-chart-7" data-category="maps-inventory" data-keywords="isotype pictogram flat inventory 1bhk 2bhk 3bhk apartments vega altair chart_7">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge">ISOTYPE</span>
-              <span class="chart-tag">Vega Style</span>
-              <span class="chart-tag">SVG Floorplans</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="7" data-title="Isotype Flat Inventory Pictogram">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="7" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="7" data-title="Isotype Flat Inventory Pictogram">
-          <img class="chart-thumb" src="static/thumbnails/chart_isotype.png?v=5" alt="Isotype Flat Inventory Pictogram" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="7" data-title="Isotype Flat Inventory Pictogram">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">Isotype pictograms substituting floorplan SVGs with real-time +/- adjusters.</div>
-          <div class="footer-pills"><span class="chart-tag">Isotype</span></div>
-        </footer>
-      </article>
-
-      <!-- Block 23: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- Block 24: Chart -->
-      <article class="chart-card" id="card-chart-8" data-category="maps-inventory" data-keywords="india map leaflet marker metros heritage landmarks tours flourish chart_8">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge">MAP</span>
-              <span class="chart-tag">Flourish v13.0.1</span>
-              <span class="chart-tag">Leaflet 1.9</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="8" data-title="India Interactive Marker Map">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="8" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="8" data-title="India Interactive Marker Map">
-          <img class="chart-thumb" src="static/thumbnails/chart_indiamap.png?v=5" alt="India Interactive Marker Map" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="8" data-title="India Interactive Marker Map">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">32 curated landmark markers across India with video tour embeds.</div>
-          <div class="footer-pills"><span class="chart-tag">Leaflet</span></div>
-        </footer>
-      </article>
-
-      <!-- ====================================================================
-           ROW 7: [CHART] [BLANK] [CHART] [BLANK] (Start with Chart)
-           ==================================================================== -->
-
-      <!-- Block 25: Chart -->
-      <article class="chart-card" id="card-chart-9" data-category="3d-webgl" data-keywords="3d viewer three.js webgl ridgeline surface elevation elevation model mountains flourish chart_9">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge">3D RIDGES</span>
-              <span class="chart-tag">Flourish v4.0.1</span>
-              <span class="chart-tag">Three.js WebGL</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="9" data-title="3D Ridgeline Surface Model">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="9" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="9" data-title="3D Ridgeline Surface Model">
-          <img class="chart-thumb" src="static/thumbnails/chart_ridgeline.png?v=6" alt="3D Ridgeline Surface Model" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="9" data-title="3D Ridgeline Surface Model">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">10 extruded ribbons, cyan-to-magenta gradient, turntable auto-rotate.</div>
-          <div class="footer-pills"><span class="chart-tag">Three.js</span></div>
-        </footer>
-      </article>
-
-      <!-- Block 26: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-      <!-- Block 27: Chart -->
-      <article class="chart-card" id="card-chart-math" data-category="3d-webgl" data-keywords="3d surface math polynomial cubic scatter database plotly webgl">
-        <header class="card-header">
-          <div class="chart-badge-row">
-            <span class="chart-num-badge">3D MATH</span>
-              <span class="chart-tag">Plotly 3D WebGL</span>
-              <span class="chart-tag">FastAPI Engine</span>
-          </div>
-          <div class="card-actions">
-            <button class="card-action-btn btn-maximize" title="Explore Interactive View" data-chart="math" data-title="3D Mathematical Surface Explorer">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-            </button>
-            <a href="#" class="card-action-btn btn-ext" title="Open Standalone Tab" data-chart="math" target="_blank">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
-        </header>
-        <div class="chart-stage" data-chart="math" data-title="3D Mathematical Surface Explorer">
-          <img class="chart-thumb" src="static/thumbnails/chart_surface.png?v=5" alt="3D Mathematical Surface Explorer" loading="lazy">
-          <div class="thumb-overlay">
-            <button class="thumb-action-pill btn-maximize" data-chart="math" data-title="3D Mathematical Surface Explorer">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              <span>Interactive View</span>
-            </button>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <div class="card-desc">Cubic polynomial surface with WebGL lighting, specular reflections, and camera zoom.</div>
-          <div class="footer-pills"><span class="chart-tag">Plotly 3D</span></div>
-        </footer>
-      </article>
-
-      <!-- Block 28: Blank -->
-      <div class="blank-card" data-category="all" aria-hidden="true"></div>
-
-        </div>
-  </main>
-
-  <!-- ==========================================================================
-       FULLSCREEN MODAL DIALOG
-       ========================================================================== */ -->
-  <div class="modal-overlay" id="fullscreen-modal" role="dialog" aria-modal="true">
-    <div class="modal-dialog">
-      <header class="modal-header">
-        <h2 id="modal-chart-title">
-          <i class="ph-bold ph-chart-line-up"></i> Chart View
-        </h2>
-        <div class="modal-actions">
-          <a href="#" class="btn-header" id="modal-open-tab-btn" target="_blank">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> Open in New Window
-          </a>
-          <button class="btn-header btn-icon-only" id="modal-close-btn" title="Close (Esc)">
-            <i class="ph-bold ph-x"></i>
-          </button>
-        </div>
-      </header>
-      <div class="modal-body">
-        <iframe id="modal-iframe" src="about:blank" title="Fullscreen Chart View"></iframe>
+    <!-- 6. Matching Projects List -->
+    <div>
+      <div class="filter-group-label">
+        <span>3D Projects in Radius (Click for Details)</span>
+        <span id="listCountLabel">0 Found</span>
+      </div>
+      <div class="projects-list" id="projectsList">
+        <!-- Rendered dynamically -->
       </div>
     </div>
   </div>
+</div>
 
-  <footer class="app-footer">
-    <p>Universal Visual Analytics Hub • Alternating 4-Block Layout: [Chart] [Blank] [Chart] [Blank]</p>
-  </footer>
+<!-- Glassmorphic View Details Modal -->
+<div class="modal-backdrop" id="projectDetailsModal" onclick="handleModalBackdropClick(event)">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>
+        <div class="modal-badges">
+          <span class="modal-badge-market" id="modalMarketBadge">Ultra Luxury</span>
+          <span class="modal-badge-status" id="modalStatusBadge">Under Construction</span>
+          <span class="modal-badge-sector" id="modalSectorBadge">Sector 62</span>
+        </div>
+        <h2 class="modal-title" id="modalTitle">Pioneer Adivat</h2>
+        <div class="modal-developer" id="modalDeveloper">by Pioneer Urban Land &amp; Infrastructure Ltd</div>
+      </div>
+      <button class="modal-close-btn" onclick="closeProjectDetailsModal()" title="Close Details">
+        <i class="ph-bold ph-x"></i>
+      </button>
+    </div>
 
-  <!-- ==========================================================================
-       ORCHESTRATION JAVASCRIPT
-       ========================================================================== */ -->
-  <script>
-    (function() {
-      function resolveChartUrl(chartKey) {
-        const hostname = window.location.hostname;
-        const isLocalPyServer = (hostname === 'localhost' || hostname === '127.0.0.1');
+    <!-- Proximity Banner -->
+    <div class="modal-distance-banner" id="modalDistanceBanner">
+      <i class="ph-bold ph-navigation-arrow"></i>
+      <span id="modalDistanceText"><b>3.4 KM</b> away from <b>Heritage Xperential Learning School</b></span>
+    </div>
 
-        if (isLocalPyServer) {
-          if (chartKey === 'treemap') return '/treemap';
-          if (chartKey === 'sunburst') return '/sunburst';
-          if (chartKey === 'chart') return '/static/chart/index.html?t=' + Date.now();
-          if (chartKey === 'chart2') return '/chart2/embed?theme=light';
-          if (chartKey === 'chart3') return '/chart3/embed?theme=light';
-          if (chartKey === 'math') return '/embed';
-          return `/static/desktop_charts/chart_${chartKey}/index.html`;
-        }
+    <!-- Project Specifications Grid -->
+    <div class="modal-specs-grid">
+      <div class="spec-card">
+        <div class="spec-label"><i class="ph-bold ph-ruler"></i> Land Area</div>
+        <div class="spec-value" id="modalLandArea">10.07 Acres</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label"><i class="ph-bold ph-tree"></i> Open Space</div>
+        <div class="spec-value" id="modalOpenArea">65% Open Area</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label"><i class="ph-bold ph-calendar-check"></i> Possession</div>
+        <div class="spec-value" id="modalPossession">Dec 2028</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label"><i class="ph-bold ph-path"></i> Corridor</div>
+        <div class="spec-value" id="modalCorridor">Golf Course Extn Rd</div>
+      </div>
+    </div>
 
-        // Static mode: Works on GitHub Pages, custom domains, or local file:// protocol
-        if (chartKey === 'treemap') return 'treemap/treemap.html';
-        if (chartKey === 'sunburst') return 'treemap/sunburst.html';
-        if (chartKey === 'chart') return 'chart/index.html';
-        if (chartKey === 'chart2') return 'chart2/index.html';
-        if (chartKey === 'chart3') return 'chart3/index.html';
-        if (chartKey === 'math') return 'math/index.html';
-        return `chart_${chartKey}/index.html`;
+    <!-- Unit Configurations -->
+    <div class="modal-section">
+      <div class="modal-section-title"><i class="ph-bold ph-house-line"></i> Available Configurations</div>
+      <div class="modal-config-chips" id="modalConfigs">
+        <!-- Rendered chips -->
+      </div>
+    </div>
+
+    <!-- Location & Address -->
+    <div class="modal-section">
+      <div class="modal-section-title"><i class="ph-bold ph-map-pin"></i> Location &amp; Address</div>
+      <div class="modal-address" id="modalAddress">Sector 62, Golf Course Extension Road, Gurugram, Haryana</div>
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="modal-footer">
+      <button class="modal-btn-zoom" id="modalZoomBtn" onclick="zoomToProjectFromModal()">
+        <i class="ph-bold ph-video-camera"></i> Zoom to 3D Tower
+      </button>
+      <button class="modal-btn-close" onclick="closeProjectDetailsModal()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Ensure dataset from data.js
+  const SCHOOLS = (typeof REAL_SCHOOLS_DATA !== 'undefined' && REAL_SCHOOLS_DATA.length > 0) ? REAL_SCHOOLS_DATA : [];
+  const PROJECTS = (typeof REAL_PROJECTS_DATA !== 'undefined' && REAL_PROJECTS_DATA.length > 0) ? REAL_PROJECTS_DATA : [];
+
+  // Currently active state
+  let currentSelectedSchool = null;
+  let currentMatchingProjects = [];
+  let currentModalProject = null;
+  let isOrbiting = false;
+  let orbitAnimId = null;
+
+  // ==========================================
+  // HAVERSINE DISTANCE (KM)
+  // ==========================================
+  function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth's radius in KM
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  // Generate GeoJSON Circle for 3D Radius Buffer
+  function createGeoJsonCircle(center, radiusKm, points = 64) {
+    const coords = [];
+    const distanceX = radiusKm / (111.320 * Math.cos(center[1] * Math.PI / 180));
+    const distanceY = radiusKm / 110.574;
+
+    for (let i = 0; i <= points; i++) {
+      const theta = (i / points) * (2 * Math.PI);
+      const x = distanceX * Math.cos(theta);
+      const y = distanceY * Math.sin(theta);
+      coords.push([center[0] + x, center[1] + y]);
+    }
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [coords]
       }
+    };
+  }
 
-      const chartItems = ['treemap', 'sunburst', 'chart', 'chart2', 'chart3', 2, 3, 4, 5, 6, 7, 8, 9, 'math'];
+  // ==========================================
+  // PROCEDURAL 3D ARCHITECTURAL MESH BUILDERS
+  // ==========================================
+
+  // 3D School Landmark Model
+  function create3DSchoolModel() {
+    const group = new THREE.Group();
+
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.7 });
+    const trimMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+    const roofMat = new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.4 });
+    const windowMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.1, metalness: 0.8 });
+    const lawnMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.9 });
+
+    // Green Campus Ground
+    const lawn = new THREE.Mesh(new THREE.BoxGeometry(160, 160, 2), lawnMat);
+    lawn.position.set(0, 0, 1);
+    group.add(lawn);
+
+    // Main Academic Center Building
+    const center = new THREE.Mesh(new THREE.BoxGeometry(70, 36, 24), wallMat);
+    center.position.set(0, -10, 14);
+    group.add(center);
+
+    // Pitched Red Roof
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(45, 18, 4), roofMat);
+    roof.rotateZ(Math.PI / 4);
+    roof.position.set(0, -10, 35);
+    group.add(roof);
+
+    // Left Academic Wing
+    const leftWing = new THREE.Mesh(new THREE.BoxGeometry(32, 55, 20), wallMat);
+    leftWing.position.set(-42, 2, 12);
+    group.add(leftWing);
+
+    // Right Academic Wing
+    const rightWing = new THREE.Mesh(new THREE.BoxGeometry(32, 55, 20), wallMat);
+    rightWing.position.set(42, 2, 12);
+    group.add(rightWing);
+
+    // Clock Tower Spire
+    const tower = new THREE.Mesh(new THREE.BoxGeometry(18, 18, 55), wallMat);
+    tower.position.set(0, -14, 28);
+    group.add(tower);
+
+    const spire = new THREE.Mesh(new THREE.ConeGeometry(12, 22, 4), roofMat);
+    spire.rotateZ(Math.PI / 4);
+    spire.position.set(0, -14, 65);
+    group.add(spire);
+
+    // Sports Field / Running Track
+    const trackMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.9 });
+    const track = new THREE.Mesh(new THREE.CylinderGeometry(28, 28, 2, 24), trackMat);
+    track.position.set(0, 75, 2);
+    track.scale.set(1.4, 1, 0.9);
+    group.add(track);
+
+    // Classroom Windows
+    for (let x = -24; x <= 24; x += 12) {
+      for (let z = 6; z <= 20; z += 7) {
+        const win = new THREE.Mesh(new THREE.BoxGeometry(6, 1, 4), windowMat);
+        win.position.set(x, -12, z);
+        group.add(win);
+      }
+    }
+
+    group.scale.set(0.7, 0.7, 0.7);
+    return group;
+  }
+
+  // 3D High-Rise Residential Tower Model (Realistic Architectural Neutral Finish - NO BLUE)
+  function create3DBuildingModel(project) {
+    const group = new THREE.Group();
+    const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
+
+    // Consistent, realistic architectural materials across all residential towers (NO BLUE)
+    const facadeMat = new THREE.MeshStandardMaterial({
+      color: 0xdcd8d4,
+      roughness: 0.65,
+      metalness: 0.1
+    });
+
+    const glassMat = new THREE.MeshPhysicalMaterial({
+      color: 0x222c38,
+      metalness: 0.85,
+      roughness: 0.18,
+      transparent: true,
+      opacity: 0.92
+    });
+
+    const frameMat = new THREE.MeshStandardMaterial({
+      color: 0x64748b,
+      metalness: 0.5,
+      roughness: 0.35
+    });
+
+    const podiumMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      roughness: 0.85
+    });
+
+    const balconyMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.25
+    });
+
+    const floors = isUltra ? 38 : 28;
+    const totalHeight = floors * 3.8;
+
+    // Podium Base
+    const podium = new THREE.Mesh(new THREE.BoxGeometry(95, 75, 14), podiumMat);
+    podium.position.set(0, 0, 7);
+    group.add(podium);
+
+    // Tower 1 (Main High-Rise Tower)
+    const towerWidth = isUltra ? 36 : 28;
+    const towerDepth = isUltra ? 28 : 22;
+    const tower1 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth, towerDepth, totalHeight), glassMat);
+    tower1.position.set(-16, 0, totalHeight / 2 + 14);
+    group.add(tower1);
+
+    // Balcony Bands for Tower 1
+    const numBands = Math.floor(floors / 2);
+    for (let i = 1; i <= numBands; i++) {
+      const zPos = 14 + (i * 7.6);
+      const band = new THREE.Mesh(new THREE.BoxGeometry(towerWidth + 3.5, towerDepth + 3.5, 1.2), balconyMat);
+      band.position.set(-16, 0, zPos);
+      group.add(band);
+    }
+
+    // Tower 2 (Twin Tower)
+    const tower2Height = totalHeight * 0.9;
+    const tower2 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.9, towerDepth * 0.9, tower2Height), glassMat);
+    tower2.position.set(22, 10, tower2Height / 2 + 14);
+    group.add(tower2);
+
+    // Balcony Bands for Tower 2
+    for (let i = 1; i <= Math.floor(floors * 0.9 / 2); i++) {
+      const zPos = 14 + (i * 7.6);
+      const band2 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.9 + 3.5, towerDepth * 0.9 + 3.5, 1.2), balconyMat);
+      band2.position.set(22, 10, zPos);
+      group.add(band2);
+    }
+
+    // Architectural Penthouse & Roof Feature
+    if (isUltra) {
+      const crownMat = new THREE.MeshStandardMaterial({
+        color: 0xf59e0b,
+        metalness: 0.8,
+        roughness: 0.25
+      });
+      const crown = new THREE.Mesh(new THREE.BoxGeometry(towerWidth + 4, towerDepth + 4, 8), crownMat);
+      crown.position.set(-16, 0, totalHeight + 17);
+      group.add(crown);
+
+      const helipad = new THREE.Mesh(new THREE.CylinderGeometry(8, 8, 2, 16), crownMat);
+      helipad.rotation.x = Math.PI / 2;
+      helipad.position.set(-16, 0, totalHeight + 22);
+      group.add(helipad);
+    } else {
+      const roofCap = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.7, towerDepth * 0.7, 6), frameMat);
+      roofCap.position.set(-16, 0, totalHeight + 17);
+      group.add(roofCap);
+    }
+
+    group.scale.set(0.65, 0.65, 0.65);
+    return group;
+  }
+
+  // ==========================================
+  // MAPLIBRE 3D ENGINE & STATE
+  // ==========================================
+  let selectedRadiusKm = 4;
+  let activeThreeScene = null;
+  let activeThreeCamera = null;
+  let activeThreeRenderer = null;
+  let activeThreeGroup = new THREE.Group();
+  let activeHtmlMarkers = [];
+
+  const map = new maplibregl.Map({
+    container: 'map',
+    style: 'https://tiles.openfreemap.org/styles/positron',
+    center: [77.065, 28.415],
+    zoom: 13.5,
+    pitch: 58,
+    bearing: -20,
+    antialias: true
+  });
+
+  map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+  map.addControl(new maplibregl.FullscreenControl(), 'top-right');
+
+  // Custom Three.js 3D Layer
+  const custom3DLayer = {
+    id: 'three-3d-models',
+    type: 'custom',
+    renderingMode: '3d',
+    onAdd: function(m, gl) {
+      activeThreeCamera = new THREE.Camera();
+      activeThreeScene = new THREE.Scene();
+
+      // Realistic Architectural Ambient & Directional Lighting
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.85);
+      activeThreeScene.add(ambLight);
+
+      const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.2);
+      dirLight1.position.set(80, 120, 150);
+      activeThreeScene.add(dirLight1);
+
+      const dirLight2 = new THREE.DirectionalLight(0x94a3b8, 0.6);
+      dirLight2.position.set(-80, -100, 80);
+      activeThreeScene.add(dirLight2);
+
+      activeThreeScene.add(activeThreeGroup);
+
+      activeThreeRenderer = new THREE.WebGLRenderer({
+        canvas: m.getCanvas(),
+        context: gl,
+        antialias: true
+      });
+      activeThreeRenderer.autoClear = false;
+    },
+    render: function(gl, matrix) {
+      const m = new THREE.Matrix4().fromArray(matrix);
+      activeThreeCamera.projectionMatrix = m;
+      activeThreeRenderer.resetState();
+      activeThreeRenderer.render(activeThreeScene, activeThreeCamera);
+      map.triggerRepaint();
+    }
+  };
+
+  // Map Load & Initialization
+  map.on('style.load', () => {
+    // 3D Buildings Extrusion
+    const layers = map.getStyle().layers;
+    let labelLayerId;
+    for (let i = 0; i < layers.length; i++) {
+      if (layers[i].type === 'symbol' && layers[i].layout && layers[i].layout['text-field']) {
+        labelLayerId = layers[i].id;
+        break;
+      }
+    }
+
+    if (!map.getLayer('building-3d') && map.getSource('openmaptiles')) {
+      map.addLayer({
+        'id': 'building-3d',
+        'source': 'openmaptiles',
+        'source-layer': 'building',
+        'type': 'fill-extrusion',
+        'minzoom': 13,
+        'paint': {
+          'fill-extrusion-color': '#cbd5e1',
+          'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 13, 0, 16, ['get', 'render_height']],
+          'fill-extrusion-base': ['interpolate', ['linear'], ['zoom'], 13, 0, 16, ['get', 'render_min_height']],
+          'fill-extrusion-opacity': 0.7
+        }
+      }, labelLayerId);
+    }
+
+    // 3D Proximity Radius Buffer Source & Layers
+    map.addSource('radius-buffer', {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] }
+    });
+
+    map.addLayer({
+      id: 'radius-buffer-fill',
+      type: 'fill',
+      source: 'radius-buffer',
+      paint: {
+        'fill-color': '#6366f1',
+        'fill-opacity': 0.12
+      }
+    });
+
+    map.addLayer({
+      id: 'radius-buffer-line',
+      type: 'line',
+      source: 'radius-buffer',
+      paint: {
+        'line-color': '#6366f1',
+        'line-width': 2.5,
+        'line-dasharray': [3, 2]
+      }
+    });
+
+    // Add Three.js Custom 3D Layer
+    map.addLayer(custom3DLayer);
+
+    // Initial Population of UI
+    populateSchoolDropdown();
+    handleFilterChange(false);
+  });
+
+  // Re-stagger labels on map movements
+  map.on('move', () => {
+    updateLabelStaggering();
+  });
+
+  // ==========================================
+  // CAMERA CONTROLS (3D View, Top 2D, Orbit 360, Reset)
+  // ==========================================
+  function setCameraMode(mode) {
+    if (isOrbiting) toggleOrbit();
+
+    document.getElementById('btn3d').classList.toggle('active', mode === '3d');
+    document.getElementById('btnTop').classList.toggle('active', mode === 'top');
+
+    if (mode === 'top') {
+      map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
+    } else {
+      map.easeTo({ pitch: 58, bearing: -20, duration: 800 });
+    }
+  }
+
+  function toggleOrbit() {
+    isOrbiting = !isOrbiting;
+    document.getElementById('btnOrbit').classList.toggle('active', isOrbiting);
+
+    if (isOrbiting) {
+      function orbitStep() {
+        if (!isOrbiting) return;
+        map.setBearing(map.getBearing() + 0.18);
+        orbitAnimId = requestAnimationFrame(orbitStep);
+      }
+      orbitStep();
+    } else {
+      if (orbitAnimId) cancelAnimationFrame(orbitAnimId);
+    }
+  }
+
+  function resetSchoolView() {
+    if (isOrbiting) toggleOrbit();
+    if (!currentSelectedSchool) return;
+
+    map.flyTo({
+      center: [currentSelectedSchool.lng, currentSelectedSchool.lat],
+      zoom: selectedRadiusKm <= 2 ? 14.8 : selectedRadiusKm <= 3 ? 14.1 : 13.5,
+      pitch: 58,
+      bearing: -20,
+      speed: 1.2,
+      curve: 1.2,
+      essential: true
+    });
+    document.getElementById('btn3d').classList.add('active');
+    document.getElementById('btnTop').classList.remove('active');
+  }
+
+  // ==========================================
+  // PANEL COLLAPSE & AUTO-HIDE LOGIC
+  // ==========================================
+  function toggleFilterPanel(show) {
+    const panel = document.getElementById('filterPanel');
+    const trigger = document.getElementById('floatingTrigger');
+    if (show) {
+      panel.classList.remove('collapsed');
+      trigger.classList.remove('visible');
+    } else {
+      panel.classList.add('collapsed');
+      trigger.classList.add('visible');
+    }
+  }
+
+  function updateFloatingTriggerUI(school, count, radiusKm) {
+    const textEl = document.getElementById('floatingTriggerText');
+    const badgeEl = document.getElementById('floatingTriggerBadge');
+    if (textEl && school) {
+      textEl.innerText = `${school.name} • ${radiusKm} KM`;
+    }
+    if (badgeEl) {
+      badgeEl.innerText = `${count} Projects`;
+    }
+  }
+
+  // ==========================================
+  // VIEW DETAILS MODAL LOGIC
+  // ==========================================
+  function openProjectDetails(proj, school) {
+    currentModalProject = proj;
+    const modal = document.getElementById('projectDetailsModal');
+
+    // Title & Developer
+    document.getElementById('modalTitle').innerText = proj.name;
+    document.getElementById('modalDeveloper').innerText = proj.developer ? `by ${proj.developer}` : 'Premier Real Estate Developer';
+
+    // Badges
+    const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
+    const isLuxury = (proj.target_market || '').toLowerCase() === 'luxury';
+    const marketBadge = document.getElementById('modalMarketBadge');
+    marketBadge.innerText = proj.target_market || 'Luxury';
+    marketBadge.className = `modal-badge-market ${isUltra ? 'ultra' : isLuxury ? 'luxury' : ''}`;
+
+    const statusBadge = document.getElementById('modalStatusBadge');
+    statusBadge.innerText = proj.status || 'Under Construction';
+
+    const sectorBadge = document.getElementById('modalSectorBadge');
+    sectorBadge.innerText = proj.sector || proj.corridor || 'Gurugram';
+
+    // Distance Banner
+    const schoolName = (school && school.name) ? school.name : (currentSelectedSchool ? currentSelectedSchool.name : 'Center School');
+    const dist = (proj.distanceFromSchool !== undefined) ? proj.distanceFromSchool.toFixed(2) : calculateDistanceKm(school ? school.lat : 28.415, school ? school.lng : 77.065, proj.lat, proj.lng).toFixed(2);
+    document.getElementById('modalDistanceText').innerHTML = `<b>📍 ${dist} KM</b> away from <b>${schoolName}</b>`;
+
+    // Specs Grid
+    document.getElementById('modalLandArea').innerText = proj.total_area_acres ? `${proj.total_area_acres} Acres` : 'Master Planned';
+    document.getElementById('modalOpenArea').innerText = proj.open_area_percent ? `${proj.open_area_percent}% Open Area` : '65% Open Area';
+    document.getElementById('modalPossession').innerText = proj.possession_year ? `Possession ${proj.possession_year}` : (proj.status || 'Ready / Upcoming');
+    document.getElementById('modalCorridor').innerText = proj.corridor || 'Gurugram';
+
+    // Available Configurations
+    const configsContainer = document.getElementById('modalConfigs');
+    if (proj.configurations && proj.configurations.length > 0) {
+      configsContainer.innerHTML = proj.configurations.map(c => `<span class="config-chip">${c}</span>`).join('');
+    } else {
+      configsContainer.innerHTML = '<span class="config-chip">3 BHK</span><span class="config-chip">4 BHK</span>';
+    }
+
+    // Address
+    document.getElementById('modalAddress').innerText = proj.address || `${proj.sector || 'Gurugram'}, ${proj.corridor || 'Haryana'}`;
+
+    // Show Modal
+    modal.classList.add('active');
+  }
+
+  function openProjectDetailsById(id) {
+    const proj = PROJECTS.find(p => p.id === id);
+    if (proj) {
+      openProjectDetails(proj, currentSelectedSchool);
+    }
+  }
+
+  function closeProjectDetailsModal() {
+    const modal = document.getElementById('projectDetailsModal');
+    modal.classList.remove('active');
+    currentModalProject = null;
+  }
+
+  function handleModalBackdropClick(event) {
+    if (event.target && event.target.id === 'projectDetailsModal') {
+      closeProjectDetailsModal();
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeProjectDetailsModal();
+    }
+  });
+
+  function zoomToProjectFromModal() {
+    if (!currentModalProject) return;
+    const { lng, lat } = currentModalProject;
+    closeProjectDetailsModal();
+    focusProject(lng, lat);
+  }
+
+  // ==========================================
+  // FILTER & STATE MANAGEMENT
+  // ==========================================
+  function populateSchoolDropdown() {
+    const select = document.getElementById('schoolSelect');
+    select.innerHTML = '';
+
+    SCHOOLS.forEach(school => {
+      const opt = document.createElement('option');
+      opt.value = school.name;
+      opt.innerText = `${school.name} (${school.corridor})`;
+      if (school.name.includes('Heritage Xperential')) {
+        opt.selected = true;
+      }
+      select.appendChild(opt);
+    });
+  }
+
+  function filterSchoolOptions() {
+    const query = document.getElementById('schoolSearch').value.toLowerCase();
+    const select = document.getElementById('schoolSelect');
+    select.innerHTML = '';
+
+    const filtered = SCHOOLS.filter(s =>
+      s.name.toLowerCase().includes(query) || s.corridor.toLowerCase().includes(query)
+    );
+
+    filtered.forEach(school => {
+      const opt = document.createElement('option');
+      opt.value = school.name;
+      opt.innerText = `${school.name} (${school.corridor})`;
+      select.appendChild(opt);
+    });
+
+    if (filtered.length > 0) {
+      select.selectedIndex = 0;
+      handleFilterChange(false);
+    }
+  }
+
+  // Auto-collapse when user selects from dropdowns
+  function handleSchoolSelectChange() {
+    handleFilterChange(true);
+  }
+
+  function handleCorridorSelectChange() {
+    handleFilterChange(true);
+  }
+
+  function setRadius(km) {
+    selectedRadiusKm = km;
+    document.querySelectorAll('.radius-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.innerText.includes(`${km} KM`));
+    });
+    document.getElementById('radiusDisplay').innerText = `${km} km`;
+    handleFilterChange(true); // Auto-hide dropdown on selection
+  }
+
+  function handleFilterChange(autoCollapse = false) {
+    const schoolName = document.getElementById('schoolSelect').value;
+    const selectedSchool = SCHOOLS.find(s => s.name === schoolName) || SCHOOLS[0];
+    if (!selectedSchool) return;
+
+    currentSelectedSchool = selectedSchool;
+
+    const targetMarkets = Array.from(
+      document.querySelectorAll('.pills-group input[type="checkbox"]:checked')
+    ).map(cb => cb.value).filter(v => ['Ultra Luxury', 'Luxury', 'Premium', 'Mid Segment'].includes(v));
+
+    const selectedConfigs = Array.from(
+      document.querySelectorAll('.pills-group input[type="checkbox"]:checked')
+    ).map(cb => cb.value).filter(v => ['2 BHK', '3 BHK', '4 BHK', 'Penthouse'].includes(v));
+
+    const selectedCorridor = document.getElementById('corridorSelect').value;
+
+    // Filter from 405 Real Projects
+    const matchingProjects = [];
+    PROJECTS.forEach(proj => {
+      const dist = calculateDistanceKm(selectedSchool.lat, selectedSchool.lng, proj.lat, proj.lng);
+      if (dist > selectedRadiusKm) return;
+      if (targetMarkets.length > 0 && !targetMarkets.includes(proj.target_market)) return;
+      if (selectedConfigs.length > 0 && !proj.configurations.some(c => selectedConfigs.includes(c))) return;
+      if (selectedCorridor !== 'ALL' && proj.corridor !== selectedCorridor) return;
+
+      matchingProjects.push({ ...proj, distanceFromSchool: dist });
+    });
+
+    matchingProjects.sort((a, b) => a.distanceFromSchool - b.distanceFromSchool);
+    currentMatchingProjects = matchingProjects;
+
+    // Update Floating Trigger & Badges
+    updateFloatingTriggerUI(selectedSchool, matchingProjects.length, selectedRadiusKm);
+
+    // 1. Draw 3D Radius Circle
+    const circleGeo = createGeoJsonCircle([selectedSchool.lng, selectedSchool.lat], selectedRadiusKm);
+    if (map.getSource('radius-buffer')) {
+      map.getSource('radius-buffer').setData(circleGeo);
+    }
+
+    // 2. Camera FlyTo in 3D
+    map.flyTo({
+      center: [selectedSchool.lng, selectedSchool.lat],
+      zoom: selectedRadiusKm <= 2 ? 14.8 : selectedRadiusKm <= 3 ? 14.1 : 13.5,
+      pitch: 58,
+      bearing: -20,
+      speed: 1.2,
+      curve: 1.3,
+      essential: true
+    });
+
+    // 3. Rebuild 3D Meshes in Three.js (Neutral Architectural Finish)
+    rebuild3DModels(selectedSchool, matchingProjects);
+
+    // 4. Update 3D Floating HTML Labels & Sidebar
+    renderHtmlLabels(selectedSchool, matchingProjects);
+    renderProjectsSidebar(matchingProjects, selectedSchool);
+
+    // If triggered by a user dropdown/radius selection, auto-collapse sidebar to show map
+    if (autoCollapse) {
+      setTimeout(() => {
+        toggleFilterPanel(false);
+      }, 150);
+    }
+  }
+
+  function placeMeshAtLngLat(mesh, lng, lat, altitude = 0) {
+    const coord = maplibregl.MercatorCoordinate.fromLngLat([lng, lat], altitude);
+    const scale = coord.meterInMercatorCoordinateUnits();
+
+    mesh.position.set(coord.x, coord.y, coord.z);
+    mesh.scale.set(scale, -scale, scale);
+    mesh.rotation.x = Math.PI / 2;
+  }
+
+  function rebuild3DModels(school, projects) {
+    if (!activeThreeScene) return;
+
+    while (activeThreeGroup.children.length > 0) {
+      const obj = activeThreeGroup.children[0];
+      activeThreeGroup.remove(obj);
+    }
+
+    // 3D School Model
+    const schoolMesh = create3DSchoolModel();
+    placeMeshAtLngLat(schoolMesh, school.lng, school.lat, 0);
+    activeThreeGroup.add(schoolMesh);
+
+    // 3D Towers for top 25 nearest projects to prevent WebGL lag
+    projects.slice(0, 25).forEach(p => {
+      const bldgMesh = create3DBuildingModel(p);
+      placeMeshAtLngLat(bldgMesh, p.lng, p.lat, 0);
+      activeThreeGroup.add(bldgMesh);
+    });
+
+    map.triggerRepaint();
+  }
+
+  function renderHtmlLabels(school, projects) {
+    activeHtmlMarkers.forEach(m => (m.marker ? m.marker.remove() : m.remove()));
+    activeHtmlMarkers = [];
+
+    // School Pin
+    const schoolEl = document.createElement('div');
+    schoolEl.className = 'model-label-school';
+    schoolEl.innerHTML = `<i class="ph-bold ph-graduation-cap" style="font-size: 16px;"></i> ${school.name}`;
+    schoolEl.title = `3D School Campus • ${school.corridor}`;
+
+    const schoolMarker = new maplibregl.Marker({ element: schoolEl, anchor: 'bottom' })
+      .setLngLat([school.lng, school.lat])
+      .addTo(map);
+    activeHtmlMarkers.push({ marker: schoolMarker });
+
+    // Project Pins
+    projects.slice(0, 25).forEach(proj => {
+      const el = document.createElement('div');
+      const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
+      const is4S = proj.name.toLowerCase().includes('4s');
+      el.className = `model-label-building ${isUltra ? 'ultra-label' : ''} ${is4S ? 'featured-label' : ''}`;
       
-      // Wire up standalone external tab buttons
-      chartItems.forEach(key => {
-        const extBtns = document.querySelectorAll(`.btn-ext[data-chart="${key}"]`);
-        const url = resolveChartUrl(key);
-        extBtns.forEach(btn => {
-          btn.href = url;
-        });
+      el.innerHTML = `
+        <div class="label-top-row">
+          <i class="ph-bold ph-buildings" style="color: ${isUltra ? 'var(--accent-gold)' : 'var(--accent-cyan)'}"></i>
+          <b>${proj.name}</b>
+        </div>
+        <div class="label-sub-row">
+          <span style="color: var(--accent-cyan); font-weight: 800;">📍 ${proj.distanceFromSchool.toFixed(1)} km</span>
+          <span>•</span>
+          <span>${proj.configurations.join(', ')}</span>
+        </div>
+      `;
+
+      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([proj.lng, proj.lat])
+        .addTo(map);
+
+      // Clicking ANY project marker opens View Details Modal
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openProjectDetails(proj, school);
       });
 
-      // Handle thumbnail fallbacks for both root and static path contexts
-      document.querySelectorAll('.chart-thumb').forEach(img => {
-        img.onerror = function() {
-          if (this.src.includes('static/thumbnails/')) {
-            this.src = this.src.replace('static/thumbnails/', 'thumbnails/');
-          } else if (this.src.includes('thumbnails/')) {
-            this.src = this.src.replace('thumbnails/', 'static/thumbnails/');
-          }
-        };
-      });
+      activeHtmlMarkers.push({ marker, el, proj });
+    });
 
-      // Clicking anywhere on the card opens the full interactive chart modal
-      document.querySelectorAll('.chart-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-          const stage = card.querySelector('.chart-stage');
-          if (stage) {
-            const chartKey = stage.getAttribute('data-chart');
-            const title = stage.getAttribute('data-title');
-            if (chartKey) {
-              openInteractiveModal(chartKey, title);
-            }
-          }
-        });
-      });
+    updateLabelStaggering();
+  }
 
-      // Individual Card Refresh
-      document.querySelectorAll('.btn-refresh').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const targetId = btn.getAttribute('data-target');
-          const iframe = document.getElementById(targetId);
-          if (iframe) {
-            btn.querySelector('i').classList.add('ph-spin');
-            iframe.src = iframe.src;
-            setTimeout(() => {
-              btn.querySelector('i').classList.remove('ph-spin');
-            }, 600);
-          }
-        });
-      });
-
-      // Global Reload All
-      const reloadAllBtn = document.getElementById('btn-reload-all');
-      if (reloadAllBtn) {
-        reloadAllBtn.addEventListener('click', () => {
-          reloadAllBtn.querySelector('i').classList.add('ph-spin');
-          chartItems.forEach(key => {
-            let iframeId = `iframe-chart-${key}`;
-            let loaderId = `loader-chart-${key}`;
-
-            if (key === 'treemap') {
-              iframeId = 'iframe-treemap';
-              loaderId = 'loader-treemap';
-            } else if (key === 'sunburst') {
-              iframeId = 'iframe-sunburst';
-              loaderId = 'loader-sunburst';
-            } else if (key === 'chart' || key === 'chart2' || key === 'chart3') {
-              iframeId = `iframe-desktop-${key}`;
-              loaderId = `loader-desktop-${key}`;
-            }
-
-            const iframe = document.getElementById(iframeId);
-            const loader = document.getElementById(loaderId);
-            if (loader) loader.classList.remove('hidden');
-            if (iframe) iframe.src = iframe.src;
-          });
-          setTimeout(() => {
-            reloadAllBtn.querySelector('i').classList.remove('ph-spin');
-          }, 1200);
-        });
-      }
-
-      // Category Filters
-      const filterButtons = document.querySelectorAll('.filter-btn');
-      const allCards = document.querySelectorAll('.chart-card, .blank-card');
-
-      filterButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-          filterButtons.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-
-          const category = btn.getAttribute('data-category');
-          allCards.forEach(card => {
-            if (card.classList.contains('blank-card')) {
-              // Always keep blank cards visible in 'all' view to preserve 4-block layout
-              card.style.display = (category === 'all') ? 'flex' : 'none';
-              return;
-            }
-            const cardCats = card.getAttribute('data-category') || '';
-            if (category === 'all' || cardCats.includes(category)) {
-              card.style.display = 'flex';
-            } else {
-              card.style.display = 'none';
-            }
-          });
-        });
-      });
-
-      // Search Bar
-      const searchInput = document.getElementById('chart-search-input');
-      if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-          const query = e.target.value.toLowerCase().trim();
-          allCards.forEach(card => {
-            if (card.classList.contains('blank-card')) {
-              card.style.display = query ? 'none' : 'flex';
-              return;
-            }
-            const text = (card.innerText + ' ' + (card.getAttribute('data-keywords') || '')).toLowerCase();
-            if (!query || text.includes(query)) {
-              card.style.display = 'flex';
-            } else {
-              card.style.display = 'none';
-            }
-          });
-        });
-      }
-
-      // View Mode Toggle (4 Blocks vs 2 Cols vs Stack)
-      const gridContainer = document.getElementById('charts-grid');
-      const viewFourBtn = document.getElementById('view-four-btn');
-      const viewTwoBtn = document.getElementById('view-two-btn');
-      const viewStackBtn = document.getElementById('view-stack-btn');
-      const blankCards = document.querySelectorAll('.blank-card');
-
-      const setViewMode = (mode) => {
-        [viewFourBtn, viewTwoBtn, viewStackBtn].forEach(b => b && b.classList.remove('active'));
-        gridContainer.classList.remove('view-two-col', 'view-stack');
-
-        if (mode === 'two') {
-          gridContainer.classList.add('view-two-col');
-          if (viewTwoBtn) viewTwoBtn.classList.add('active');
-          blankCards.forEach(b => b.style.display = 'none');
-        } else if (mode === 'stack') {
-          gridContainer.classList.add('view-stack');
-          if (viewStackBtn) viewStackBtn.classList.add('active');
-          blankCards.forEach(b => b.style.display = 'none');
-        } else {
-          if (viewFourBtn) viewFourBtn.classList.add('active');
-          blankCards.forEach(b => b.style.display = 'flex');
-        }
-      };
-
-      if (viewFourBtn) viewFourBtn.addEventListener('click', () => setViewMode('four'));
-      if (viewTwoBtn) viewTwoBtn.addEventListener('click', () => setViewMode('two'));
-      if (viewStackBtn) viewStackBtn.addEventListener('click', () => setViewMode('stack'));
-
-      // Fullscreen Modal Controls
-      const modal = document.getElementById('fullscreen-modal');
-      const modalIframe = document.getElementById('modal-iframe');
-      const modalTitle = document.getElementById('modal-chart-title');
-      const modalOpenTab = document.getElementById('modal-open-tab-btn');
-      const modalClose = document.getElementById('modal-close-btn');
-
-      function openInteractiveModal(chartKey, title) {
-        const url = resolveChartUrl(chartKey);
-        modalTitle.innerHTML = `<span class="chart-num-badge">INTERACTIVE</span> ${title || 'Chart View'}`;
-        modalIframe.src = url;
-        modalOpenTab.href = url;
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-      }
-
-      document.querySelectorAll('.btn-maximize').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const chartKey = btn.getAttribute('data-chart');
-          const title = btn.getAttribute('data-title');
-          if (chartKey) {
-            openInteractiveModal(chartKey, title);
-          }
-        });
-      });
-
-      const closeModal = () => {
-        modal.classList.remove('active');
-        modalIframe.src = 'about:blank';
-        document.body.style.overflow = '';
-      };
-
-      if (modalClose) modalClose.addEventListener('click', closeModal);
-      if (modal) {
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) closeModal();
-        });
-      }
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-          closeModal();
-        }
-      });
-
-      // Theme Switcher (Dark Mode by default)
-      const themeToggleBtn = document.getElementById('theme-toggle-btn');
-      const themeIcon = document.getElementById('theme-icon');
-
-      const savedTheme = localStorage.getItem('hub-theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      updateThemeIcon(savedTheme);
-
-      function updateThemeIcon(theme) {
-        if (themeIcon) {
-          if (theme === 'light') {
-            themeIcon.classList.remove('ph-sun');
-            themeIcon.classList.add('ph-moon');
-          } else {
-            themeIcon.classList.remove('ph-moon');
-            themeIcon.classList.add('ph-sun');
-          }
+  // Dynamic anti-overlap staggering so cards along roads never collide
+  function updateLabelStaggering() {
+    if (!activeHtmlMarkers || activeHtmlMarkers.length <= 1) return;
+    const placed = [];
+    activeHtmlMarkers.forEach(item => {
+      if (!item.proj) return;
+      const pt = map.project([item.proj.lng, item.proj.lat]);
+      let tier = 0;
+      for (const p of placed) {
+        const dx = Math.abs(pt.x - p.x);
+        const dy = Math.abs(pt.y - p.y);
+        if (dx < 170 && dy < 48 && p.tier === tier) {
+          tier++;
         }
       }
-
-      if (themeToggleBtn) {
-        themeToggleBtn.addEventListener('click', () => {
-          const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-          document.documentElement.setAttribute('data-theme', newTheme);
-          localStorage.setItem('hub-theme', newTheme);
-          updateThemeIcon(newTheme);
-        });
+      placed.push({ x: pt.x, y: pt.y - tier * 48, tier });
+      if (tier > 0) {
+        item.el.style.transform = 'translateY(-' + (tier * 48) + 'px)';
+        item.el.style.zIndex = '' + (1000 + tier * 10);
+      } else {
+        item.el.style.transform = '';
+        item.el.style.zIndex = '';
       }
-    })();
-  </script>
+    });
+  }
+
+  function renderProjectsSidebar(projects, school) {
+    const listEl = document.getElementById('projectsList');
+    const badgeEl = document.getElementById('matchBadge');
+    const countEl = document.getElementById('listCountLabel');
+
+    badgeEl.innerText = `${projects.length} Project${projects.length !== 1 ? 's' : ''}`;
+    countEl.innerText = `${projects.length} Found in ${selectedRadiusKm}km`;
+
+    if (projects.length === 0) {
+      listEl.innerHTML = `
+        <div style="text-align: center; padding: 25px 10px; color: var(--text-muted); font-size: 12px;">
+          <i class="ph-bold ph-warning-circle" style="font-size: 26px; color: var(--accent-gold); display: block; margin-bottom: 6px;"></i>
+          No 3D projects found within <b>${selectedRadiusKm} km</b> of ${school.name} matching selected filters.<br>
+          <span style="color: #818cf8; cursor: pointer; text-decoration: underline; margin-top: 6px; display: inline-block; font-weight: 700;" onclick="setRadius(5)">Expand radius to 5 KM</span>
+        </div>
+      `;
+      return;
+    }
+
+    listEl.innerHTML = projects.map(p => {
+      const isUltra = (p.target_market || '').toLowerCase().includes('ultra');
+      const is4S = p.name.toLowerCase().includes('4s');
+      const badgeClass = isUltra ? 'ultra' : p.target_market === 'Luxury' ? 'luxury' : 'premium';
+      return `
+        <div class="project-card ${is4S ? 'featured-card' : ''}" onclick="openProjectDetailsById(${p.id})">
+          <div class="project-card-header">
+            <span class="project-title">${p.name}</span>
+            <span class="project-distance">${p.distanceFromSchool.toFixed(1)} km</span>
+          </div>
+          <div class="project-meta">
+            <span class="tag-market ${badgeClass}">${p.target_market}</span>
+            <span>${p.configurations.join(', ')}</span>
+            <span style="margin-left: auto; color: var(--text-muted);">${p.sector || p.corridor}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function focusProject(lng, lat) {
+    map.flyTo({
+      center: [lng, lat],
+      zoom: 16.5,
+      pitch: 65,
+      bearing: -15,
+      speed: 1.3,
+      curve: 1.2,
+      essential: true
+    });
+  }
+</script>
 </body>
 </html>
