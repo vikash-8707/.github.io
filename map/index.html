@@ -26,83 +26,166 @@
       --primary: #6366f1;
       --primary-hover: #4f46e5;
       --primary-glow: rgba(99, 102, 241, 0.45);
-      --surface: rgba(15, 23, 42, 0.90);
+      --surface: rgba(15, 23, 42, 0.94);
       --surface-card: rgba(30, 41, 59, 0.85);
       --border: rgba(255, 255, 255, 0.10);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --accent-gold: #f59e0b;
       --accent-emerald: #10b981;
-      --accent-cyan: #06b6d4;
-      --accent-rose: #f43f5e;
+      --accent-cyan: #38bdf8;
       --radius-sm: 8px;
       --radius-md: 12px;
-      --radius-lg: 18px;
+      --radius-lg: 16px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    body {
-      width: 100vw;
-      height: 100vh;
+    body, html {
+      width: 100%;
+      height: 100%;
       overflow: hidden;
-      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-      background: #060911;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: #020617;
       color: var(--text-main);
     }
 
     #map {
-      position: absolute;
-      inset: 0;
       width: 100%;
       height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
 
-    /* Floating Left Sidebar Panel */
+    /* Floating Filter Trigger Button (Visible when panel is collapsed) */
+    .floating-filter-trigger {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 999;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(99, 102, 241, 0.6);
+      border-radius: 9999px;
+      padding: 10px 18px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.35);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+    .floating-filter-trigger:hover {
+      transform: translateY(-2px) scale(1.02);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.5);
+    }
+    .floating-filter-trigger.visible {
+      display: flex;
+    }
+    .floating-filter-trigger i {
+      font-size: 17px;
+      color: var(--accent-cyan);
+    }
+    .floating-filter-badge {
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-weight: 800;
+    }
+
+    /* Floating Glassmorphic Filter Sidebar Panel */
     .filter-panel {
-      position: absolute;
-      top: 18px;
-      left: 18px;
-      width: 420px;
-      max-height: calc(100vh - 36px);
-      background: var(--surface);
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 400px;
+      max-height: calc(100vh - 40px);
+      background: rgba(15, 23, 42, 0.96);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius-lg);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
-      z-index: 30;
+      z-index: 1000;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(0, 0, 0, 0.3);
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .filter-panel.collapsed {
+      transform: translateX(-430px);
+      opacity: 0;
+      pointer-events: none;
     }
 
     .panel-header {
-      padding: 16px 20px;
+      padding: 18px 20px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 100%);
+      gap: 10px;
     }
     .panel-header h1 {
       font-size: 15px;
       font-weight: 800;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       letter-spacing: -0.3px;
     }
-    .panel-header h1 i { color: var(--accent-cyan); font-size: 20px; }
+    .panel-header h1 i {
+      color: var(--accent-cyan);
+      font-size: 20px;
+    }
+    .panel-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     .badge-count {
-      font-size: 11px;
-      font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(99, 102, 241, 0.25);
-      color: #c7d2fe;
-      border: 1px solid rgba(165, 180, 252, 0.4);
       font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: rgba(99, 102, 241, 0.25);
+      border: 1px solid rgba(99, 102, 241, 0.5);
+      color: #c7d2fe;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      font-weight: 700;
+    }
+    .panel-close-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.2s ease;
+    }
+    .panel-close-btn:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
     }
 
     .panel-body {
@@ -110,209 +193,271 @@
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 16px;
+    }
+    .panel-body::-webkit-scrollbar {
+      width: 4px;
+    }
+    .panel-body::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
     }
 
-    /* Section Labels */
     .filter-group-label {
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.6px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    /* Search Input */
     .search-input {
       width: 100%;
-      background: var(--surface-card);
+      background: rgba(15, 23, 42, 0.6);
       border: 1px solid var(--border);
-      color: var(--text-main);
       border-radius: var(--radius-sm);
       padding: 9px 12px;
-      font-size: 12.5px;
-      font-family: inherit;
+      color: var(--text-main);
+      font-size: 13px;
       outline: none;
-      margin-bottom: 6px;
+      transition: border-color 0.2s;
+      margin-bottom: 8px;
     }
-    .search-input:focus { border-color: var(--primary); }
+    .search-input:focus {
+      border-color: var(--primary);
+    }
 
-    /* Select Inputs */
     .custom-select {
       width: 100%;
-      background: var(--surface-card);
+      background: rgba(30, 41, 59, 0.95);
       border: 1px solid var(--border);
-      color: var(--text-main);
       border-radius: var(--radius-sm);
       padding: 10px 12px;
+      color: var(--text-main);
       font-size: 13px;
       font-weight: 600;
-      font-family: inherit;
       outline: none;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: border-color 0.2s;
     }
     .custom-select:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 2px var(--primary-glow);
     }
     .custom-select option {
       background: #0f172a;
       color: #fff;
     }
 
-    /* Radius Pill Selector */
     .radius-selector {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 5px;
+      gap: 6px;
     }
     .radius-btn {
-      padding: 8px 2px;
-      border-radius: var(--radius-sm);
+      background: rgba(30, 41, 59, 0.7);
       border: 1px solid var(--border);
-      background: var(--surface-card);
+      border-radius: var(--radius-sm);
+      padding: 8px 4px;
       color: var(--text-muted);
-      font-size: 11.5px;
-      font-weight: 800;
+      font-size: 11px;
+      font-weight: 700;
       cursor: pointer;
+      transition: all 0.2s;
       text-align: center;
-      transition: all 0.15s;
     }
-    .radius-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+    .radius-btn:hover {
+      background: rgba(99, 102, 241, 0.15);
+      color: #fff;
+      border-color: var(--primary);
+    }
     .radius-btn.active {
       background: var(--primary);
-      border-color: #818cf8;
       color: #fff;
-      box-shadow: 0 4px 14px var(--primary-glow);
+      border-color: var(--primary);
+      box-shadow: 0 0 15px var(--primary-glow);
     }
 
-    /* Multi-select Pills */
     .pills-group {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
     }
     .pill-checkbox {
+      display: inline-flex;
       cursor: pointer;
       user-select: none;
     }
-    .pill-checkbox input { display: none; }
+    .pill-checkbox input {
+      display: none;
+    }
     .pill-content {
-      padding: 5px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--surface-card);
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-      transition: all 0.15s;
       display: inline-flex;
       align-items: center;
       gap: 5px;
+      padding: 5px 10px;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.2s;
     }
-    .pill-checkbox input:checked + .pill-content {
-      background: rgba(99, 102, 241, 0.3);
-      border-color: #818cf8;
+    .pill-checkbox:hover .pill-content {
+      border-color: rgba(255, 255, 255, 0.3);
       color: #fff;
     }
+    .pill-checkbox input:checked + .pill-content {
+      background: rgba(99, 102, 241, 0.25);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
     .pill-checkbox.gold input:checked + .pill-content {
-      background: rgba(245, 158, 11, 0.25);
+      background: rgba(245, 158, 11, 0.2);
       border-color: var(--accent-gold);
-      color: #fde68a;
+      color: #fbbf24;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
     }
 
-    /* Matching Projects List */
+    .apply-map-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+      margin-top: 4px;
+    }
+    .apply-map-btn:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+    }
+
     .projects-list {
-      max-height: 230px;
-      overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
       padding-right: 2px;
     }
+    .projects-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .projects-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
     .project-card {
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-      background: rgba(30, 41, 59, 0.65);
+      background: rgba(30, 41, 59, 0.6);
       border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.2s;
     }
     .project-card:hover {
-      background: rgba(51, 65, 85, 0.95);
+      background: rgba(49, 65, 96, 0.85);
       border-color: var(--primary);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+      transform: translateX(4px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
     .project-card.featured-card {
-      border-color: rgba(245, 158, 11, 0.4);
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(245, 158, 11, 0.1) 100%);
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.08);
     }
     .project-card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       margin-bottom: 4px;
     }
     .project-title {
-      font-size: 12.5px;
-      font-weight: 800;
+      font-size: 13px;
+      font-weight: 700;
       color: #fff;
     }
     .project-distance {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 800;
       color: var(--accent-cyan);
-      font-family: 'JetBrains Mono', monospace;
-      background: rgba(6, 182, 212, 0.15);
-      padding: 2px 7px;
+      background: rgba(56, 189, 248, 0.15);
+      padding: 2px 6px;
       border-radius: 4px;
     }
     .project-meta {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       font-size: 11px;
       color: var(--text-muted);
-      flex-wrap: wrap;
     }
     .tag-market {
       font-size: 9.5px;
       font-weight: 800;
-      padding: 1px 6px;
-      border-radius: 3px;
       text-transform: uppercase;
+      padding: 1px 6px;
+      border-radius: 4px;
     }
-    .tag-market.ultra { background: rgba(245, 158, 11, 0.25); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.4); }
-    .tag-market.luxury { background: rgba(99, 102, 241, 0.25); color: #c7d2fe; border: 1px solid rgba(99, 102, 241, 0.4); }
-    .tag-market.premium { background: rgba(16, 185, 129, 0.25); color: #a7f3d0; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .tag-market.ultra {
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .tag-market.luxury {
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+    .tag-market.premium {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
 
-    /* Floating 3D HTML Labels anchored above 3D Models */
+    /* 3D School Landmark Label */
     .model-label-school {
       pointer-events: auto;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 7px;
-      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-      color: white;
-      padding: 7px 14px;
-      border-radius: 999px;
+      background: linear-gradient(135deg, #b91c1c, #dc2626);
+      border: 2px solid #fff;
+      border-radius: 9999px;
+      padding: 7px 15px;
+      color: #fff;
       font-size: 12px;
       font-weight: 800;
-      box-shadow: 0 0 30px rgba(239, 68, 68, 0.8), 0 4px 12px rgba(0,0,0,0.5);
-      border: 2px solid #ffffff;
+      box-shadow: 0 10px 30px rgba(220, 38, 38, 0.65), 0 0 25px rgba(239, 68, 68, 0.8);
       white-space: nowrap;
       user-select: none;
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 5000 !important;
     }
-    .model-label-school:hover { transform: scale(1.1); }
+    .model-label-school:hover {
+      transform: scale(1.12) translateY(-4px);
+    }
 
+    /* 3D High-Rise Real Estate Marker Card */
     .model-label-building {
       pointer-events: auto;
       cursor: pointer;
@@ -384,6 +529,271 @@
       height: 14px;
       border-radius: 3px;
     }
+
+    /* Glassmorphic View Details Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(8, 12, 24, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .modal-backdrop.active {
+      display: flex;
+      opacity: 1;
+    }
+    .modal-card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 20px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 50px rgba(99, 102, 241, 0.25);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transform: scale(0.94);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modal-backdrop.active .modal-card {
+      transform: scale(1);
+    }
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 14px;
+    }
+    .modal-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .modal-badge-market {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+    .modal-badge-market.ultra {
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      border-color: rgba(245, 158, 11, 0.5);
+    }
+    .modal-badge-market.luxury {
+      background: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .modal-badge-status {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .modal-badge-sector {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background: rgba(148, 163, 184, 0.15);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+    .modal-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.25;
+      margin: 0;
+    }
+    .modal-developer {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+    .modal-close-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .modal-close-btn:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+    }
+    .modal-distance-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: 12px;
+      padding: 11px 15px;
+      color: #c7d2fe;
+      font-size: 13px;
+    }
+    .modal-distance-banner i {
+      font-size: 18px;
+      color: var(--accent-cyan);
+      flex-shrink: 0;
+    }
+    .modal-distance-banner b {
+      color: #ffffff;
+    }
+    .modal-specs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .spec-card {
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .spec-label {
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .spec-label i {
+      font-size: 14px;
+      color: var(--accent-cyan);
+    }
+    .spec-value {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .modal-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .modal-section-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .modal-section-title i {
+      color: var(--accent-gold);
+    }
+    .modal-config-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .config-chip {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      color: #e0e7ff;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .modal-address {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.5;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .modal-btn-zoom {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      transition: all 0.2s ease;
+    }
+    .modal-btn-zoom:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+    }
+    .modal-btn-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .modal-btn-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
   </style>
 </head>
 <body>
@@ -391,7 +801,14 @@
 <!-- Map Container -->
 <div id="map"></div>
 
-<!-- 3D HUD / Navigation Legend -->
+<!-- Floating Trigger Button (appears when sidebar is collapsed) -->
+<div class="floating-filter-trigger" id="floatingTrigger" onclick="toggleFilterPanel(true)">
+  <i class="ph-bold ph-sliders-horizontal"></i>
+  <span id="floatingTriggerText">Filters • Heritage Xperential Learning School</span>
+  <span class="floating-filter-badge" id="floatingTriggerBadge">9 Projects</span>
+</div>
+
+<!-- 3D HUD / Navigation Legend (Updated: Realistic Architectural Materials, zero blue) -->
 <div class="hud-controls">
   <div style="font-weight: 800; color: #fff; font-size: 12px; margin-bottom: 2px;">
     🏙️ 3D PropertyAI Models (Gurgaon)
@@ -401,12 +818,12 @@
     <span>3D School Campus (Pitched Red Roof &amp; Clock Tower)</span>
   </div>
   <div class="hud-legend-item">
-    <div class="legend-box" style="background: #f59e0b; border: 1px solid #fff;"></div>
-    <span>3D Ultra Luxury Skyscraper (Gold Glass Crown)</span>
+    <div class="legend-box" style="background: #dcd8d4; border: 1px solid #64748b;"></div>
+    <span>3D High-Rise Residential Towers (Architectural Concrete &amp; Tinted Glass)</span>
   </div>
   <div class="hud-legend-item">
-    <div class="legend-box" style="background: #6366f1; border: 1px solid #fff;"></div>
-    <span>3D Luxury High-Rise (Modern Blue Towers)</span>
+    <div class="legend-box" style="background: #f59e0b; border: 1px solid #fff;"></div>
+    <span>3D Ultra Luxury Skyscraper (Gold Glass Crown)</span>
   </div>
   <hr style="border: 0; border-top: 1px solid var(--border); margin: 4px 0;">
   <div style="font-size: 10.5px;">
@@ -415,10 +832,15 @@
 </div>
 
 <!-- Floating Filter Panel -->
-<div class="filter-panel">
+<div class="filter-panel" id="filterPanel">
   <div class="panel-header">
     <h1><i class="ph-bold ph-buildings"></i> 3D Real Estate Explorer</h1>
-    <span class="badge-count" id="matchBadge">0 Projects</span>
+    <div class="panel-header-actions">
+      <span class="badge-count" id="matchBadge">0 Projects</span>
+      <button class="panel-close-btn" onclick="toggleFilterPanel(false)" title="Hide Filter Panel & View 3D Map">
+        <i class="ph-bold ph-x"></i>
+      </button>
+    </div>
   </div>
 
   <div class="panel-body">
@@ -429,7 +851,7 @@
         <i class="ph-bold ph-graduation-cap"></i>
       </div>
       <input type="text" class="search-input" id="schoolSearch" placeholder="🔍 Search school..." oninput="filterSchoolOptions()" />
-      <select class="custom-select" id="schoolSelect" onchange="handleFilterChange()">
+      <select class="custom-select" id="schoolSelect" onchange="handleSchoolSelectChange()">
         <!-- Populated from data.js -->
       </select>
     </div>
@@ -457,19 +879,19 @@
       </div>
       <div class="pills-group">
         <label class="pill-checkbox gold">
-          <input type="checkbox" value="Ultra Luxury" checked onchange="handleFilterChange()">
+          <input type="checkbox" value="Ultra Luxury" checked onchange="handleFilterChange(false)">
           <span class="pill-content"><i class="ph-bold ph-sparkle"></i> Ultra Luxury</span>
         </label>
         <label class="pill-checkbox">
-          <input type="checkbox" value="Luxury" checked onchange="handleFilterChange()">
+          <input type="checkbox" value="Luxury" checked onchange="handleFilterChange(false)">
           <span class="pill-content"><i class="ph-bold ph-gem"></i> Luxury</span>
         </label>
         <label class="pill-checkbox">
-          <input type="checkbox" value="Premium" checked onchange="handleFilterChange()">
+          <input type="checkbox" value="Premium" checked onchange="handleFilterChange(false)">
           <span class="pill-content">Premium</span>
         </label>
         <label class="pill-checkbox">
-          <input type="checkbox" value="Mid Segment" onchange="handleFilterChange()">
+          <input type="checkbox" value="Mid Segment" onchange="handleFilterChange(false)">
           <span class="pill-content">Mid Segment</span>
         </label>
       </div>
@@ -483,19 +905,19 @@
       </div>
       <div class="pills-group">
         <label class="pill-checkbox">
-          <input type="checkbox" value="2 BHK" onchange="handleFilterChange()">
+          <input type="checkbox" value="2 BHK" onchange="handleFilterChange(false)">
           <span class="pill-content">2 BHK</span>
         </label>
         <label class="pill-checkbox">
-          <input type="checkbox" value="3 BHK" checked onchange="handleFilterChange()">
+          <input type="checkbox" value="3 BHK" checked onchange="handleFilterChange(false)">
           <span class="pill-content">3 BHK</span>
         </label>
         <label class="pill-checkbox">
-          <input type="checkbox" value="4 BHK" checked onchange="handleFilterChange()">
+          <input type="checkbox" value="4 BHK" checked onchange="handleFilterChange(false)">
           <span class="pill-content">4 BHK</span>
         </label>
         <label class="pill-checkbox">
-          <input type="checkbox" value="Penthouse" onchange="handleFilterChange()">
+          <input type="checkbox" value="Penthouse" onchange="handleFilterChange(false)">
           <span class="pill-content">Penthouse</span>
         </label>
       </div>
@@ -507,7 +929,7 @@
         <span>5. Corridor</span>
         <i class="ph-bold ph-path"></i>
       </div>
-      <select class="custom-select" id="corridorSelect" onchange="handleFilterChange()">
+      <select class="custom-select" id="corridorSelect" onchange="handleCorridorSelectChange()">
         <option value="ALL">All Corridors (Entire Gurgaon)</option>
         <option value="Golf Course Extension Road" selected>Golf Course Extension Road (GCER)</option>
         <option value="Golf Course Road">Golf Course Road (GCR)</option>
@@ -519,10 +941,15 @@
       </select>
     </div>
 
+    <!-- Apply & View Full 3D Map Button -->
+    <button class="apply-map-btn" onclick="toggleFilterPanel(false)">
+      <i class="ph-bold ph-eye"></i> Apply &amp; Explore 3D Map
+    </button>
+
     <!-- 6. Matching Projects List -->
     <div>
       <div class="filter-group-label">
-        <span>3D Projects in Radius</span>
+        <span>3D Projects in Radius (Click for Details)</span>
         <span id="listCountLabel">0 Found</span>
       </div>
       <div class="projects-list" id="projectsList">
@@ -532,10 +959,85 @@
   </div>
 </div>
 
+<!-- Glassmorphic View Details Modal -->
+<div class="modal-backdrop" id="projectDetailsModal" onclick="handleModalBackdropClick(event)">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>
+        <div class="modal-badges">
+          <span class="modal-badge-market" id="modalMarketBadge">Ultra Luxury</span>
+          <span class="modal-badge-status" id="modalStatusBadge">Under Construction</span>
+          <span class="modal-badge-sector" id="modalSectorBadge">Sector 62</span>
+        </div>
+        <h2 class="modal-title" id="modalTitle">Pioneer Adivat</h2>
+        <div class="modal-developer" id="modalDeveloper">by Pioneer Urban Land &amp; Infrastructure Ltd</div>
+      </div>
+      <button class="modal-close-btn" onclick="closeProjectDetailsModal()" title="Close Details">
+        <i class="ph-bold ph-x"></i>
+      </button>
+    </div>
+
+    <!-- Proximity Banner -->
+    <div class="modal-distance-banner" id="modalDistanceBanner">
+      <i class="ph-bold ph-navigation-arrow"></i>
+      <span id="modalDistanceText"><b>3.4 KM</b> away from <b>Heritage Xperential Learning School</b></span>
+    </div>
+
+    <!-- Project Specifications Grid -->
+    <div class="modal-specs-grid">
+      <div class="spec-card">
+        <div class="spec-label"><i class="ph-bold ph-ruler"></i> Land Area</div>
+        <div class="spec-value" id="modalLandArea">10.07 Acres</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label"><i class="ph-bold ph-tree"></i> Open Space</div>
+        <div class="spec-value" id="modalOpenArea">65% Open Area</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label"><i class="ph-bold ph-calendar-check"></i> Possession</div>
+        <div class="spec-value" id="modalPossession">Dec 2028</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-label"><i class="ph-bold ph-path"></i> Corridor</div>
+        <div class="spec-value" id="modalCorridor">Golf Course Extn Rd</div>
+      </div>
+    </div>
+
+    <!-- Unit Configurations -->
+    <div class="modal-section">
+      <div class="modal-section-title"><i class="ph-bold ph-house-line"></i> Available Configurations</div>
+      <div class="modal-config-chips" id="modalConfigs">
+        <!-- Rendered chips -->
+      </div>
+    </div>
+
+    <!-- Location & Address -->
+    <div class="modal-section">
+      <div class="modal-section-title"><i class="ph-bold ph-map-pin"></i> Location &amp; Address</div>
+      <div class="modal-address" id="modalAddress">Sector 62, Golf Course Extension Road, Gurugram, Haryana</div>
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="modal-footer">
+      <button class="modal-btn-zoom" id="modalZoomBtn" onclick="zoomToProjectFromModal()">
+        <i class="ph-bold ph-video-camera"></i> Zoom to 3D Tower
+      </button>
+      <button class="modal-btn-close" onclick="closeProjectDetailsModal()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
   // Ensure dataset from data.js
   const SCHOOLS = (typeof REAL_SCHOOLS_DATA !== 'undefined' && REAL_SCHOOLS_DATA.length > 0) ? REAL_SCHOOLS_DATA : [];
   const PROJECTS = (typeof REAL_PROJECTS_DATA !== 'undefined' && REAL_PROJECTS_DATA.length > 0) ? REAL_PROJECTS_DATA : [];
+
+  // Currently active state
+  let currentSelectedSchool = null;
+  let currentMatchingProjects = [];
+  let currentModalProject = null;
 
   // ==========================================
   // HAVERSINE DISTANCE (KM)
@@ -564,21 +1066,20 @@
       const y = distanceY * Math.sin(theta);
       coords.push([center[0] + x, center[1] + y]);
     }
-
     return {
-      type: "Feature",
+      type: 'Feature',
       geometry: {
-        type: "Polygon",
+        type: 'Polygon',
         coordinates: [coords]
       }
     };
   }
 
   // ==========================================
-  // PROCEDURAL 3D MESH ARCHITECTURE (THREE.JS)
+  // PROCEDURAL 3D ARCHITECTURAL MESH BUILDERS
   // ==========================================
-  
-  // 3D School Campus Model
+
+  // 3D School Landmark Model
   function create3DSchoolModel() {
     const group = new THREE.Group();
 
@@ -589,39 +1090,51 @@
     const lawnMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.9 });
 
     // Green Campus Ground
-    const lawn = new THREE.Mesh(new THREE.BoxGeometry(150, 110, 3), lawnMat);
-    lawn.position.set(0, 0, 1.5);
+    const lawn = new THREE.Mesh(new THREE.BoxGeometry(160, 160, 2), lawnMat);
+    lawn.position.set(0, 0, 1);
     group.add(lawn);
 
-    // Main Academic Block
-    const mainBlock = new THREE.Mesh(new THREE.BoxGeometry(85, 45, 26), wallMat);
-    mainBlock.position.set(0, 10, 15);
-    group.add(mainBlock);
+    // Main Academic Center Building
+    const center = new THREE.Mesh(new THREE.BoxGeometry(70, 36, 24), wallMat);
+    center.position.set(0, -10, 14);
+    group.add(center);
 
     // Pitched Red Roof
-    const roofGeom = new THREE.ConeGeometry(55, 20, 4);
-    const roof = new THREE.Mesh(roofGeom, roofMat);
-    roof.rotation.y = Math.PI / 4;
-    roof.rotation.x = Math.PI / 2;
-    roof.position.set(0, 10, 33);
-    roof.scale.set(1.2, 0.7, 1);
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(45, 18, 4), roofMat);
+    roof.rotateZ(Math.PI / 4);
+    roof.position.set(0, -10, 35);
     group.add(roof);
 
-    // Central Clock Tower
-    const tower = new THREE.Mesh(new THREE.BoxGeometry(22, 22, 50), trimMat);
-    tower.position.set(0, 20, 26);
+    // Left Academic Wing
+    const leftWing = new THREE.Mesh(new THREE.BoxGeometry(32, 55, 20), wallMat);
+    leftWing.position.set(-42, 2, 12);
+    group.add(leftWing);
+
+    // Right Academic Wing
+    const rightWing = new THREE.Mesh(new THREE.BoxGeometry(32, 55, 20), wallMat);
+    rightWing.position.set(42, 2, 12);
+    group.add(rightWing);
+
+    // Clock Tower Spire
+    const tower = new THREE.Mesh(new THREE.BoxGeometry(18, 18, 55), wallMat);
+    tower.position.set(0, -14, 28);
     group.add(tower);
 
-    // Spire
-    const spire = new THREE.Mesh(new THREE.ConeGeometry(15, 18, 4), roofMat);
-    spire.rotation.y = Math.PI / 4;
-    spire.rotation.x = Math.PI / 2;
-    spire.position.set(0, 20, 56);
+    const spire = new THREE.Mesh(new THREE.ConeGeometry(12, 22, 4), roofMat);
+    spire.rotateZ(Math.PI / 4);
+    spire.position.set(0, -14, 65);
     group.add(spire);
 
-    // Windows
-    for (let x = -30; x <= 30; x += 15) {
-      for (let z = 10; z <= 22; z += 6) {
+    // Sports Field / Running Track
+    const trackMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.9 });
+    const track = new THREE.Mesh(new THREE.CylinderGeometry(28, 28, 2, 24), trackMat);
+    track.position.set(0, 75, 2);
+    track.scale.set(1.4, 1, 0.9);
+    group.add(track);
+
+    // Classroom Windows
+    for (let x = -24; x <= 24; x += 12) {
+      for (let z = 6; z <= 20; z += 7) {
         const win = new THREE.Mesh(new THREE.BoxGeometry(6, 1, 4), windowMat);
         win.position.set(x, -12, z);
         group.add(win);
@@ -632,30 +1145,46 @@
     return group;
   }
 
-  // 3D High-Rise Residential Tower Model
+  // 3D High-Rise Residential Tower Model (Realistic Architectural Neutral Finish - NO BLUE)
   function create3DBuildingModel(project) {
     const group = new THREE.Group();
     const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
 
-    const glassColor = isUltra ? 0x0284c7 : 0x4f46e5;
-    const frameColor = isUltra ? 0xf59e0b : 0xe2e8f0;
+    // Consistent, realistic architectural materials across all residential towers (NO BLUE)
+    // Warm architectural concrete/limestone facade
+    const facadeMat = new THREE.MeshStandardMaterial({
+      color: 0xdcd8d4,
+      roughness: 0.65,
+      metalness: 0.1
+    });
 
+    // Tinted architectural neutral glass (dark charcoal tint, reflective, NO BLUE)
     const glassMat = new THREE.MeshPhysicalMaterial({
-      color: glassColor,
+      color: 0x222c38,
       metalness: 0.85,
-      roughness: 0.15,
+      roughness: 0.18,
       transparent: true,
-      opacity: 0.95
+      opacity: 0.92
     });
 
+    // Sleek architectural frame / mullions
     const frameMat = new THREE.MeshStandardMaterial({
-      color: frameColor,
-      metalness: 0.6,
-      roughness: 0.3
+      color: 0x64748b,
+      metalness: 0.5,
+      roughness: 0.35
     });
 
-    const podiumMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
-    const balconyMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+    // Dark slate podium base
+    const podiumMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      roughness: 0.85
+    });
+
+    // Crisp white architectural balconies
+    const balconyMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.25
+    });
 
     const floors = isUltra ? 38 : 28;
     const totalHeight = floors * 3.8;
@@ -665,38 +1194,55 @@
     podium.position.set(0, 0, 7);
     group.add(podium);
 
-    // Tower 1
+    // Tower 1 (Main High-Rise Tower)
     const towerWidth = isUltra ? 36 : 28;
     const towerDepth = isUltra ? 28 : 22;
     const tower1 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth, towerDepth, totalHeight), glassMat);
     tower1.position.set(-16, 0, totalHeight / 2 + 14);
     group.add(tower1);
 
-    // Balcony Bands
+    // Balcony Bands for Tower 1
     const numBands = Math.floor(floors / 2);
     for (let i = 1; i <= numBands; i++) {
       const zPos = 14 + (i * 7.6);
-      const band = new THREE.Mesh(new THREE.BoxGeometry(towerWidth + 4, towerDepth + 4, 1.2), balconyMat);
+      const band = new THREE.Mesh(new THREE.BoxGeometry(towerWidth + 3.5, towerDepth + 3.5, 1.2), balconyMat);
       band.position.set(-16, 0, zPos);
       group.add(band);
     }
 
-    // Twin Tower
+    // Tower 2 (Twin Tower)
     const tower2Height = totalHeight * 0.9;
     const tower2 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.9, towerDepth * 0.9, tower2Height), glassMat);
     tower2.position.set(22, 10, tower2Height / 2 + 14);
     group.add(tower2);
 
-    // Crown / Helipad for Ultra Luxury
+    // Balcony Bands for Tower 2
+    for (let i = 1; i <= Math.floor(floors * 0.9 / 2); i++) {
+      const zPos = 14 + (i * 7.6);
+      const band2 = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.9 + 3.5, towerDepth * 0.9 + 3.5, 1.2), balconyMat);
+      band2.position.set(22, 10, zPos);
+      group.add(band2);
+    }
+
+    // Architectural Penthouse & Roof Feature
     if (isUltra) {
-      const crown = new THREE.Mesh(new THREE.BoxGeometry(towerWidth + 6, towerDepth + 6, 8), frameMat);
+      const crownMat = new THREE.MeshStandardMaterial({
+        color: 0xf59e0b,
+        metalness: 0.8,
+        roughness: 0.25
+      });
+      const crown = new THREE.Mesh(new THREE.BoxGeometry(towerWidth + 4, towerDepth + 4, 8), crownMat);
       crown.position.set(-16, 0, totalHeight + 17);
       group.add(crown);
 
-      const helipad = new THREE.Mesh(new THREE.CylinderGeometry(8, 8, 2, 16), frameMat);
+      const helipad = new THREE.Mesh(new THREE.CylinderGeometry(8, 8, 2, 16), crownMat);
       helipad.rotation.x = Math.PI / 2;
       helipad.position.set(-16, 0, totalHeight + 22);
       group.add(helipad);
+    } else {
+      const roofCap = new THREE.Mesh(new THREE.BoxGeometry(towerWidth * 0.7, towerDepth * 0.7, 6), frameMat);
+      roofCap.position.set(-16, 0, totalHeight + 17);
+      group.add(roofCap);
     }
 
     group.scale.set(0.65, 0.65, 0.65);
@@ -713,67 +1259,87 @@
   let activeThreeGroup = new THREE.Group();
   let activeHtmlMarkers = [];
 
-  // Center initially near Sector 59 / 60 (GCER)
   const map = new maplibregl.Map({
     container: 'map',
-    style: 'https://tiles.openfreemap.org/styles/liberty',
-    center: [77.071684, 28.389659], // Shriram Millennium School (GCER)
-    zoom: 13.8,
+    style: 'https://tiles.openfreemap.org/styles/positron',
+    center: [77.065, 28.415],
+    zoom: 13.5,
     pitch: 58,
     bearing: -20,
     antialias: true
   });
 
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+  map.addControl(new maplibregl.FullscreenControl(), 'top-right');
 
-  // Custom 3D Layer for Three.js Meshes
-  const threeCustomLayer = {
-    id: 'threejs-3d-models',
+  // Custom Three.js 3D Layer
+  const custom3DLayer = {
+    id: 'three-3d-models',
     type: 'custom',
     renderingMode: '3d',
-    onAdd: function (mapInstance, gl) {
+    onAdd: function(m, gl) {
       activeThreeCamera = new THREE.Camera();
       activeThreeScene = new THREE.Scene();
 
-      // Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
-      activeThreeScene.add(ambientLight);
+      // Realistic Architectural Ambient & Directional Lighting
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.85);
+      activeThreeScene.add(ambLight);
 
-      const sunLight = new THREE.DirectionalLight(0xfffaed, 1.5);
-      sunLight.position.set(200, 350, 500);
-      activeThreeScene.add(sunLight);
+      const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.2);
+      dirLight1.position.set(80, 120, 150);
+      activeThreeScene.add(dirLight1);
+
+      const dirLight2 = new THREE.DirectionalLight(0x94a3b8, 0.6);
+      dirLight2.position.set(-80, -100, 80);
+      activeThreeScene.add(dirLight2);
 
       activeThreeScene.add(activeThreeGroup);
 
       activeThreeRenderer = new THREE.WebGLRenderer({
-        canvas: mapInstance.getCanvas(),
+        canvas: m.getCanvas(),
         context: gl,
         antialias: true
       });
       activeThreeRenderer.autoClear = false;
     },
-    render: function (gl, matrix) {
-      if (!activeThreeCamera || !activeThreeRenderer) return;
-
+    render: function(gl, matrix) {
       const m = new THREE.Matrix4().fromArray(matrix);
       activeThreeCamera.projectionMatrix = m;
-
       activeThreeRenderer.resetState();
       activeThreeRenderer.render(activeThreeScene, activeThreeCamera);
       map.triggerRepaint();
     }
   };
 
-  map.on('load', () => {
-    // Style 3D Extruded Buildings
-    if (map.getLayer('building-3d')) {
-      map.setPaintProperty('building-3d', 'fill-extrusion-color', '#334155');
-      map.setPaintProperty('building-3d', 'fill-extrusion-opacity', 0.65);
+  // Map Load & Initialization
+  map.on('style.load', () => {
+    // 3D Buildings Extrusion
+    const layers = map.getStyle().layers;
+    let labelLayerId;
+    for (let i = 0; i < layers.length; i++) {
+      if (layers[i].type === 'symbol' && layers[i].layout && layers[i].layout['text-field']) {
+        labelLayerId = layers[i].id;
+        break;
+      }
     }
 
-    map.addLayer(threeCustomLayer);
+    if (!map.getLayer('building-3d') && map.getSource('openmaptiles')) {
+      map.addLayer({
+        'id': 'building-3d',
+        'source': 'openmaptiles',
+        'source-layer': 'building',
+        'type': 'fill-extrusion',
+        'minzoom': 13,
+        'paint': {
+          'fill-extrusion-color': '#cbd5e1',
+          'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 13, 0, 16, ['get', 'render_height']],
+          'fill-extrusion-base': ['interpolate', ['linear'], ['zoom'], 13, 0, 16, ['get', 'render_min_height']],
+          'fill-extrusion-opacity': 0.7
+        }
+      }, labelLayerId);
+    }
 
-    // Radius buffer GeoJSON
+    // 3D Proximity Radius Buffer Source & Layers
     map.addSource('radius-buffer', {
       type: 'geojson',
       data: { type: 'FeatureCollection', features: [] }
@@ -784,7 +1350,7 @@
       type: 'fill',
       source: 'radius-buffer',
       paint: {
-        'fill-color': '#4f46e5',
+        'fill-color': '#6366f1',
         'fill-opacity': 0.12
       }
     });
@@ -794,57 +1360,197 @@
       type: 'line',
       source: 'radius-buffer',
       paint: {
-        'line-color': '#818cf8',
+        'line-color': '#6366f1',
         'line-width': 2.5,
         'line-dasharray': [3, 2]
       }
     });
 
-    initSchoolDropdown();
-    handleFilterChange();
+    // Add Three.js Custom 3D Layer
+    map.addLayer(custom3DLayer);
 
-    map.on("move", updateLabelStaggering);
-    map.on("zoom", updateLabelStaggering);
+    // Initial Population of UI
+    populateSchoolDropdown();
+    handleFilterChange(false);
   });
 
-  function initSchoolDropdown(filterText = '') {
-    const sel = document.getElementById('schoolSelect');
-    const term = filterText.toLowerCase().trim();
+  // Re-stagger labels on map movements
+  map.on('move', () => {
+    updateLabelStaggering();
+  });
 
-    const filtered = SCHOOLS.filter(s => 
-      !term || s.name.toLowerCase().includes(term) || s.corridor.toLowerCase().includes(term)
-    );
+  // ==========================================
+  // PANEL COLLAPSE & AUTO-HIDE LOGIC
+  // ==========================================
+  function toggleFilterPanel(show) {
+    const panel = document.getElementById('filterPanel');
+    const trigger = document.getElementById('floatingTrigger');
+    if (show) {
+      panel.classList.remove('collapsed');
+      trigger.classList.remove('visible');
+    } else {
+      panel.classList.add('collapsed');
+      trigger.classList.add('visible');
+    }
+  }
 
-    // Prefer Shriram Millennium or DPS International if present
-    const defaultSchool = filtered.find(s => s.name.includes('Shriram Millennium')) || filtered[0];
+  function updateFloatingTriggerUI(school, count, radiusKm) {
+    const textEl = document.getElementById('floatingTriggerText');
+    const badgeEl = document.getElementById('floatingTriggerBadge');
+    if (textEl && school) {
+      textEl.innerText = `${school.name} • ${radiusKm} KM`;
+    }
+    if (badgeEl) {
+      badgeEl.innerText = `${count} Projects`;
+    }
+  }
 
-    sel.innerHTML = filtered.map(s => 
-      `<option value="${s.id}" ${s.id === defaultSchool?.id ? 'selected' : ''}>${s.name} (${s.corridor})</option>`
-    ).join('');
+  // ==========================================
+  // VIEW DETAILS MODAL LOGIC
+  // ==========================================
+  function openProjectDetails(proj, school) {
+    currentModalProject = proj;
+    const modal = document.getElementById('projectDetailsModal');
+
+    // Title & Developer
+    document.getElementById('modalTitle').innerText = proj.name;
+    document.getElementById('modalDeveloper').innerText = proj.developer ? `by ${proj.developer}` : 'Premier Real Estate Developer';
+
+    // Badges
+    const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
+    const isLuxury = (proj.target_market || '').toLowerCase() === 'luxury';
+    const marketBadge = document.getElementById('modalMarketBadge');
+    marketBadge.innerText = proj.target_market || 'Luxury';
+    marketBadge.className = `modal-badge-market ${isUltra ? 'ultra' : isLuxury ? 'luxury' : ''}`;
+
+    const statusBadge = document.getElementById('modalStatusBadge');
+    statusBadge.innerText = proj.status || 'Under Construction';
+
+    const sectorBadge = document.getElementById('modalSectorBadge');
+    sectorBadge.innerText = proj.sector || proj.corridor || 'Gurugram';
+
+    // Distance Banner
+    const schoolName = (school && school.name) ? school.name : (currentSelectedSchool ? currentSelectedSchool.name : 'Center School');
+    const dist = (proj.distanceFromSchool !== undefined) ? proj.distanceFromSchool.toFixed(2) : calculateDistanceKm(school ? school.lat : 28.415, school ? school.lng : 77.065, proj.lat, proj.lng).toFixed(2);
+    document.getElementById('modalDistanceText').innerHTML = `<b>📍 ${dist} KM</b> away from <b>${schoolName}</b>`;
+
+    // Specs Grid
+    document.getElementById('modalLandArea').innerText = proj.total_area_acres ? `${proj.total_area_acres} Acres` : 'Master Planned';
+    document.getElementById('modalOpenArea').innerText = proj.open_area_percent ? `${proj.open_area_percent}% Open Area` : '65% Open Area';
+    document.getElementById('modalPossession').innerText = proj.possession_year ? `Possession ${proj.possession_year}` : (proj.status || 'Ready / Upcoming');
+    document.getElementById('modalCorridor').innerText = proj.corridor || 'Gurugram';
+
+    // Available Configurations
+    const configsContainer = document.getElementById('modalConfigs');
+    if (proj.configurations && proj.configurations.length > 0) {
+      configsContainer.innerHTML = proj.configurations.map(c => `<span class="config-chip">${c}</span>`).join('');
+    } else {
+      configsContainer.innerHTML = '<span class="config-chip">3 BHK</span><span class="config-chip">4 BHK</span>';
+    }
+
+    // Address
+    document.getElementById('modalAddress').innerText = proj.address || `${proj.sector || 'Gurugram'}, ${proj.corridor || 'Haryana'}`;
+
+    // Show Modal
+    modal.classList.add('active');
+  }
+
+  function openProjectDetailsById(id) {
+    const proj = PROJECTS.find(p => p.id === id);
+    if (proj) {
+      openProjectDetails(proj, currentSelectedSchool);
+    }
+  }
+
+  function closeProjectDetailsModal() {
+    const modal = document.getElementById('projectDetailsModal');
+    modal.classList.remove('active');
+    currentModalProject = null;
+  }
+
+  function handleModalBackdropClick(event) {
+    if (event.target && event.target.id === 'projectDetailsModal') {
+      closeProjectDetailsModal();
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeProjectDetailsModal();
+    }
+  });
+
+  function zoomToProjectFromModal() {
+    if (!currentModalProject) return;
+    const { lng, lat } = currentModalProject;
+    closeProjectDetailsModal();
+    focusProject(lng, lat);
+  }
+
+  // ==========================================
+  // FILTER & STATE MANAGEMENT
+  // ==========================================
+  function populateSchoolDropdown() {
+    const select = document.getElementById('schoolSelect');
+    select.innerHTML = '';
+
+    SCHOOLS.forEach(school => {
+      const opt = document.createElement('option');
+      opt.value = school.name;
+      opt.innerText = `${school.name} (${school.corridor})`;
+      if (school.name.includes('Heritage Xperential')) {
+        opt.selected = true;
+      }
+      select.appendChild(opt);
+    });
   }
 
   function filterSchoolOptions() {
-    const text = document.getElementById('schoolSearch').value;
-    initSchoolDropdown(text);
-    handleFilterChange();
+    const query = document.getElementById('schoolSearch').value.toLowerCase();
+    const select = document.getElementById('schoolSelect');
+    select.innerHTML = '';
+
+    const filtered = SCHOOLS.filter(s =>
+      s.name.toLowerCase().includes(query) || s.corridor.toLowerCase().includes(query)
+    );
+
+    filtered.forEach(school => {
+      const opt = document.createElement('option');
+      opt.value = school.name;
+      opt.innerText = `${school.name} (${school.corridor})`;
+      select.appendChild(opt);
+    });
+
+    if (filtered.length > 0) {
+      select.selectedIndex = 0;
+      handleFilterChange(false);
+    }
+  }
+
+  // Auto-collapse when user selects from dropdowns
+  function handleSchoolSelectChange() {
+    handleFilterChange(true);
+  }
+
+  function handleCorridorSelectChange() {
+    handleFilterChange(true);
   }
 
   function setRadius(km) {
     selectedRadiusKm = km;
-    document.getElementById('radiusDisplay').innerText = `${km} km`;
     document.querySelectorAll('.radius-btn').forEach(btn => {
       btn.classList.toggle('active', btn.innerText.includes(`${km} KM`));
     });
-    handleFilterChange();
+    document.getElementById('radiusDisplay').innerText = `${km} km`;
+    handleFilterChange(true); // Auto-hide dropdown on selection
   }
 
-  // ==========================================
-  // REAL-TIME FILTERING & 3D MESH GENERATION
-  // ==========================================
-  function handleFilterChange() {
-    const schoolId = document.getElementById('schoolSelect').value;
-    const selectedSchool = SCHOOLS.find(s => s.id === schoolId) || SCHOOLS[0];
+  function handleFilterChange(autoCollapse = false) {
+    const schoolName = document.getElementById('schoolSelect').value;
+    const selectedSchool = SCHOOLS.find(s => s.name === schoolName) || SCHOOLS[0];
     if (!selectedSchool) return;
+
+    currentSelectedSchool = selectedSchool;
 
     const targetMarkets = Array.from(
       document.querySelectorAll('.pills-group input[type="checkbox"]:checked')
@@ -869,6 +1575,10 @@
     });
 
     matchingProjects.sort((a, b) => a.distanceFromSchool - b.distanceFromSchool);
+    currentMatchingProjects = matchingProjects;
+
+    // Update Floating Trigger & Badges
+    updateFloatingTriggerUI(selectedSchool, matchingProjects.length, selectedRadiusKm);
 
     // 1. Draw 3D Radius Circle
     const circleGeo = createGeoJsonCircle([selectedSchool.lng, selectedSchool.lat], selectedRadiusKm);
@@ -887,12 +1597,19 @@
       essential: true
     });
 
-    // 3. Rebuild 3D Meshes in Three.js
+    // 3. Rebuild 3D Meshes in Three.js (Neutral Architectural Finish)
     rebuild3DModels(selectedSchool, matchingProjects);
 
     // 4. Update 3D Floating HTML Labels & Sidebar
     renderHtmlLabels(selectedSchool, matchingProjects);
     renderProjectsSidebar(matchingProjects, selectedSchool);
+
+    // If triggered by a user dropdown/radius selection, auto-collapse sidebar to show map
+    if (autoCollapse) {
+      setTimeout(() => {
+        toggleFilterPanel(false);
+      }, 150);
+    }
   }
 
   function placeMeshAtLngLat(mesh, lng, lat, altitude = 0) {
@@ -961,27 +1678,14 @@
         </div>
       `;
 
-      const popup = new maplibregl.Popup({ offset: 35, closeButton: false }).setHTML(`
-        <div style="font-family: inherit; color: #0f172a; padding: 6px; min-width: 220px;">
-          <b style="font-size: 14px; color: #0f172a;">${proj.name}</b>
-          <div style="font-size: 11px; color: #64748b; margin-top: 2px;">by ${proj.developer}</div>
-          <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 6px 0;">
-          <div style="font-size: 12px; margin-bottom: 3px;"><b>📍 Distance:</b> <span style="color: #4f46e5; font-weight: 800;">${proj.distanceFromSchool.toFixed(2)} km</span> from ${school.name}</div>
-          <div style="font-size: 12px; margin-bottom: 3px;"><b>🏷️ Segment:</b> <span style="color: ${isUltra ? '#b45309' : '#3730a3'}; font-weight: 800;">${proj.target_market}</span></div>
-          <div style="font-size: 12px; margin-bottom: 3px;"><b>🛏️ Units:</b> ${proj.configurations.join(', ')}</div>
-          <div style="font-size: 12px; margin-bottom: 3px;"><b>📍 Location:</b> ${proj.sector || proj.address || proj.corridor}</div>
-          ${proj.total_area_acres ? `<div style="font-size: 12px; margin-bottom: 3px;"><b>📐 Land Area:</b> ${proj.total_area_acres} Acres (${proj.open_area_percent || 65}% Open Area)</div>` : ''}
-          <div style="font-size: 11.5px; color: #16a34a; font-weight: 800; margin-top: 4px;">Status: ${proj.status} (Possession ${proj.possession_year || 'Under Construction'})</div>
-        </div>
-      `);
-
       const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
         .setLngLat([proj.lng, proj.lat])
-        .setPopup(popup)
         .addTo(map);
 
-      el.addEventListener('click', () => {
-        focusProject(proj.lng, proj.lat);
+      // Clicking ANY project marker opens View Details Modal
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openProjectDetails(proj, school);
       });
 
       activeHtmlMarkers.push({ marker, el, proj });
@@ -990,7 +1694,7 @@
     updateLabelStaggering();
   }
 
-  // Dynamic anti-overlap staggering so cards never occlude each other
+  // Dynamic anti-overlap staggering so cards along roads never collide
   function updateLabelStaggering() {
     if (!activeHtmlMarkers || activeHtmlMarkers.length <= 1) return;
     const placed = [];
@@ -1040,7 +1744,7 @@
       const is4S = p.name.toLowerCase().includes('4s');
       const badgeClass = isUltra ? 'ultra' : p.target_market === 'Luxury' ? 'luxury' : 'premium';
       return `
-        <div class="project-card ${is4S ? 'featured-card' : ''}" onclick="focusProject(${p.lng}, ${p.lat})">
+        <div class="project-card ${is4S ? 'featured-card' : ''}" onclick="openProjectDetailsById(${p.id})">
           <div class="project-card-header">
             <span class="project-title">${p.name}</span>
             <span class="project-distance">${p.distanceFromSchool.toFixed(1)} km</span>
@@ -1058,7 +1762,7 @@
   function focusProject(lng, lat) {
     map.flyTo({
       center: [lng, lat],
-      zoom: 16.4,
+      zoom: 16.5,
       pitch: 65,
       bearing: -15,
       speed: 1.3,
