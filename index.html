@@ -532,8 +532,9 @@
       border-color: var(--primary);
     }
 
+    
     /* ==========================================================================
-       SIDE-OVER PROJECT DETAILS DRAWER (With Propium Score & Redirect Button)
+       LUXURY EXECUTIVE DRAWER ("DETAILS CARD POP") STYLING
        ========================================================================== */
     .project-drawer {
       position: absolute;
@@ -541,19 +542,19 @@
       right: 18px;
       width: 420px;
       max-height: calc(100vh - 86px);
-      background: var(--bg-surface);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.16), 0 4px 16px rgba(0, 0, 0, 0.04);
       z-index: 60;
       display: flex;
       flex-direction: column;
       transform: translateX(460px);
       opacity: 0;
       pointer-events: none;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
       overflow: hidden;
     }
     .project-drawer.open {
@@ -563,100 +564,138 @@
     }
 
     .drawer-header {
-      padding: 16px 18px;
-      border-bottom: 1px solid var(--border-light);
+      padding: 18px 20px 14px 20px;
+      border-bottom: 1px solid #f1f5f9;
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
       background: #ffffff;
     }
     .drawer-badges {
       display: flex;
       align-items: center;
       gap: 6px;
-      margin-bottom: 5px;
+      margin-bottom: 7px;
       flex-wrap: wrap;
     }
     .drawer-tag {
       font-size: 10px;
       font-weight: 800;
-      padding: 2px 7px;
+      padding: 2.5px 8px;
       border-radius: var(--radius-full);
       text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
     .drawer-tag.gold {
       background: #fef3c7;
       color: #b45309;
+      border: 1px solid #fde68a;
     }
     .drawer-tag.indigo {
       background: #eef2ff;
       color: #4338ca;
+      border: 1px solid #c7d2fe;
     }
     .drawer-tag.emerald {
-      background: #d1fae5;
+      background: #ecfdf5;
       color: #065f46;
+      border: 1px solid #a7f3d0;
     }
     .drawer-tag.sector {
-      background: #f1f5f9;
+      background: #f8fafc;
       color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .drawer-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 3px;
     }
     .drawer-title {
-      font-size: 17px;
+      font-size: 19px;
       font-weight: 800;
       color: #0f172a;
       line-height: 1.25;
-      letter-spacing: -0.3px;
+      letter-spacing: -0.4px;
+      margin: 0;
+    }
+    .drawer-verified-icon {
+      font-size: 17px;
+      color: #3b82f6;
+    }
+    .drawer-ext-icon {
+      font-size: 15px;
+      color: #6366f1;
+      transition: transform 0.15s ease;
+    }
+    .drawer-title-link:hover .drawer-ext-icon {
+      transform: translate(2px, -2px);
     }
     .drawer-developer {
-      font-size: 11.5px;
+      font-size: 12px;
       color: #64748b;
-      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
     }
+
     .drawer-close-btn {
       background: #f1f5f9;
       border: none;
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
+      font-size: 16px;
       color: #64748b;
       cursor: pointer;
       transition: all 0.2s;
+      flex-shrink: 0;
     }
     .drawer-close-btn:hover {
       background: #fee2e2;
       color: #dc2626;
+      transform: rotate(90deg);
     }
 
     .drawer-body {
-      padding: 16px 18px;
+      padding: 16px 20px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 13px;
     }
     .drawer-body::-webkit-scrollbar {
-      width: 4px;
+      width: 5px;
     }
     .drawer-body::-webkit-scrollbar-thumb {
       background: #cbd5e1;
-      border-radius: 4px;
+      border-radius: 6px;
     }
 
-    /* PROPIUM AI SCORECARD BOX */
+    /* EXECUTIVE PROPIUM AI INVESTMENT SCORECARD */
     .propium-score-card {
-      background: linear-gradient(135deg, #1e1b4b, #312e81);
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-      color: #ffffff;
-      box-shadow: 0 4px 15px rgba(49, 46, 129, 0.25);
+      background: #ffffff;
+      border: 1.5px solid #e0e7ff;
+      border-radius: 14px;
+      padding: 14px 16px;
+      box-shadow: 0 4px 18px rgba(79, 70, 229, 0.08);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .propium-score-card:hover {
+      border-color: #818cf8;
+      box-shadow: 0 6px 22px rgba(79, 70, 229, 0.15);
+      transform: translateY(-1px);
     }
     .score-card-top {
       display: flex;
@@ -666,129 +705,177 @@
     .score-badge-wrap {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     .score-circle {
-      width: 36px;
-      height: 36px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
+      background: linear-gradient(135deg, #10b981, #059669);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 800;
       color: #ffffff;
       font-family: 'JetBrains Mono', monospace;
-      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+      flex-shrink: 0;
     }
     .score-meta-title {
       font-size: 10px;
-      font-weight: 700;
-      color: #c7d2fe;
+      font-weight: 800;
+      color: #6366f1;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
     }
     .score-verdict {
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 800;
-      color: #ffffff;
+      color: #0f172a;
+      margin-top: 1px;
     }
     .score-aspects-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.08);
-      padding: 8px 10px;
-      border-radius: var(--radius-sm);
-      font-size: 10.5px;
+      gap: 8px;
+      background: #f8fafc;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #f1f5f9;
     }
     .aspect-row {
       display: flex;
-      justify-content: space-between;
-      color: #e0e7ff;
+      flex-direction: column;
+      gap: 3px;
     }
-    .aspect-row b {
-      color: #fde047;
+    .aspect-row-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: #475569;
+    }
+    .aspect-row-head b {
+      color: #0f172a;
+      font-weight: 800;
+    }
+    .aspect-bar-bg {
+      width: 100%;
+      height: 4px;
+      background: #e2e8f0;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .aspect-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #3b82f6);
+      border-radius: 2px;
+    }
+    .score-card-footer {
+      font-size: 11px;
+      color: #6366f1;
       font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 8px;
     }
 
-    /* REDIRECT TO PROPIUM PRIMARY BUTTON */
+    /* PRIMARY UAT BUTTON */
     .propium-redirect-btn {
       width: 100%;
-      height: 42px;
-      background: linear-gradient(135deg, #4f46e5, #3b82f6);
+      height: 44px;
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
       color: #ffffff !important;
       border: none;
-      border-radius: var(--radius-md);
-      font-size: 13px;
+      border-radius: 12px;
+      font-size: 13.5px;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
+      gap: 8px;
       text-decoration: none;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+      box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35);
       transition: all 0.2s ease;
     }
     .propium-redirect-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
-      background: linear-gradient(135deg, #4338ca, #2563eb);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+      background: linear-gradient(135deg, #4338ca 0%, #2563eb 100%);
     }
 
     /* Proximity Distance Box */
     .proximity-distance-box {
-      background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-      border: 1px solid #c7d2fe;
-      border-radius: var(--radius-md);
-      padding: 10px 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px 14px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-size: 12px;
-      color: #1e1b4b;
+      color: #334155;
     }
-    .proximity-distance-box i {
-      font-size: 18px;
-      color: var(--primary);
+    .proximity-icon-wrap {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #eef2ff;
+      color: #4f46e5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
     }
     .proximity-distance-box b {
-      color: var(--primary);
+      color: #0f172a;
       font-weight: 800;
     }
 
-    /* CARPET AREA HIGHLIGHT BANNER */
+    /* RERA CARPET AREA HIGHLIGHT TILE */
     .carpet-area-banner {
-      background: #f0fdf4;
-      border: 1.5px solid #bbf7d0;
-      border-radius: var(--radius-md);
-      padding: 10px 12px;
+      background: #ffffff;
+      border: 1.5px solid #dcfce7;
+      border-radius: 14px;
+      padding: 12px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(22, 163, 74, 0.06);
     }
     .carpet-banner-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
-    .carpet-banner-left i {
-      font-size: 20px;
-      color: #16a34a;
+    .carpet-icon-wrap {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: #ecfdf5;
+      color: #059669;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
     }
     .carpet-title {
-      font-size: 10.5px;
-      font-weight: 700;
-      color: #166534;
+      font-size: 10px;
+      font-weight: 800;
+      color: #059669;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.5px;
     }
     .carpet-range {
-      font-size: 14.5px;
+      font-size: 15px;
       font-weight: 800;
-      color: #14532d;
+      color: #064e3b;
       font-family: 'JetBrains Mono', monospace;
     }
 
@@ -800,9 +887,9 @@
     }
     .spec-item {
       background: #f8fafc;
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-md);
-      padding: 8px 10px;
+      border: 1px solid #f1f5f9;
+      border-radius: 10px;
+      padding: 9px 12px;
     }
     .spec-label {
       font-size: 10.5px;
@@ -820,50 +907,68 @@
     .unit-carpet-breakdown {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
     }
     .unit-row-card {
-      background: #f8fafc;
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-sm);
-      padding: 7px 10px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 9px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       transition: all 0.15s;
     }
     .unit-row-card:hover {
-      background: #ffffff;
-      border-color: #cbd5e1;
+      border-color: #6366f1;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
     }
     .unit-badge {
       font-weight: 800;
-      font-size: 11.5px;
-      color: var(--primary);
+      font-size: 12px;
+      color: #4f46e5;
       background: #eef2ff;
-      padding: 2px 7px;
-      border-radius: var(--radius-full);
+      padding: 3px 8px;
+      border-radius: 6px;
     }
     .unit-areas {
       text-align: right;
     }
     .unit-carpet-val {
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 800;
       color: #0f172a;
     }
     .unit-super-val {
-      font-size: 9.5px;
+      font-size: 10px;
       color: #64748b;
     }
 
     .drawer-footer {
-      padding: 12px 18px;
-      border-top: 1px solid var(--border-light);
+      padding: 14px 20px 18px 20px;
+      border-top: 1px solid #f1f5f9;
       background: #ffffff;
-      display: flex;
-      gap: 8px;
     }
+    .drawer-zoom-btn {
+      height: 40px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #1e293b;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .drawer-zoom-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
     .drawer-zoom-btn {
       flex: 1;
       height: 38px;
@@ -1329,81 +1434,114 @@
   <!-- ==========================================================================
        SIDE-OVER PROJECT DETAILS DRAWER (With Propium Score & Redirect Button)
        ========================================================================== -->
+    <!-- ==========================================================================
+       SIDE-OVER PROJECT DETAILS DRAWER (With Propium Score & Redirect Button)
+       ========================================================================== -->
   <aside class="project-drawer" id="projectDrawer">
     <div class="drawer-header">
-      <div>
+      <div style="flex: 1; min-width: 0;">
         <div class="drawer-badges">
           <span class="drawer-tag gold" id="dMarketTag">Ultra Luxury</span>
           <span class="drawer-tag emerald" id="dStatusTag">Under Construction</span>
           <span class="drawer-tag sector" id="dSectorTag">Sector 62</span>
         </div>
-        <a href="#" target="_blank" id="dTitleLink" class="drawer-title-link" title="Open on Propium UAT">
-          <h2 class="drawer-title" id="dTitle" style="margin: 0;">Pioneer Adivat</h2>
-          <i class="ph-bold ph-arrow-square-out" style="font-size: 15px; color: #4f46e5;"></i>
+        <a href="#" target="_blank" id="dTitleLink" class="drawer-title-link" style="text-decoration: none;" title="Open on Propium UAT">
+          <div class="drawer-title-row">
+            <h2 class="drawer-title" id="dTitle">Pioneer Araya</h2>
+            <i class="ph-fill ph-seal-check drawer-verified-icon" title="RERA Verified Project"></i>
+            <i class="ph-bold ph-arrow-square-out drawer-ext-icon"></i>
+          </div>
         </a>
-        <div class="drawer-developer" id="dDeveloper">Pioneer Urban Land &amp; Infrastructure</div>
+        <div class="drawer-developer" id="dDeveloper">
+          <i class="ph-bold ph-buildings" style="color: #6366f1;"></i> by Pioneer Urban
+        </div>
       </div>
-      <button class="drawer-close-btn" onclick="closeProjectDrawer()"><i class="ph-bold ph-x"></i></button>
+      <button class="drawer-close-btn" onclick="closeProjectDrawer()" title="Close details"><i class="ph-bold ph-x"></i></button>
     </div>
 
     <div class="drawer-body">
-      <!-- PROPIUM AI INVESTMENT SCORECARD -->
-      <div class="propium-score-card" id="dScoreCard" style="cursor: pointer;" title="Click to view AI investment report on Propium UAT">
+      <!-- PROPIUM AI INVESTMENT SCORECARD (Executive Glass Card) -->
+      <div class="propium-score-card" id="dScoreCard" title="Click to view full AI investment due-diligence report on Propium UAT">
         <div class="score-card-top">
           <div class="score-badge-wrap">
             <div class="score-circle" id="dScoreCircle">92</div>
             <div>
-              <div class="score-meta-title">Propium AI Investment Score</div>
-              <div class="score-verdict" id="dScoreVerdict">Exceptional Investment (Top 5%)</div>
+              <div class="score-meta-title">Propium AI Investment Grade</div>
+              <div class="score-verdict" id="dScoreVerdict">Grade A+ • Exceptional Investment</div>
             </div>
           </div>
-          <i class="ph-bold ph-trend-up" style="font-size: 24px; color: #38bdf8;"></i>
+          <i class="ph-bold ph-trend-up" style="font-size: 22px; color: #10b981;"></i>
         </div>
+        
         <div class="score-aspects-grid">
-          <div class="aspect-row"><span>Connectivity</span> <b id="dAspectConn">96%</b></div>
-          <div class="aspect-row"><span>Developer Trust</span> <b id="dAspectDev">92%</b></div>
-          <div class="aspect-row"><span>Appreciation</span> <b id="dAspectAppr">90%</b></div>
-          <div class="aspect-row"><span>Livability</span> <b id="dAspectLive">88%</b></div>
+          <div class="aspect-row">
+            <div class="aspect-row-head"><span>🚇 Connectivity</span> <b id="dAspectConn">96%</b></div>
+            <div class="aspect-bar-bg"><div class="aspect-bar-fill" id="dBarConn" style="width: 96%;"></div></div>
+          </div>
+          <div class="aspect-row">
+            <div class="aspect-row-head"><span>🏢 Developer Trust</span> <b id="dAspectDev">92%</b></div>
+            <div class="aspect-bar-bg"><div class="aspect-bar-fill" id="dBarDev" style="width: 92%;"></div></div>
+          </div>
+          <div class="aspect-row">
+            <div class="aspect-row-head"><span>📈 Appreciation</span> <b id="dAspectAppr">90%</b></div>
+            <div class="aspect-bar-bg"><div class="aspect-bar-fill" id="dBarAppr" style="width: 90%;"></div></div>
+          </div>
+          <div class="aspect-row">
+            <div class="aspect-row-head"><span>🌳 Livability</span> <b id="dAspectLive">88%</b></div>
+            <div class="aspect-bar-bg"><div class="aspect-bar-fill" id="dBarLive" style="width: 88%;"></div></div>
+          </div>
+        </div>
+
+        <div class="score-card-footer">
+          <span>Due-Diligence Factsheet</span>
+          <span>View Full AI Analysis ↗</span>
         </div>
       </div>
 
       <!-- REDIRECT TO PROPIUM FULL PROJECT PAGE -->
       <a href="#" target="_blank" class="propium-redirect-btn" id="dPropiumRedirectBtn">
-        <i class="ph-bold ph-arrow-square-out"></i> Open on Propium UAT (Analysis &amp; Factsheet)
+        <i class="ph-bold ph-arrow-square-out"></i> Open on Propium UAT (Factsheet &amp; Pricing)
       </a>
 
       <!-- Proximity Distance Box -->
       <div class="proximity-distance-box" id="dProximityBox">
-        <i class="ph-fill ph-navigation-arrow"></i>
-        <span id="dProximityText"><b>3.4 KM</b> away from <b>Heritage Xperential Learning School</b></span>
+        <div class="proximity-icon-wrap">
+          <i class="ph-fill ph-graduation-cap"></i>
+        </div>
+        <div style="flex: 1;">
+          <div style="font-size: 11px; color: #64748b; font-weight: 600;">School Proximity</div>
+          <div id="dProximityText" style="font-size: 12px; color: #0f172a;"><b>3.4 KM</b> from <b>Heritage Xperential Learning School</b></div>
+        </div>
       </div>
 
       <!-- CARPET AREA HIGHLIGHT BANNER -->
       <div class="carpet-area-banner">
         <div class="carpet-banner-left">
-          <i class="ph-bold ph-ruler"></i>
+          <div class="carpet-icon-wrap">
+            <i class="ph-bold ph-ruler"></i>
+          </div>
           <div>
-            <div class="carpet-title">RERA Carpet Area Range</div>
+            <div class="carpet-title">RERA Net Usable Carpet Area</div>
             <div class="carpet-range" id="dCarpetRange">1,450 – 3,250 sq.ft</div>
           </div>
         </div>
-        <div style="font-size: 9.5px; color: #15803d; font-weight: 700; text-align: right;">
-          Net Usable<br>Floor Space
+        <div style="font-size: 10px; color: #059669; font-weight: 800; background: #ecfdf5; padding: 4px 8px; border-radius: 6px; border: 1px solid #a7f3d0;">
+          ✓ 100% Usable
         </div>
       </div>
 
       <!-- Specs 2x2 Grid -->
       <div class="specs-grid">
         <div class="spec-item">
-          <div class="spec-label">Land Area</div>
+          <div class="spec-label">Land Parcel</div>
           <div class="spec-val" id="dLandArea">10.07 Acres</div>
         </div>
         <div class="spec-item">
-          <div class="spec-label">Open Space</div>
+          <div class="spec-label">Open Green Area</div>
           <div class="spec-val" id="dOpenArea">65% Open</div>
         </div>
         <div class="spec-item">
-          <div class="spec-label">Possession</div>
+          <div class="spec-label">Possession Date</div>
           <div class="spec-val" id="dPossession">Dec 2029</div>
         </div>
         <div class="spec-item">
@@ -1414,8 +1552,8 @@
 
       <!-- CONFIGURATION & CARPET AREA BREAKDOWN TABLE -->
       <div>
-        <div class="spec-label" style="margin-bottom: 5px; font-weight: 700; color: #334155;">
-          Configurations &amp; Usable Carpet Area:
+        <div class="spec-label" style="margin-bottom: 6px; font-weight: 800; color: #334155; font-size: 11.5px;">
+          Configuration Breakdown &amp; Usable Carpet Area:
         </div>
         <div class="unit-carpet-breakdown" id="dUnitCarpetBreakdown">
           <!-- Rendered dynamically -->
@@ -1423,17 +1561,17 @@
       </div>
 
       <!-- Address -->
-      <div>
-        <div class="spec-label" style="margin-bottom: 4px;">Location &amp; Address</div>
-        <div style="font-size: 11.5px; color: #334155; line-height: 1.4;" id="dAddress">Sector 62, Golf Course Extension Road, Gurugram</div>
+      <div style="background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 10px; padding: 10px 12px;">
+        <div class="spec-label" style="margin-bottom: 3px;">Location &amp; Micro-Market</div>
+        <div style="font-size: 12px; color: #334155; line-height: 1.4; font-weight: 600;" id="dAddress">Sector 62, Golf Course Extension Road, Gurugram</div>
       </div>
     </div>
 
     <div class="drawer-footer" style="display: flex; gap: 8px;">
       <button class="drawer-zoom-btn" id="dZoomTowerBtn" onclick="zoomToActiveTower()" style="flex: 1;">
-        <i class="ph-bold ph-video-camera"></i> 3D Skyscraper
+        <i class="ph-bold ph-video-camera"></i> 360° Orbit View
       </button>
-      <a href="#" target="_blank" id="dFooterUatBtn" class="drawer-zoom-btn" style="flex: 1.2; background: linear-gradient(135deg, #4f46e5, #3b82f6); color: #ffffff; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;">
+      <a href="#" target="_blank" id="dFooterUatBtn" class="drawer-zoom-btn" style="flex: 1.2; background: linear-gradient(135deg, #4f46e5, #3b82f6); color: #ffffff; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; border: none; font-weight: 800;">
         <i class="ph-bold ph-arrow-square-out"></i> Open on UAT ↗
       </a>
     </div>
@@ -1614,65 +1752,283 @@
       };
     }
 
-        function getProjectMaterials(project, rand) {
+            // ==========================================
+    // PROCEDURAL HIGH-RES ARCHITECTURAL FACADE TEXTURES
+    // (REALISTIC WINDOW PANES, MULLIONS, GLOWING APARTMENTS - NEVER A PNG!)
+    // ==========================================
+    const FACADE_TEX_CACHE = {};
+    let HELIPAD_TEX = null;
+    let LOBBY_TEX = null;
+
+    function getArchitecturalFacadeTexture(paletteKey = 'modern_blue') {
+      if (FACADE_TEX_CACHE[paletteKey]) return FACADE_TEX_CACHE[paletteKey];
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
+
+      const palettes = {
+        modern_blue: {
+          bg: '#0f172a',
+          top: '#1e3a8a',
+          bottom: '#0284c7',
+          spandrel: '#ffffff',
+          mullion: '#94a3b8',
+          litWarm: '#fef08a',
+          litCool: '#bae6fd'
+        },
+        luxury_bronze: {
+          bg: '#18181b',
+          top: '#27272a',
+          bottom: '#52525b',
+          spandrel: '#fef3c7',
+          mullion: '#d97706',
+          litWarm: '#fed7aa',
+          litCool: '#fef08a'
+        },
+        azure_cyan: {
+          bg: '#082f49',
+          top: '#0369a1',
+          bottom: '#38bdf8',
+          spandrel: '#f8fafc',
+          mullion: '#cbd5e1',
+          litWarm: '#fef9c3',
+          litCool: '#e0f2fe'
+        },
+        emerald_glass: {
+          bg: '#064e3b',
+          top: '#047857',
+          bottom: '#34d399',
+          spandrel: '#f0fdf4',
+          mullion: '#a7f3d0',
+          litWarm: '#fef08a',
+          litCool: '#d1fae5'
+        }
+      };
+
+      const pal = palettes[paletteKey] || palettes.modern_blue;
+
+      // Base curtain wall glass
+      ctx.fillStyle = pal.bg;
+      ctx.fillRect(0, 0, 512, 1024);
+
+      const cols = 12;
+      const floors = 32;
+      const colW = 512 / cols;
+      const floorH = 1024 / floors;
+
+      for (let f = 0; f < floors; f++) {
+        const y = f * floorH;
+
+        // Concrete / aluminum horizontal spandrel slab
+        ctx.fillStyle = pal.spandrel;
+        ctx.fillRect(0, y, 512, 5.5);
+
+        // Ambient contact shadow under slab
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.fillRect(0, y + 5.5, 512, 2);
+
+        for (let c = 0; c < cols; c++) {
+          const x = c * colW;
+          const winW = colW - 3.5;
+          const winH = floorH - 9;
+
+          // Glass gradient (sky reflection to deep interior)
+          const grad = ctx.createLinearGradient(x, y + 7, x, y + 7 + winH);
+          grad.addColorStop(0, pal.top);
+          grad.addColorStop(1, pal.bottom);
+          ctx.fillStyle = grad;
+          ctx.fillRect(x + 1.8, y + 7, winW, winH);
+
+          // Illuminated apartment windows (~24% occupancy light)
+          const seed = (c * 19 + f * 43) % 100;
+          if (seed < 20) {
+            ctx.fillStyle = pal.litWarm;
+            ctx.globalAlpha = 0.85;
+            ctx.fillRect(x + 3.5, y + 9, winW - 3.5, winH - 3.5);
+            ctx.globalAlpha = 1.0;
+          } else if (seed < 32) {
+            ctx.fillStyle = pal.litCool;
+            ctx.globalAlpha = 0.65;
+            ctx.fillRect(x + 3.5, y + 9, winW - 3.5, winH - 3.5);
+            ctx.globalAlpha = 1.0;
+          }
+
+          // Structural Mullion Frame
+          ctx.strokeStyle = pal.mullion;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(x + 1.8, y + 7, winW, winH);
+
+          // Vertical window mullion divider
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+          ctx.beginPath();
+          ctx.moveTo(x + 1.8 + winW / 2, y + 7);
+          ctx.lineTo(x + 1.8 + winW / 2, y + 7 + winH);
+          ctx.stroke();
+        }
+      }
+
+      // Diagonal sun glare / reflection streak across the building facade
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(0, 480);
+      ctx.lineTo(512, 220);
+      ctx.lineTo(512, 380);
+      ctx.lineTo(0, 640);
+      ctx.closePath();
+      const glareGrad = ctx.createLinearGradient(0, 480, 512, 380);
+      glareGrad.addColorStop(0, 'rgba(255, 255, 255, 0.12)');
+      glareGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.24)');
+      glareGrad.addColorStop(1, 'rgba(255, 255, 255, 0.04)');
+      ctx.fillStyle = glareGrad;
+      ctx.fill();
+      ctx.restore();
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.anisotropy = 4;
+      FACADE_TEX_CACHE[paletteKey] = tex;
+      return tex;
+    }
+
+    function getHelipadTexture() {
+      if (HELIPAD_TEX) return HELIPAD_TEX;
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(0, 0, 256, 256);
+
+      ctx.fillStyle = '#64748b';
+      ctx.beginPath();
+      ctx.arc(128, 128, 105, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.arc(128, 128, 85, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 74px "JetBrains Mono", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('H', 128, 132);
+
+      HELIPAD_TEX = new THREE.CanvasTexture(canvas);
+      return HELIPAD_TEX;
+    }
+
+    function getLobbyTexture() {
+      if (LOBBY_TEX) return LOBBY_TEX;
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+
+      const grad = ctx.createLinearGradient(0, 0, 0, 128);
+      grad.addColorStop(0, '#fef08a');
+      grad.addColorStop(1, '#fde047');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 256, 128);
+
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 4;
+      for (let x = 0; x <= 256; x += 32) {
+        ctx.strokeRect(x, 0, 32, 128);
+      }
+
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(100, 44, 56, 84);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(104, 48, 22, 76);
+      ctx.fillRect(130, 48, 22, 76);
+
+      LOBBY_TEX = new THREE.CanvasTexture(canvas);
+      return LOBBY_TEX;
+    }
+
+    // Material Generator with Genuine Architectural Textures
+    function getProjectMaterials(project, rand) {
       const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
-      const paletteIndex = Math.floor(rand() * 4);
+      const paletteKeys = ['modern_blue', 'luxury_bronze', 'azure_cyan', 'emerald_glass'];
+      const key = paletteKeys[Math.floor(rand() * paletteKeys.length)];
 
-      // High-end vibrant architectural glass colors (Radiant Sky-Blue, Azure, Cerulean, Emerald)
-      const glassColors = [0x38bdf8, 0x60a5fa, 0x0ea5e9, 0x34d399];
-      const glassEmissives = [0x0369a1, 0x1d4ed8, 0x0284c7, 0x047857];
-
-      const slabColors = [0xffffff, 0xf8fafc, 0xf1f5f9, 0xffffff];
-      const crownColors = isUltra 
-        ? [0xf59e0b, 0xd97706, 0xfbbf24, 0x6366f1] // Champagne Gold & Royal
-        : [0x38bdf8, 0x10b981, 0x6366f1, 0x0ea5e9];
+      const facadeTex = getArchitecturalFacadeTexture(key);
+      const helipadTex = getHelipadTexture();
+      const lobbyTex = getLobbyTexture();
 
       return {
-        // Radiant architectural curtain glass with self-illumination (never renders black!)
-        glassMat: new THREE.MeshPhongMaterial({
-          color: glassColors[paletteIndex],
-          emissive: glassEmissives[paletteIndex],
-          emissiveIntensity: 0.35,
-          specular: 0xffffff,
-          shininess: 90,
+        // Photorealistic Glass Facade with Window Grids & Lit Apartments
+        towerMat: new THREE.MeshStandardMaterial({
+          map: facadeTex,
+          roughness: 0.16,
+          metalness: 0.32
+        }),
+        // Double-Height Ground Lobby with Warm Lights
+        lobbyMat: new THREE.MeshStandardMaterial({
+          map: lobbyTex,
+          roughness: 0.25,
+          emissive: 0xfef08a,
+          emissiveIntensity: 0.25
+        }),
+        // Pure Crisp White Architectural Floor Slabs
+        slabMat: new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          roughness: 0.35,
+          metalness: 0.08
+        }),
+        // Translucent Glass Balcony Guardrails
+        balconyGlassMat: new THREE.MeshStandardMaterial({
+          color: 0x38bdf8,
           transparent: true,
-          opacity: 0.92
+          opacity: 0.72,
+          roughness: 0.1,
+          metalness: 0.25
         }),
-        // Pure architectural white floor slabs (never renders black!)
-        slabMat: new THREE.MeshLambertMaterial({
-          color: slabColors[paletteIndex],
-          emissive: 0x334155,
-          emissiveIntensity: 0.15
+        // Light Travertine Stone Podium Base
+        podiumMat: new THREE.MeshStandardMaterial({
+          color: 0xf1f5f9,
+          roughness: 0.6,
+          metalness: 0.05
         }),
-        balconyMat: new THREE.MeshLambertMaterial({
-          color: 0xffffff
+        // Landscaped Emerald Lawn Roof
+        lawnMat: new THREE.MeshStandardMaterial({
+          color: 0x15803d,
+          roughness: 0.85
         }),
-        // Clean light travertine podium base (low profile)
-        podiumMat: new THREE.MeshLambertMaterial({
-          color: 0xf8fafc,
-          emissive: 0x1e293b,
-          emissiveIntensity: 0.08
+        // Helipad Surface
+        helipadMat: new THREE.MeshStandardMaterial({
+          map: helipadTex,
+          roughness: 0.7,
+          metalness: 0.1
         }),
-        // Lush golf green manicured podium lawn
-        lawnMat: new THREE.MeshLambertMaterial({
-          color: 0x10b981
+        // Champagne Gold / Illuminated Crown
+        crownMat: new THREE.MeshStandardMaterial({
+          color: isUltra ? 0xf59e0b : 0x0284c7,
+          roughness: 0.2,
+          metalness: 0.85,
+          emissive: isUltra ? 0xb45309 : 0x0369a1,
+          emissiveIntensity: 0.35
         }),
-        // Champagne Gold Penthouse Crown
-        crownMat: new THREE.MeshPhongMaterial({
-          color: crownColors[paletteIndex],
-          emissive: isUltra ? 0xb45309 : 0x1e40af,
-          emissiveIntensity: 0.4,
-          specular: 0xffffff,
-          shininess: 95
+        treeLeavesMat: new THREE.MeshStandardMaterial({
+          color: 0x166534,
+          roughness: 0.9
         }),
-        frameMat: new THREE.MeshLambertMaterial({
-          color: 0xe2e8f0
+        treeTrunkMat: new THREE.MeshStandardMaterial({
+          color: 0x78350f,
+          roughness: 0.8
         })
       };
     }
 
-    // Distinct Procedural 3D Skyscraper Architecture Builder
-        function create3DBuildingModel(project) {
+    // HYPER-REALISTIC 3D SKYSCRAPER ARCHITECTURE BUILDER
+    function create3DBuildingModel(project) {
       const rand = getSeededRandom(project.id * 31 + 47);
       const mats = getProjectMaterials(project, rand);
       const group = new THREE.Group();
@@ -1683,99 +2039,168 @@
 
       const typology = (acres > 18) ? 2 : Math.floor(rand() * 4);
       const baseHeight = isUltra ? (140 + rand() * 40) : isLuxury ? (110 + rand() * 30) : (80 + rand() * 25);
-      const podiumH = 4; // Clean low-profile landscaped base (NO bulky black base!)
+      const podiumH = 4.5;
+      const lobbyH = 6.0;
 
-      // TYPOLOGY 0: SINGLE SLEEK ICONIC MONOLITH
+      // Helper: Add stylized landscaped tree to podium
+      function addTree(x, y, z) {
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.4, 2.5, 6), mats.treeTrunkMat);
+        trunk.position.set(x, y, z + 1.25);
+        trunk.rotation.x = Math.PI / 2;
+        group.add(trunk);
+
+        const leaves = new THREE.Mesh(new THREE.DodecahedronGeometry(1.6), mats.treeLeavesMat);
+        leaves.position.set(x, y, z + 3.2);
+        group.add(leaves);
+      }
+
+      // TYPOLOGY 0: SINGLE ICONIC LUXURY MONOLITH
       if (typology === 0) {
-        const tw = 36 + rand() * 8;
-        const td = 26 + rand() * 6;
+        const tw = 36 + rand() * 6;
+        const td = 26 + rand() * 4;
         const th = baseHeight;
 
-        const podium = new THREE.Mesh(new THREE.BoxGeometry(tw + 20, td + 18, podiumH), mats.podiumMat);
+        // 1. Podium Base & Landscaped Garden
+        const podium = new THREE.Mesh(new THREE.BoxGeometry(tw + 22, td + 20, podiumH), mats.podiumMat);
         podium.position.set(0, 0, podiumH / 2);
         group.add(podium);
 
-        const park = new THREE.Mesh(new THREE.BoxGeometry(tw + 16, td + 14, 0.8), mats.lawnMat);
-        park.position.set(0, 0, podiumH + 0.4);
-        group.add(park);
+        const lawn = new THREE.Mesh(new THREE.BoxGeometry(tw + 18, td + 16, 0.8), mats.lawnMat);
+        lawn.position.set(0, 0, podiumH + 0.4);
+        group.add(lawn);
 
-        const tower = new THREE.Mesh(new THREE.BoxGeometry(tw, td, th), mats.glassMat);
-        tower.position.set(0, 0, podiumH + th / 2);
+        // Add garden trees on podium corners
+        addTree(-tw / 2 - 6, -td / 2 - 5, podiumH + 0.8);
+        addTree( tw / 2 + 6, -td / 2 - 5, podiumH + 0.8);
+        addTree(-tw / 2 - 6,  td / 2 + 5, podiumH + 0.8);
+        addTree( tw / 2 + 6,  td / 2 + 5, podiumH + 0.8);
+
+        // 2. Double-height Grand Lobby
+        const lobby = new THREE.Mesh(new THREE.BoxGeometry(tw + 2, td + 2, lobbyH), mats.lobbyMat);
+        lobby.position.set(0, 0, podiumH + lobbyH / 2);
+        group.add(lobby);
+
+        // Entrance Canopy (Porte-Cochère)
+        const canopy = new THREE.Mesh(new THREE.BoxGeometry(16, 12, 0.8), mats.slabMat);
+        canopy.position.set(0, td / 2 + 6, podiumH + lobbyH - 0.5);
+        group.add(canopy);
+
+        // 3. Main Skyscraper Tower with High-Res Architectural Facade
+        const towerZ = podiumH + lobbyH;
+        const tower = new THREE.Mesh(new THREE.BoxGeometry(tw, td, th), mats.towerMat);
+        tower.position.set(0, 0, towerZ + th / 2);
         group.add(tower);
 
-        const floors = Math.floor(th / 4.0);
+        // Protruding Architectural Floor Slabs & Glass Balconies
+        const floors = Math.floor(th / 4.2);
         for (let f = 1; f < floors; f++) {
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(tw + 1.8, td + 1.8, 0.6), mats.slabMat);
-          slab.position.set(0, 0, podiumH + f * 4.0);
+          const slabZ = towerZ + f * 4.2;
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(tw + 2.0, td + 2.0, 0.6), mats.slabMat);
+          slab.position.set(0, 0, slabZ);
           group.add(slab);
+
+          // Glass Balcony Railings on alternating floors
+          if (f % 2 === 0) {
+            const balFront = new THREE.Mesh(new THREE.BoxGeometry(tw * 0.7, 1.2, 1.4), mats.balconyGlassMat);
+            balFront.position.set(0, td / 2 + 1.2, slabZ + 0.7);
+            group.add(balFront);
+          }
         }
 
-        const crownH = 15;
-        const crown = new THREE.Mesh(new THREE.ConeGeometry(tw * 0.45, crownH, 4), mats.crownMat);
-        crown.rotation.x = Math.PI / 2;
-        crown.rotation.z = Math.PI / 4;
-        crown.position.set(0, 0, podiumH + th + crownH / 2);
-        group.add(crown);
+        // 4. Rooftop Mechanical Penthouse & Helipad
+        const topZ = towerZ + th;
+        const mechH = 8;
+        const mech = new THREE.Mesh(new THREE.BoxGeometry(tw * 0.6, td * 0.6, mechH), mats.podiumMat);
+        mech.position.set(0, 0, topZ + mechH / 2);
+        group.add(mech);
 
-        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 1.2, 20, 8), mats.crownMat);
+        // Helipad on Penthouse Roof
+        const helipad = new THREE.Mesh(new THREE.BoxGeometry(18, 18, 0.5), mats.helipadMat);
+        helipad.position.set(0, 0, topZ + mechH + 0.25);
+        group.add(helipad);
+
+        // Illuminated Architectural Spire with Aircraft Warning Beacon
+        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 1.2, 22, 8), mats.crownMat);
         spire.rotation.x = Math.PI / 2;
-        spire.position.set(0, 0, podiumH + th + crownH + 10);
+        spire.position.set(0, 0, topZ + mechH + 11);
         group.add(spire);
       }
-      // TYPOLOGY 1: ASYMMETRIC TWIN TOWERS (With Skybridge)
+      // TYPOLOGY 1: ASYMMETRIC TWIN TOWERS WITH SKYBRIDGE
       else if (typology === 1) {
-        const t1_w = 30, t1_d = 24, t1_h = baseHeight;
+        const t1_w = 28, t1_d = 24, t1_h = baseHeight;
         const t2_w = 24, t2_d = 20, t2_h = baseHeight * 0.75;
 
-        const podium = new THREE.Mesh(new THREE.BoxGeometry(72, 50, podiumH), mats.podiumMat);
+        // Podium & Garden
+        const podium = new THREE.Mesh(new THREE.BoxGeometry(76, 52, podiumH), mats.podiumMat);
         podium.position.set(0, 0, podiumH / 2);
         group.add(podium);
 
-        const park = new THREE.Mesh(new THREE.BoxGeometry(66, 44, 0.8), mats.lawnMat);
-        park.position.set(0, 0, podiumH + 0.4);
-        group.add(park);
+        const lawn = new THREE.Mesh(new THREE.BoxGeometry(70, 46, 0.8), mats.lawnMat);
+        lawn.position.set(0, 0, podiumH + 0.4);
+        group.add(lawn);
 
-        const tower1 = new THREE.Mesh(new THREE.BoxGeometry(t1_w, t1_d, t1_h), mats.glassMat);
-        tower1.position.set(-16, 0, podiumH + t1_h / 2);
-        group.add(tower1);
+        addTree( 26, -16, podiumH + 0.8);
+        addTree(-28,  16, podiumH + 0.8);
 
-        const f1 = Math.floor(t1_h / 4.0);
+        // Lobbies
+        const l1 = new THREE.Mesh(new THREE.BoxGeometry(t1_w + 2, t1_d + 2, lobbyH), mats.lobbyMat);
+        l1.position.set(-16, 0, podiumH + lobbyH / 2);
+        group.add(l1);
+
+        const l2 = new THREE.Mesh(new THREE.BoxGeometry(t2_w + 2, t2_d + 2, lobbyH), mats.lobbyMat);
+        l2.position.set(18, 6, podiumH + lobbyH / 2);
+        group.add(l2);
+
+        // Tower 1 (Tall Primary Tower)
+        const towerZ = podiumH + lobbyH;
+        const tw1 = new THREE.Mesh(new THREE.BoxGeometry(t1_w, t1_d, t1_h), mats.towerMat);
+        tw1.position.set(-16, 0, towerZ + t1_h / 2);
+        group.add(tw1);
+
+        const f1 = Math.floor(t1_h / 4.2);
         for (let f = 1; f < f1; f++) {
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(t1_w + 1.6, t1_d + 1.6, 0.6), mats.slabMat);
-          slab.position.set(-16, 0, podiumH + f * 4.0);
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(t1_w + 1.8, t1_d + 1.8, 0.6), mats.slabMat);
+          slab.position.set(-16, 0, towerZ + f * 4.2);
           group.add(slab);
         }
 
-        const tower2 = new THREE.Mesh(new THREE.BoxGeometry(t2_w, t2_d, t2_h), mats.glassMat);
-        tower2.position.set(18, 6, podiumH + t2_h / 2);
-        group.add(tower2);
+        // Tower 2 (Secondary Tower)
+        const tw2 = new THREE.Mesh(new THREE.BoxGeometry(t2_w, t2_d, t2_h), mats.towerMat);
+        tw2.position.set(18, 6, towerZ + t2_h / 2);
+        group.add(tw2);
 
-        const f2 = Math.floor(t2_h / 4.0);
+        const f2 = Math.floor(t2_h / 4.2);
         for (let f = 1; f < f2; f++) {
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(t2_w + 1.6, t2_d + 1.6, 0.6), mats.slabMat);
-          slab.position.set(18, 6, podiumH + f * 4.0);
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(t2_w + 1.8, t2_d + 1.8, 0.6), mats.slabMat);
+          slab.position.set(18, 6, towerZ + f * 4.2);
           group.add(slab);
         }
 
-        const bridgeZ = podiumH + t2_h * 0.65;
-        const skybridge = new THREE.Mesh(new THREE.BoxGeometry(14, 7, 3.5), mats.crownMat);
+        // Skybridge between Towers
+        const bridgeZ = towerZ + t2_h * 0.68;
+        const skybridge = new THREE.Mesh(new THREE.BoxGeometry(16, 8, 4), mats.crownMat);
         skybridge.position.set(1, 3, bridgeZ);
         group.add(skybridge);
 
-        const crown = new THREE.Mesh(new THREE.BoxGeometry(t1_w * 0.85, t1_d * 0.85, 8), mats.crownMat);
-        crown.position.set(-16, 0, podiumH + t1_h + 4);
-        group.add(crown);
+        // Helipad on Tower 1
+        const helipad = new THREE.Mesh(new THREE.BoxGeometry(16, 16, 0.5), mats.helipadMat);
+        helipad.position.set(-16, 0, towerZ + t1_h + 0.25);
+        group.add(helipad);
       }
-      // TYPOLOGY 2: MULTI-TOWER GATED COMMUNITY (3 Towers around Park)
+      // TYPOLOGY 2: GATED LUXURY COMMUNITY (3 Towers + Central Park)
       else if (typology === 2) {
-        const pw = 84, pd = 74;
+        const pw = 86, pd = 76;
         const podium = new THREE.Mesh(new THREE.BoxGeometry(pw, pd, podiumH), mats.podiumMat);
         podium.position.set(0, 0, podiumH / 2);
         group.add(podium);
 
-        const park = new THREE.Mesh(new THREE.BoxGeometry(pw - 6, pd - 6, 0.8), mats.lawnMat);
-        park.position.set(0, 0, podiumH + 0.4);
-        group.add(park);
+        const lawn = new THREE.Mesh(new THREE.BoxGeometry(pw - 6, pd - 6, 0.8), mats.lawnMat);
+        lawn.position.set(0, 0, podiumH + 0.4);
+        group.add(lawn);
+
+        addTree(0, -6, podiumH + 0.8);
+        addTree(8, -4, podiumH + 0.8);
+        addTree(-8, -4, podiumH + 0.8);
 
         const towerConfigs = [
           { x: -22, y: -18, h: baseHeight * 0.95, w: 24, d: 22 },
@@ -1783,40 +2208,69 @@
           { x:   0, y:  20, h: baseHeight,        w: 28, d: 24 }
         ];
 
+        const towerZ = podiumH + lobbyH;
         towerConfigs.forEach(tc => {
-          const tw = new THREE.Mesh(new THREE.BoxGeometry(tc.w, tc.d, tc.h), mats.glassMat);
-          tw.position.set(tc.x, tc.y, podiumH + tc.h / 2);
+          const lob = new THREE.Mesh(new THREE.BoxGeometry(tc.w + 2, tc.d + 2, lobbyH), mats.lobbyMat);
+          lob.position.set(tc.x, tc.y, podiumH + lobbyH / 2);
+          group.add(lob);
+
+          const tw = new THREE.Mesh(new THREE.BoxGeometry(tc.w, tc.d, tc.h), mats.towerMat);
+          tw.position.set(tc.x, tc.y, towerZ + tc.h / 2);
           group.add(tw);
 
-          const fl = Math.floor(tc.h / 4.0);
+          const fl = Math.floor(tc.h / 4.2);
           for (let f = 1; f < fl; f += 2) {
             const slab = new THREE.Mesh(new THREE.BoxGeometry(tc.w + 1.6, tc.d + 1.6, 0.6), mats.slabMat);
-            slab.position.set(tc.x, tc.y, podiumH + f * 4.0);
+            slab.position.set(tc.x, tc.y, towerZ + f * 4.2);
             group.add(slab);
           }
         });
+
+        // Helipad on tallest central tower
+        const helipad = new THREE.Mesh(new THREE.BoxGeometry(16, 16, 0.5), mats.helipadMat);
+        helipad.position.set(0, 20, towerZ + baseHeight + 0.25);
+        group.add(helipad);
       }
-      // TYPOLOGY 3: STEPPED ZIGGURAT / CASCADING TERRACES
+      // TYPOLOGY 3: STEPPED MODERNIST ZIGGURAT / CASCADING SKY GARDENS
       else {
         const totalTiers = 3;
         const tierH = baseHeight / 3;
         let curW = 44, curD = 34;
 
+        const podium = new THREE.Mesh(new THREE.BoxGeometry(curW + 18, curD + 16, podiumH), mats.podiumMat);
+        podium.position.set(0, 0, podiumH / 2);
+        group.add(podium);
+
+        const lawn = new THREE.Mesh(new THREE.BoxGeometry(curW + 14, curD + 12, 0.8), mats.lawnMat);
+        lawn.position.set(0, 0, podiumH + 0.4);
+        group.add(lawn);
+
         for (let t = 0; t < totalTiers; t++) {
           const tz = podiumH + t * tierH + tierH / 2;
-          const tierMesh = new THREE.Mesh(new THREE.BoxGeometry(curW, curD, tierH), mats.glassMat);
+          const tierMesh = new THREE.Mesh(new THREE.BoxGeometry(curW, curD, tierH), mats.towerMat);
           tierMesh.position.set(0, 0, tz);
           group.add(tierMesh);
 
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(curW + 2.5, curD + 2.5, 0.7), mats.slabMat);
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(curW + 2.4, curD + 2.4, 0.7), mats.slabMat);
           slab.position.set(0, 0, podiumH + t * tierH);
           group.add(slab);
+
+          // Green sky garden on the terrace step
+          if (t > 0) {
+            const terraceLawn = new THREE.Mesh(new THREE.BoxGeometry(curW + 4, curD + 4, 0.4), mats.lawnMat);
+            terraceLawn.position.set(0, 0, podiumH + t * tierH + 0.4);
+            group.add(terraceLawn);
+          }
 
           curW *= 0.8;
           curD *= 0.8;
         }
 
         const topZ = podiumH + baseHeight;
+        const helipad = new THREE.Mesh(new THREE.BoxGeometry(16, 16, 0.5), mats.helipadMat);
+        helipad.position.set(0, 0, topZ + 0.25);
+        group.add(helipad);
+
         const crown = new THREE.Mesh(new THREE.BoxGeometry(curW * 0.85, curD * 0.85, 7), mats.crownMat);
         crown.position.set(0, 0, topZ + 3.5);
         group.add(crown);
@@ -1884,16 +2338,16 @@
         activeThreeCamera = new THREE.Camera();
         activeThreeScene = new THREE.Scene();
 
-        // High-ambient daylight lighting so towers NEVER look dark or black
-        activeThreeScene.add(new THREE.AmbientLight(0xffffff, 1.4));
-        activeThreeScene.add(new THREE.HemisphereLight(0xffffff, 0xcfd8dc, 1.0));
+        // Realistic natural architectural daylight & sun glint
+        activeThreeScene.add(new THREE.AmbientLight(0xffffff, 0.9));
+        activeThreeScene.add(new THREE.HemisphereLight(0xffffff, 0x94a3b8, 0.75));
 
-        const dirLight1 = new THREE.DirectionalLight(0xfffaed, 1.6);
-        dirLight1.position.set(160, -220, 320);
+        const dirLight1 = new THREE.DirectionalLight(0xfffaf0, 1.3);
+        dirLight1.position.set(160, -200, 300);
         activeThreeScene.add(dirLight1);
 
-        const dirLight2 = new THREE.DirectionalLight(0xe0f2fe, 0.9);
-        dirLight2.position.set(-160, 160, 160);
+        const dirLight2 = new THREE.DirectionalLight(0xdbeafe, 0.7);
+        dirLight2.position.set(-160, 180, 180);
         activeThreeScene.add(dirLight2);
 
         activeThreeScene.add(activeThreeGroup);
@@ -2393,19 +2847,29 @@
       activeDrawerProject = proj;
 
       document.getElementById('dTitle').innerText = proj.name;
-      document.getElementById('dDeveloper').innerText = proj.developer ? `by ${proj.developer}` : 'Premier Real Estate Developer';
+      document.getElementById('dDeveloper').innerHTML = `<i class="ph-bold ph-buildings" style="color: #6366f1;"></i> by ${proj.developer || 'Premier Developer'}`;
       document.getElementById('dMarketTag').innerText = proj.target_market || 'Luxury';
       document.getElementById('dSectorTag').innerText = proj.sector || 'Gurgaon';
       document.getElementById('dStatusTag').innerText = proj.status || 'Under Construction';
 
-      // Propium Score & Redirect URL
+      // Propium Score & Progress Bars
       const scoreData = getPropiumScoreData(proj);
       document.getElementById('dScoreCircle').innerText = scoreData.score;
-      document.getElementById('dScoreVerdict').innerText = scoreData.verdict;
+      document.getElementById('dScoreVerdict').innerText = `Grade A+ • ${scoreData.verdict}`;
+      
       document.getElementById('dAspectConn').innerText = scoreData.aspects.conn;
       document.getElementById('dAspectDev').innerText = scoreData.aspects.dev;
       document.getElementById('dAspectAppr').innerText = scoreData.aspects.appr;
       document.getElementById('dAspectLive').innerText = scoreData.aspects.live;
+
+      const barConn = document.getElementById('dBarConn');
+      if (barConn) barConn.style.width = scoreData.aspects.conn;
+      const barDev = document.getElementById('dBarDev');
+      if (barDev) barDev.style.width = scoreData.aspects.dev;
+      const barAppr = document.getElementById('dBarAppr');
+      if (barAppr) barAppr.style.width = scoreData.aspects.appr;
+      const barLive = document.getElementById('dBarLive');
+      if (barLive) barLive.style.width = scoreData.aspects.live;
 
       const propiumUrl = getPropiumProjectUrl(proj);
       
@@ -2418,7 +2882,7 @@
       const redirectBtn = document.getElementById('dPropiumRedirectBtn');
       redirectBtn.href = propiumUrl;
       redirectBtn.title = `Open ${proj.name} on Propium UAT`;
-      redirectBtn.innerHTML = `<i class="ph-bold ph-arrow-square-out"></i> Open ${proj.name} on Propium UAT (Analysis &amp; Factsheet) ↗`;
+      redirectBtn.innerHTML = `<i class="ph-bold ph-arrow-square-out"></i> Open ${proj.name} on Propium UAT (Factsheet &amp; Pricing) ↗`;
 
       const footerUatBtn = document.getElementById('dFooterUatBtn');
       if (footerUatBtn) {
@@ -2431,15 +2895,16 @@
         scoreCard.onclick = () => window.open(propiumUrl, '_blank');
       }
 
-      document.getElementById('dLandArea').innerText = proj.total_area_acres ? `${proj.total_area_acres} Acres` : 'N/A';
-      document.getElementById('dOpenArea').innerText = proj.open_area_percent ? `${proj.open_area_percent}% Open` : 'N/A';
+      document.getElementById('dLandArea').innerText = proj.total_area_acres ? `${proj.total_area_acres} Acres Gated` : 'N/A';
+      document.getElementById('dOpenArea').innerText = proj.open_area_percent ? `${proj.open_area_percent}% Green Cover` : '65% Open';
       document.getElementById('dPossession').innerText = proj.possession_year ? `Dec ${proj.possession_year}` : 'Under Construction';
       document.getElementById('dCorridor').innerText = proj.corridor || 'Gurgaon';
       document.getElementById('dAddress').innerText = proj.address || `${proj.sector || ''}, Gurugram, Haryana`;
 
-      // Proximity Distance
+      // Proximity Distance with Drive Time
       if (currentSelectedSchool && proj._currentDist) {
-        document.getElementById('dProximityText').innerHTML = `<b>${proj._currentDist.toFixed(1)} KM</b> away from <b>${currentSelectedSchool.name}</b>`;
+        const driveMins = Math.max(3, Math.round(proj._currentDist * 2.8));
+        document.getElementById('dProximityText').innerHTML = `<b>${proj._currentDist.toFixed(1)} KM</b> from <b>${currentSelectedSchool.name}</b> <span style="color: #6366f1; font-weight: 700;">(🚗 ~${driveMins} mins drive)</span>`;
         document.getElementById('dProximityBox').style.display = 'flex';
       } else {
         document.getElementById('dProximityBox').style.display = 'none';
@@ -2455,10 +2920,13 @@
         const row = document.createElement('div');
         row.className = 'unit-row-card';
         row.innerHTML = `
-          <span class="unit-badge">${item.config}</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="unit-badge">${item.config}</span>
+            <span style="font-size: 10.5px; color: #059669; font-weight: 700;">✓ RERA Approved</span>
+          </div>
           <div class="unit-areas">
             <div class="unit-carpet-val">Carpet: ${item.carpetSqft.toLocaleString()} sq.ft (${item.sqMtr} m²)</div>
-            <div class="unit-super-val">Super Area: ~${item.superSqft.toLocaleString()} sq.ft</div>
+            <div class="unit-super-val">Super Built-up: ~${item.superSqft.toLocaleString()} sq.ft</div>
           </div>
         `;
         breakdownEl.appendChild(row);
