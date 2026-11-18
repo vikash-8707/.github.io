@@ -2750,123 +2750,150 @@
       }
     }
 
-    // ==========================================
+        // ==========================================
     // PROJECT DETAILS DRAWER (With Propium Score & Redirect Button)
     // ==========================================
-        function openProjectDrawer(proj) {
-      activeDrawerProject = proj;
+    function openProjectDrawer(proj) {
+      try {
+        activeDrawerProject = proj;
 
-      document.getElementById('dTitle').innerText = proj.name;
-      document.getElementById('dDeveloper').innerHTML = `<i class="ph-bold ph-buildings" style="color: #6366f1;"></i> by ${proj.developer || 'Premier Developer'}`;
-      document.getElementById('dMarketTag').innerText = proj.target_market || 'Luxury';
-      document.getElementById('dSectorTag').innerText = proj.sector || 'Gurgaon';
-      document.getElementById('dStatusTag').innerText = proj.status || 'Under Construction';
-
-      // Propium Score & Progress Bars
-      const scoreData = getPropiumScoreData(proj);
-      document.getElementById('dScoreCircle').innerText = scoreData.score;
-      document.getElementById('dScoreVerdict').innerText = `Grade A+ • ${scoreData.verdict}`;
-      
-      document.getElementById('dAspectConn').innerText = scoreData.aspects.conn;
-      document.getElementById('dAspectDev').innerText = scoreData.aspects.dev;
-      document.getElementById('dAspectAppr').innerText = scoreData.aspects.appr;
-      document.getElementById('dAspectLive').innerText = scoreData.aspects.live;
-
-      const barConn = document.getElementById('dBarConn');
-      if (barConn) barConn.style.width = scoreData.aspects.conn;
-      const barDev = document.getElementById('dBarDev');
-      if (barDev) barDev.style.width = scoreData.aspects.dev;
-      const barAppr = document.getElementById('dBarAppr');
-      if (barAppr) barAppr.style.width = scoreData.aspects.appr;
-      const barLive = document.getElementById('dBarLive');
-      if (barLive) barLive.style.width = scoreData.aspects.live;
-
-      const propiumUrl = getPropiumProjectUrl(proj);
-      
-      const titleLink = document.getElementById('dTitleLink');
-      if (titleLink) {
-        titleLink.href = propiumUrl;
-        titleLink.title = `Open ${proj.name} on Propium`;
-      }
-
-      const redirectBtn = document.getElementById('dPropiumRedirectBtn');
-      if (redirectBtn) {
-        redirectBtn.href = propiumUrl;
-        redirectBtn.title = `Open ${proj.name} on Propium AI`;
-        redirectBtn.innerHTML = `<i class="ph-bold ph-arrow-square-out" style="font-size: 16px;"></i> <span>Explore on Propium AI ↗</span>`;
-      }
-
-      const scoreAiBtn = document.getElementById('dScoreAiBtn');
-      if (scoreAiBtn) {
-        scoreAiBtn.href = `${propiumUrl}/analysis`;
-        scoreAiBtn.title = `View ${proj.name} AI Due-Diligence Analysis on proPIUM`;
-      }
-
-      const footerUatBtn = document.getElementById('dFooterUatBtn');
-      if (footerUatBtn) {
-        footerUatBtn.href = propiumUrl;
-        footerUatBtn.title = `Open ${proj.name} on Propium AI`;
-        footerUatBtn.innerHTML = `<i class="ph-bold ph-arrow-square-out"></i> Open on Propium ↗`;
-      }
-
-      const scoreCard = document.getElementById('dScoreCard');
-      if (scoreCard) {
-        scoreCard.onclick = (e) => {
-          if (!e.target.closest('#dScoreAiBtn')) {
-            window.open(propiumUrl, '_blank');
-          }
+        const setTxt = (id, txt) => {
+          const el = document.getElementById(id);
+          if (el) el.innerText = txt;
         };
+        const setHtml = (id, html) => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = html;
+        };
+
+        setTxt('dTitle', proj.name || 'Real Estate Project');
+        setHtml('dDeveloper', `<i class="ph-bold ph-buildings" style="color: #6366f1;"></i> by ${proj.developer || 'Premier Developer'}`);
+        setTxt('dMarketTag', proj.target_market || 'Luxury');
+        setTxt('dSectorTag', proj.sector || 'Gurgaon');
+        setTxt('dStatusTag', proj.status || 'Under Construction');
+
+        // Propium Score & Progress Bars
+        const scoreData = getPropiumScoreData(proj);
+        setTxt('dScoreCircle', scoreData.score);
+        setTxt('dScoreVerdict', `Grade A+ • ${scoreData.verdict}`);
+        
+        setTxt('dAspectConn', scoreData.aspects.conn);
+        setTxt('dAspectDev', scoreData.aspects.dev);
+        setTxt('dAspectAppr', scoreData.aspects.appr);
+        setTxt('dAspectLive', scoreData.aspects.live);
+
+        const barConn = document.getElementById('dBarConn');
+        if (barConn) barConn.style.width = scoreData.aspects.conn;
+        const barDev = document.getElementById('dBarDev');
+        if (barDev) barDev.style.width = scoreData.aspects.dev;
+        const barAppr = document.getElementById('dBarAppr');
+        if (barAppr) barAppr.style.width = scoreData.aspects.appr;
+        const barLive = document.getElementById('dBarLive');
+        if (barLive) barLive.style.width = scoreData.aspects.live;
+
+        const propiumUrl = getPropiumProjectUrl(proj);
+        
+        const titleLink = document.getElementById('dTitleLink');
+        if (titleLink) {
+          titleLink.href = propiumUrl;
+          titleLink.title = `Open ${proj.name} on proPIUM`;
+        }
+
+        const redirectBtn = document.getElementById('dPropiumRedirectBtn');
+        if (redirectBtn) {
+          redirectBtn.href = propiumUrl;
+          redirectBtn.title = `Open ${proj.name} on proPIUM`;
+          redirectBtn.innerHTML = `<i class="ph-bold ph-arrow-square-out" style="font-size: 16px;"></i> <span>Explore on proPIUM ↗</span>`;
+        }
+
+        const scoreAiBtn = document.getElementById('dScoreAiBtn');
+        if (scoreAiBtn) {
+          scoreAiBtn.href = `${propiumUrl}/analysis`;
+          scoreAiBtn.title = `View ${proj.name} AI Due-Diligence Analysis on proPIUM`;
+        }
+
+        const footerUatBtn = document.getElementById('dFooterUatBtn');
+        if (footerUatBtn) {
+          footerUatBtn.href = propiumUrl;
+          footerUatBtn.title = `Open ${proj.name} on proPIUM`;
+          footerUatBtn.innerHTML = `<i class="ph-bold ph-arrow-square-out"></i> Open on proPIUM ↗`;
+        }
+
+        const scoreCard = document.getElementById('dScoreCard');
+        if (scoreCard) {
+          scoreCard.onclick = (e) => {
+            if (!e.target.closest('#dScoreAiBtn')) {
+              window.open(propiumUrl, '_blank');
+            }
+          };
+        }
+
+        setTxt('dLandArea', proj.total_area_acres ? `${proj.total_area_acres} Acres` : 'N/A');
+        setTxt('dOpenArea', proj.open_area_percent ? `${proj.open_area_percent}% Green` : '65% Green');
+        setTxt('dPossession', proj.possession_year ? `Dec ${proj.possession_year}` : 'Under Construction');
+        setTxt('dCorridor', proj.corridor || 'Gurgaon');
+        setTxt('dAddress', proj.address || `${proj.sector || ''}, Gurugram, Haryana`);
+
+        // Proximity Distance with Drive Time
+        const proxBox = document.getElementById('dProximityBox');
+        if (proxBox) {
+          if (currentSelectedSchool && proj._currentDist) {
+            const driveMins = Math.max(3, Math.round(proj._currentDist * 2.8));
+            setHtml('dProximityText', `<b>${proj._currentDist.toFixed(1)} KM</b> from <b>${currentSelectedSchool.name}</b> <span style="color: #6366f1; font-weight: 700;">(🚗 ~${driveMins} mins drive)</span>`);
+            proxBox.style.display = 'flex';
+          } else {
+            proxBox.style.display = 'none';
+          }
+        }
+
+        // Carpet Area Calculation & Breakdown
+        const carpetData = getProjectCarpetData(proj);
+        setTxt('dCarpetRange', carpetData.rangeStr);
+
+        const breakdownEl = document.getElementById('dUnitCarpetBreakdown');
+        if (breakdownEl) {
+          breakdownEl.innerHTML = '';
+          carpetData.details.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'unit-row-card';
+            row.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="unit-badge">${item.config}</span>
+                <span style="font-size: 10.5px; color: #059669; font-weight: 700;">✓ RERA Approved</span>
+              </div>
+              <div class="unit-areas">
+                <div class="unit-carpet-val">Carpet: ${item.carpetSqft.toLocaleString()} sq.ft (${item.sqMtr} m²)</div>
+                <div class="unit-super-val">Super Built-up: ~${item.superSqft.toLocaleString()} sq.ft</div>
+              </div>
+            `;
+            breakdownEl.appendChild(row);
+          });
+        }
+
+        // Open the details drawer popup
+        const drawer = document.getElementById('projectDrawer');
+        if (drawer) {
+          drawer.classList.add('open');
+        }
+
+        // Smooth camera fly-to project
+        if (map && proj.lng && proj.lat) {
+          map.flyTo({
+            center: [proj.lng, proj.lat],
+            zoom: 15.3,
+            pitch: 62,
+            bearing: -25,
+            speed: 1.1,
+            curve: 1.2,
+            essential: true
+          });
+        }
+      } catch (err) {
+        console.error('Error opening project drawer:', err);
+        // Fallback: force open drawer even on error
+        const drawer = document.getElementById('projectDrawer');
+        if (drawer) drawer.classList.add('open');
       }
-
-      document.getElementById('dLandArea').innerText = proj.total_area_acres ? `${proj.total_area_acres} Acres Gated` : 'N/A';
-      document.getElementById('dOpenArea').innerText = proj.open_area_percent ? `${proj.open_area_percent}% Green Cover` : '65% Open';
-      document.getElementById('dPossession').innerText = proj.possession_year ? `Dec ${proj.possession_year}` : 'Under Construction';
-      document.getElementById('dCorridor').innerText = proj.corridor || 'Gurgaon';
-      document.getElementById('dAddress').innerText = proj.address || `${proj.sector || ''}, Gurugram, Haryana`;
-
-      // Proximity Distance with Drive Time
-      if (currentSelectedSchool && proj._currentDist) {
-        const driveMins = Math.max(3, Math.round(proj._currentDist * 2.8));
-        document.getElementById('dProximityText').innerHTML = `<b>${proj._currentDist.toFixed(1)} KM</b> from <b>${currentSelectedSchool.name}</b> <span style="color: #6366f1; font-weight: 700;">(🚗 ~${driveMins} mins drive)</span>`;
-        document.getElementById('dProximityBox').style.display = 'flex';
-      } else {
-        document.getElementById('dProximityBox').style.display = 'none';
-      }
-
-      // Carpet Area Calculation & Breakdown
-      const carpetData = getProjectCarpetData(proj);
-      document.getElementById('dCarpetRange').innerText = carpetData.rangeStr;
-
-      const breakdownEl = document.getElementById('dUnitCarpetBreakdown');
-      breakdownEl.innerHTML = '';
-      carpetData.details.forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'unit-row-card';
-        row.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="unit-badge">${item.config}</span>
-            <span style="font-size: 10.5px; color: #059669; font-weight: 700;">✓ RERA Approved</span>
-          </div>
-          <div class="unit-areas">
-            <div class="unit-carpet-val">Carpet: ${item.carpetSqft.toLocaleString()} sq.ft (${item.sqMtr} m²)</div>
-            <div class="unit-super-val">Super Built-up: ~${item.superSqft.toLocaleString()} sq.ft</div>
-          </div>
-        `;
-        breakdownEl.appendChild(row);
-      });
-
-      document.getElementById('projectDrawer').classList.add('open');
-
-      // Camera Fly to Project
-      map.flyTo({
-        center: [proj.lng, proj.lat],
-        zoom: 15.3,
-        pitch: 62,
-        bearing: -25,
-        speed: 1.1,
-        curve: 1.2,
-        essential: true
-      });
     }
 
     function closeProjectDrawer() {
