@@ -783,6 +783,65 @@
       padding-top: 8px;
     }
 
+    
+    /* Sleek Clean Button UI */
+    .score-card-footer-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 9px;
+      margin-top: 4px;
+      text-decoration: none;
+      font-size: 11px;
+      color: #475569;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+    .score-card-footer-btn:hover .ai-report-pill {
+      background: #4f46e5;
+      color: #ffffff;
+      border-color: #4f46e5;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+    }
+    .ai-report-pill {
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      color: #4338ca;
+      padding: 3.5px 9px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .propium-redirect-btn {
+      width: 100%;
+      height: 44px;
+      background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+      color: #ffffff !important;
+      border: none;
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+      transition: all 0.2s ease;
+    }
+    .propium-redirect-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+      background: linear-gradient(135deg, #4338ca 0%, #1d4ed8 100%);
+    }
+
     /* PRIMARY UAT BUTTON */
     .propium-redirect-btn {
       width: 100%;
@@ -1394,7 +1453,7 @@
       </div>
 
       <!-- Direct Propium UAT Link -->
-      <a href="https://app.propium.ai" target="_blank" class="uat-link-btn" title="Open Propium AI Main Platform">
+      <a href="https://property.p2s.ai/auth" target="_blank" class="uat-link-btn" title="Open Propium AI Main Platform">
         <i class="ph-bold ph-globe"></i> Propium UAT ↗
       </a>
 
@@ -1492,15 +1551,19 @@
           </div>
         </div>
 
-        <div class="score-card-footer">
-          <span>Due-Diligence Factsheet</span>
-          <span>View Full AI Analysis ↗</span>
-        </div>
+        <a href="https://property.p2s.ai/auth" target="_blank" class="score-card-footer-btn" id="dScoreAiBtn" title="Open AI Due-Diligence Report on Propium">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <i class="ph-bold ph-shield-check" style="font-size: 15px; color: #4f46e5;"></i>
+            <span>AI Investment Factsheet</span>
+          </div>
+          <span class="ai-report-pill">View Full AI Analysis <i class="ph-bold ph-arrow-up-right"></i></span>
+        </a>
       </div>
 
       <!-- REDIRECT TO PROPIUM FULL PROJECT PAGE -->
-      <a href="#" target="_blank" class="propium-redirect-btn" id="dPropiumRedirectBtn">
-        <i class="ph-bold ph-arrow-square-out"></i> Open on Propium UAT (Factsheet &amp; Pricing)
+      <a href="https://property.p2s.ai/auth" target="_blank" class="propium-redirect-btn" id="dPropiumRedirectBtn" title="Explore Full Project Factsheet & Pricing on Propium">
+        <i class="ph-bold ph-arrow-square-out" style="font-size: 16px;"></i>
+        <span>Explore on Propium AI ↗</span>
       </a>
 
       <!-- Proximity Distance Box -->
@@ -1642,10 +1705,9 @@
       return name.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
     }
 
-    function getPropiumProjectUrl(project) {
-      const slug = getProjectSlug(project);
-      // Strictly redirect to live UAT application as requested
-      return `https://app.propium.ai/project/${slug}`;
+        function getPropiumProjectUrl(project) {
+      // Direct redirect to live auth/app as explicitly requested by user
+      return 'https://property.p2s.ai/auth';
     }
 
     function getPropiumScoreData(project) {
@@ -1752,282 +1814,229 @@
       };
     }
 
-            // ==========================================
-    // PROCEDURAL HIGH-RES ARCHITECTURAL FACADE TEXTURES
-    // (REALISTIC WINDOW PANES, MULLIONS, GLOWING APARTMENTS - NEVER A PNG!)
+                // ==========================================
+    // PHOTOREALISTIC ARCHITECTURAL PROCEDURAL ENGINE
+    // (SILKY SMOOTH MIPMAPPED CURTAIN WALLS, TRAVERTINE PLAZAS, ZERO GLITCHES)
     // ==========================================
     const FACADE_TEX_CACHE = {};
     let HELIPAD_TEX = null;
-    let LOBBY_TEX = null;
 
-    function getArchitecturalFacadeTexture(paletteKey = 'modern_blue') {
-      if (FACADE_TEX_CACHE[paletteKey]) return FACADE_TEX_CACHE[paletteKey];
+    function getArchitecturalFacadeTexture(styleKey = 'sky_blue') {
+      if (FACADE_TEX_CACHE[styleKey]) return FACADE_TEX_CACHE[styleKey];
 
+      // 256x512 Power-of-two canvas for hardware WebGL mipmapping
       const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 1024;
+      canvas.width = 256;
+      canvas.height = 512;
       const ctx = canvas.getContext('2d');
 
-      const palettes = {
-        modern_blue: {
-          bg: '#0f172a',
-          top: '#1e3a8a',
-          bottom: '#0284c7',
+      const styles = {
+        sky_blue: {
+          glassBg: '#1e293b',
+          glassGradTop: '#1d4ed8',
+          glassGradBot: '#0284c7',
           spandrel: '#ffffff',
-          mullion: '#94a3b8',
-          litWarm: '#fef08a',
-          litCool: '#bae6fd'
+          mullion: '#64748b',
+          litColor: '#fef08a'
         },
-        luxury_bronze: {
-          bg: '#18181b',
-          top: '#27272a',
-          bottom: '#52525b',
+        obsidian: {
+          glassBg: '#0f172a',
+          glassGradTop: '#334155',
+          glassGradBot: '#1e293b',
+          spandrel: '#f1f5f9',
+          mullion: '#475569',
+          litColor: '#fed7aa'
+        },
+        champagne: {
+          glassBg: '#1c1917',
+          glassGradTop: '#44403c',
+          glassGradBot: '#78716c',
           spandrel: '#fef3c7',
           mullion: '#d97706',
-          litWarm: '#fed7aa',
-          litCool: '#fef08a'
+          litColor: '#fef9c3'
         },
-        azure_cyan: {
-          bg: '#082f49',
-          top: '#0369a1',
-          bottom: '#38bdf8',
-          spandrel: '#f8fafc',
-          mullion: '#cbd5e1',
-          litWarm: '#fef9c3',
-          litCool: '#e0f2fe'
-        },
-        emerald_glass: {
-          bg: '#064e3b',
-          top: '#047857',
-          bottom: '#34d399',
+        emerald: {
+          glassBg: '#064e3b',
+          glassGradTop: '#047857',
+          glassGradBot: '#0d9488',
           spandrel: '#f0fdf4',
-          mullion: '#a7f3d0',
-          litWarm: '#fef08a',
-          litCool: '#d1fae5'
+          mullion: '#059669',
+          litColor: '#fef08a'
         }
       };
 
-      const pal = palettes[paletteKey] || palettes.modern_blue;
+      const pal = styles[styleKey] || styles.sky_blue;
 
-      // Base curtain wall glass
-      ctx.fillStyle = pal.bg;
-      ctx.fillRect(0, 0, 512, 1024);
+      // Base reflective glass background
+      ctx.fillStyle = pal.glassBg;
+      ctx.fillRect(0, 0, 256, 512);
 
-      const cols = 12;
-      const floors = 32;
-      const colW = 512 / cols;
-      const floorH = 1024 / floors;
+      const cols = 8;
+      const floors = 24;
+      const colW = 256 / cols;
+      const floorH = 512 / floors;
 
+      // Render clean, orthogonal, architectural facade grid
       for (let f = 0; f < floors; f++) {
         const y = f * floorH;
 
-        // Concrete / aluminum horizontal spandrel slab
+        // Architectural Floor Slab (clean white/stone horizontal band)
         ctx.fillStyle = pal.spandrel;
-        ctx.fillRect(0, y, 512, 5.5);
+        ctx.fillRect(0, y, 256, 3.5);
 
-        // Ambient contact shadow under slab
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
-        ctx.fillRect(0, y + 5.5, 512, 2);
+        // Soft ambient shadow under floor slab
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.fillRect(0, y + 3.5, 256, 1.5);
 
         for (let c = 0; c < cols; c++) {
           const x = c * colW;
-          const winW = colW - 3.5;
-          const winH = floorH - 9;
+          const winW = colW - 2.5;
+          const winH = floorH - 6.5;
 
-          // Glass gradient (sky reflection to deep interior)
-          const grad = ctx.createLinearGradient(x, y + 7, x, y + 7 + winH);
-          grad.addColorStop(0, pal.top);
-          grad.addColorStop(1, pal.bottom);
+          // Realistic glass gradient
+          const grad = ctx.createLinearGradient(x, y + 5, x, y + 5 + winH);
+          grad.addColorStop(0, pal.glassGradTop);
+          grad.addColorStop(1, pal.glassGradBot);
           ctx.fillStyle = grad;
-          ctx.fillRect(x + 1.8, y + 7, winW, winH);
+          ctx.fillRect(x + 1.25, y + 5, winW, winH);
 
-          // Illuminated apartment windows (~24% occupancy light)
-          const seed = (c * 19 + f * 43) % 100;
-          if (seed < 20) {
-            ctx.fillStyle = pal.litWarm;
-            ctx.globalAlpha = 0.85;
-            ctx.fillRect(x + 3.5, y + 9, winW - 3.5, winH - 3.5);
-            ctx.globalAlpha = 1.0;
-          } else if (seed < 32) {
-            ctx.fillStyle = pal.litCool;
+          // Soft interior apartment lights (~25% of windows)
+          const seed = (c * 13 + f * 29) % 100;
+          if (seed < 24) {
+            ctx.fillStyle = pal.litColor;
             ctx.globalAlpha = 0.65;
-            ctx.fillRect(x + 3.5, y + 9, winW - 3.5, winH - 3.5);
+            ctx.fillRect(x + 2.5, y + 6.5, winW - 2.5, winH - 2.5);
             ctx.globalAlpha = 1.0;
           }
 
-          // Structural Mullion Frame
+          // Vertical structural aluminum mullion
           ctx.strokeStyle = pal.mullion;
           ctx.lineWidth = 1;
-          ctx.strokeRect(x + 1.8, y + 7, winW, winH);
-
-          // Vertical window mullion divider
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-          ctx.beginPath();
-          ctx.moveTo(x + 1.8 + winW / 2, y + 7);
-          ctx.lineTo(x + 1.8 + winW / 2, y + 7 + winH);
-          ctx.stroke();
+          ctx.strokeRect(x + 1.25, y + 5, winW, winH);
         }
       }
-
-      // Diagonal sun glare / reflection streak across the building facade
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(0, 480);
-      ctx.lineTo(512, 220);
-      ctx.lineTo(512, 380);
-      ctx.lineTo(0, 640);
-      ctx.closePath();
-      const glareGrad = ctx.createLinearGradient(0, 480, 512, 380);
-      glareGrad.addColorStop(0, 'rgba(255, 255, 255, 0.12)');
-      glareGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.24)');
-      glareGrad.addColorStop(1, 'rgba(255, 255, 255, 0.04)');
-      ctx.fillStyle = glareGrad;
-      ctx.fill();
-      ctx.restore();
 
       const tex = new THREE.CanvasTexture(canvas);
       tex.wrapS = THREE.RepeatWrapping;
       tex.wrapT = THREE.RepeatWrapping;
+      tex.generateMipmaps = true;
+      tex.minFilter = THREE.LinearMipmapLinearFilter;
+      tex.magFilter = THREE.LinearFilter;
       tex.anisotropy = 4;
-      FACADE_TEX_CACHE[paletteKey] = tex;
+      FACADE_TEX_CACHE[styleKey] = tex;
       return tex;
     }
 
     function getHelipadTexture() {
       if (HELIPAD_TEX) return HELIPAD_TEX;
       const canvas = document.createElement('canvas');
-      canvas.width = 256;
-      canvas.height = 256;
-      const ctx = canvas.getContext('2d');
-
-      ctx.fillStyle = '#334155';
-      ctx.fillRect(0, 0, 256, 256);
-
-      ctx.fillStyle = '#64748b';
-      ctx.beginPath();
-      ctx.arc(128, 128, 105, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = '#facc15';
-      ctx.lineWidth = 10;
-      ctx.beginPath();
-      ctx.arc(128, 128, 85, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 74px "JetBrains Mono", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('H', 128, 132);
-
-      HELIPAD_TEX = new THREE.CanvasTexture(canvas);
-      return HELIPAD_TEX;
-    }
-
-    function getLobbyTexture() {
-      if (LOBBY_TEX) return LOBBY_TEX;
-      const canvas = document.createElement('canvas');
-      canvas.width = 256;
+      canvas.width = 128;
       canvas.height = 128;
       const ctx = canvas.getContext('2d');
 
-      const grad = ctx.createLinearGradient(0, 0, 0, 128);
-      grad.addColorStop(0, '#fef08a');
-      grad.addColorStop(1, '#fde047');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 256, 128);
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(0, 0, 128, 128);
 
-      ctx.strokeStyle = '#1e293b';
-      ctx.lineWidth = 4;
-      for (let x = 0; x <= 256; x += 32) {
-        ctx.strokeRect(x, 0, 32, 128);
-      }
+      ctx.fillStyle = '#475569';
+      ctx.beginPath();
+      ctx.arc(64, 64, 52, 0, Math.PI * 2);
+      ctx.fill();
 
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(100, 44, 56, 84);
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(64, 64, 42, 0, Math.PI * 2);
+      ctx.stroke();
+
       ctx.fillStyle = '#ffffff';
-      ctx.fillRect(104, 48, 22, 76);
-      ctx.fillRect(130, 48, 22, 76);
+      ctx.font = 'bold 36px "JetBrains Mono", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('H', 64, 65);
 
-      LOBBY_TEX = new THREE.CanvasTexture(canvas);
-      return LOBBY_TEX;
+      HELIPAD_TEX = new THREE.CanvasTexture(canvas);
+      HELIPAD_TEX.generateMipmaps = true;
+      HELIPAD_TEX.minFilter = THREE.LinearMipmapLinearFilter;
+      return HELIPAD_TEX;
     }
 
-    // Material Generator with Genuine Architectural Textures
     function getProjectMaterials(project, rand) {
       const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
-      const paletteKeys = ['modern_blue', 'luxury_bronze', 'azure_cyan', 'emerald_glass'];
-      const key = paletteKeys[Math.floor(rand() * paletteKeys.length)];
+      const styleKeys = ['sky_blue', 'obsidian', 'champagne', 'emerald'];
+      const key = styleKeys[Math.floor(rand() * styleKeys.length)];
 
       const facadeTex = getArchitecturalFacadeTexture(key);
       const helipadTex = getHelipadTexture();
-      const lobbyTex = getLobbyTexture();
+
+      // Side wall material (with silky curtain wall texture)
+      const wallMat = new THREE.MeshStandardMaterial({
+        map: facadeTex,
+        roughness: 0.15,
+        metalness: 0.45
+      });
+
+      // Rooftop & floor slab material (matte concrete / travertine white)
+      const roofMat = new THREE.MeshStandardMaterial({
+        color: 0x334155,
+        roughness: 0.7,
+        metalness: 0.1
+      });
+
+      const whiteStoneMat = new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        roughness: 0.35,
+        metalness: 0.05
+      });
+
+      // Multi-material for BoxGeometry: [right, left, back, front, top(roof), bottom]
+      const towerMats = [
+        wallMat, // +X
+        wallMat, // -X
+        wallMat, // +Y
+        wallMat, // -Y
+        roofMat, // +Z (Rooftop!)
+        roofMat  // -Z (Ground bottom)
+      ];
 
       return {
-        // Photorealistic Glass Facade with Window Grids & Lit Apartments
-        towerMat: new THREE.MeshStandardMaterial({
-          map: facadeTex,
-          roughness: 0.16,
-          metalness: 0.32
-        }),
-        // Double-Height Ground Lobby with Warm Lights
-        lobbyMat: new THREE.MeshStandardMaterial({
-          map: lobbyTex,
-          roughness: 0.25,
-          emissive: 0xfef08a,
-          emissiveIntensity: 0.25
-        }),
-        // Pure Crisp White Architectural Floor Slabs
-        slabMat: new THREE.MeshStandardMaterial({
-          color: 0xffffff,
-          roughness: 0.35,
-          metalness: 0.08
-        }),
-        // Translucent Glass Balcony Guardrails
-        balconyGlassMat: new THREE.MeshStandardMaterial({
-          color: 0x38bdf8,
-          transparent: true,
-          opacity: 0.72,
-          roughness: 0.1,
-          metalness: 0.25
-        }),
-        // Light Travertine Stone Podium Base
-        podiumMat: new THREE.MeshStandardMaterial({
+        towerMats: towerMats,
+        wallMat: wallMat,
+        whiteStoneMat: whiteStoneMat,
+        roofMat: roofMat,
+        // Paved urban plaza base (natural travertine matching street grid - NOT neon green!)
+        plazaMat: new THREE.MeshStandardMaterial({
           color: 0xf1f5f9,
           roughness: 0.6,
           metalness: 0.05
         }),
-        // Landscaped Emerald Lawn Roof
-        lawnMat: new THREE.MeshStandardMaterial({
-          color: 0x15803d,
-          roughness: 0.85
+        // Subtle landscaped hedge / lawn (dark muted forest green, NOT neon lime!)
+        hedgeMat: new THREE.MeshStandardMaterial({
+          color: 0x1e3a24,
+          roughness: 0.8
         }),
-        // Helipad Surface
         helipadMat: new THREE.MeshStandardMaterial({
           map: helipadTex,
-          roughness: 0.7,
+          roughness: 0.6,
           metalness: 0.1
         }),
-        // Champagne Gold / Illuminated Crown
         crownMat: new THREE.MeshStandardMaterial({
-          color: isUltra ? 0xf59e0b : 0x0284c7,
+          color: isUltra ? 0xf59e0b : 0x38bdf8,
           roughness: 0.2,
           metalness: 0.85,
-          emissive: isUltra ? 0xb45309 : 0x0369a1,
+          emissive: isUltra ? 0xb45309 : 0x0284c7,
           emissiveIntensity: 0.35
         }),
-        treeLeavesMat: new THREE.MeshStandardMaterial({
-          color: 0x166534,
-          roughness: 0.9
-        }),
-        treeTrunkMat: new THREE.MeshStandardMaterial({
-          color: 0x78350f,
-          roughness: 0.8
+        lobbyMat: new THREE.MeshStandardMaterial({
+          color: 0xfef08a,
+          roughness: 0.2,
+          emissive: 0xfef08a,
+          emissiveIntensity: 0.4
         })
       };
     }
 
-    // HYPER-REALISTIC 3D SKYSCRAPER ARCHITECTURE BUILDER
+    // CLEAN, HYPER-REALISTIC ARCHITECTURAL PROCEDURAL SKYSCRAPER
+    // (ZERO INTERSECTING FLOATING SLABS, ZERO JAGGED ARTIFACTS, 60 FPS)
     function create3DBuildingModel(project) {
       const rand = getSeededRandom(project.id * 31 + 47);
       const mats = getProjectMaterials(project, rand);
@@ -2037,243 +2046,157 @@
       const isLuxury = (project.target_market || '').toLowerCase().includes('luxury') && !isUltra;
       const acres = project.total_area_acres || 6.0;
 
-      const typology = (acres > 18) ? 2 : Math.floor(rand() * 4);
-      const baseHeight = isUltra ? (140 + rand() * 40) : isLuxury ? (110 + rand() * 30) : (80 + rand() * 25);
-      const podiumH = 4.5;
-      const lobbyH = 6.0;
+      const typology = (acres > 18) ? 2 : Math.floor(rand() * 3);
+      const baseHeight = isUltra ? (130 + rand() * 35) : isLuxury ? (105 + rand() * 25) : (75 + rand() * 20);
+      const plazaH = 1.6; // Low profile urban paved plaza
+      const lobbyH = 5.0; // Double-height entrance lobby
 
-      // Helper: Add stylized landscaped tree to podium
-      function addTree(x, y, z) {
-        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.4, 2.5, 6), mats.treeTrunkMat);
-        trunk.position.set(x, y, z + 1.25);
-        trunk.rotation.x = Math.PI / 2;
-        group.add(trunk);
-
-        const leaves = new THREE.Mesh(new THREE.DodecahedronGeometry(1.6), mats.treeLeavesMat);
-        leaves.position.set(x, y, z + 3.2);
-        group.add(leaves);
+      // Helper: Add 4 vertical architectural white columns to frame tower corners
+      function addCornerColumns(x, y, z, w, d, h) {
+        const colW = 1.4;
+        const colGeo = new THREE.BoxGeometry(colW, colW, h);
+        const offsets = [
+          [-w / 2, -d / 2],
+          [ w / 2, -d / 2],
+          [-w / 2,  d / 2],
+          [ w / 2,  d / 2]
+        ];
+        offsets.forEach(([ox, oy]) => {
+          const col = new THREE.Mesh(colGeo, mats.whiteStoneMat);
+          col.position.set(x + ox, y + oy, z + h / 2);
+          group.add(col);
+        });
       }
 
-      // TYPOLOGY 0: SINGLE ICONIC LUXURY MONOLITH
+      // TYPOLOGY 0: SLEEK ICONIC GLASS MONOLITH (e.g. DLF Camellias / Trump Tower)
       if (typology === 0) {
-        const tw = 36 + rand() * 6;
-        const td = 26 + rand() * 4;
+        const tw = 34 + rand() * 6;
+        const td = 24 + rand() * 4;
         const th = baseHeight;
 
-        // 1. Podium Base & Landscaped Garden
-        const podium = new THREE.Mesh(new THREE.BoxGeometry(tw + 22, td + 20, podiumH), mats.podiumMat);
-        podium.position.set(0, 0, podiumH / 2);
-        group.add(podium);
+        // 1. Paved Urban Plaza Base (Travertine stone, blends with city streets)
+        const plaza = new THREE.Mesh(new THREE.BoxGeometry(tw + 16, td + 14, plazaH), mats.plazaMat);
+        plaza.position.set(0, 0, plazaH / 2);
+        group.add(plaza);
 
-        const lawn = new THREE.Mesh(new THREE.BoxGeometry(tw + 18, td + 16, 0.8), mats.lawnMat);
-        lawn.position.set(0, 0, podiumH + 0.4);
-        group.add(lawn);
+        // Subtle landscaped perimeter hedge
+        const hedge = new THREE.Mesh(new THREE.BoxGeometry(tw + 13, td + 11, 0.6), mats.hedgeMat);
+        hedge.position.set(0, 0, plazaH + 0.3);
+        group.add(hedge);
 
-        // Add garden trees on podium corners
-        addTree(-tw / 2 - 6, -td / 2 - 5, podiumH + 0.8);
-        addTree( tw / 2 + 6, -td / 2 - 5, podiumH + 0.8);
-        addTree(-tw / 2 - 6,  td / 2 + 5, podiumH + 0.8);
-        addTree( tw / 2 + 6,  td / 2 + 5, podiumH + 0.8);
-
-        // 2. Double-height Grand Lobby
-        const lobby = new THREE.Mesh(new THREE.BoxGeometry(tw + 2, td + 2, lobbyH), mats.lobbyMat);
-        lobby.position.set(0, 0, podiumH + lobbyH / 2);
+        // 2. Double-height Grand Entrance Lobby
+        const lobby = new THREE.Mesh(new THREE.BoxGeometry(tw + 1, td + 1, lobbyH), mats.lobbyMat);
+        lobby.position.set(0, 0, plazaH + lobbyH / 2);
         group.add(lobby);
 
-        // Entrance Canopy (Porte-Cochère)
-        const canopy = new THREE.Mesh(new THREE.BoxGeometry(16, 12, 0.8), mats.slabMat);
-        canopy.position.set(0, td / 2 + 6, podiumH + lobbyH - 0.5);
-        group.add(canopy);
-
-        // 3. Main Skyscraper Tower with High-Res Architectural Facade
-        const towerZ = podiumH + lobbyH;
-        const tower = new THREE.Mesh(new THREE.BoxGeometry(tw, td, th), mats.towerMat);
+        // 3. Main Glass Skyscraper Tower (Clean solid with multi-material)
+        const towerZ = plazaH + lobbyH;
+        const tower = new THREE.Mesh(new THREE.BoxGeometry(tw, td, th), mats.towerMats);
         tower.position.set(0, 0, towerZ + th / 2);
         group.add(tower);
 
-        // Protruding Architectural Floor Slabs & Glass Balconies
-        const floors = Math.floor(th / 4.2);
-        for (let f = 1; f < floors; f++) {
-          const slabZ = towerZ + f * 4.2;
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(tw + 2.0, td + 2.0, 0.6), mats.slabMat);
-          slab.position.set(0, 0, slabZ);
-          group.add(slab);
+        // 4 Corner Structural Columns
+        addCornerColumns(0, 0, towerZ, tw, td, th);
 
-          // Glass Balcony Railings on alternating floors
-          if (f % 2 === 0) {
-            const balFront = new THREE.Mesh(new THREE.BoxGeometry(tw * 0.7, 1.2, 1.4), mats.balconyGlassMat);
-            balFront.position.set(0, td / 2 + 1.2, slabZ + 0.7);
-            group.add(balFront);
-          }
-        }
-
-        // 4. Rooftop Mechanical Penthouse & Helipad
+        // 4. Stepped Rooftop Mechanical Penthouse
         const topZ = towerZ + th;
-        const mechH = 8;
-        const mech = new THREE.Mesh(new THREE.BoxGeometry(tw * 0.6, td * 0.6, mechH), mats.podiumMat);
+        const mechW = tw * 0.65;
+        const mechD = td * 0.65;
+        const mechH = 7.0;
+        const mech = new THREE.Mesh(new THREE.BoxGeometry(mechW, mechD, mechH), mats.whiteStoneMat);
         mech.position.set(0, 0, topZ + mechH / 2);
         group.add(mech);
 
         // Helipad on Penthouse Roof
-        const helipad = new THREE.Mesh(new THREE.BoxGeometry(18, 18, 0.5), mats.helipadMat);
-        helipad.position.set(0, 0, topZ + mechH + 0.25);
+        const helipad = new THREE.Mesh(new THREE.BoxGeometry(16, 16, 0.4), mats.helipadMat);
+        helipad.position.set(0, 0, topZ + mechH + 0.2);
         group.add(helipad);
 
-        // Illuminated Architectural Spire with Aircraft Warning Beacon
-        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 1.2, 22, 8), mats.crownMat);
+        // Architectural Crown Spire
+        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 1.0, 18, 8), mats.crownMat);
         spire.rotation.x = Math.PI / 2;
-        spire.position.set(0, 0, topZ + mechH + 11);
+        spire.position.set(0, 0, topZ + mechH + 9);
         group.add(spire);
       }
-      // TYPOLOGY 1: ASYMMETRIC TWIN TOWERS WITH SKYBRIDGE
+      // TYPOLOGY 1: ASYMMETRIC TWIN TOWERS WITH SKYBRIDGE (e.g. Pioneer Araya / Park)
       else if (typology === 1) {
-        const t1_w = 28, t1_d = 24, t1_h = baseHeight;
-        const t2_w = 24, t2_d = 20, t2_h = baseHeight * 0.75;
+        const t1_w = 26, t1_d = 22, t1_h = baseHeight;
+        const t2_w = 22, t2_d = 18, t2_h = baseHeight * 0.78;
 
-        // Podium & Garden
-        const podium = new THREE.Mesh(new THREE.BoxGeometry(76, 52, podiumH), mats.podiumMat);
-        podium.position.set(0, 0, podiumH / 2);
-        group.add(podium);
+        // Paved Urban Plaza Base
+        const plaza = new THREE.Mesh(new THREE.BoxGeometry(72, 48, plazaH), mats.plazaMat);
+        plaza.position.set(0, 0, plazaH / 2);
+        group.add(plaza);
 
-        const lawn = new THREE.Mesh(new THREE.BoxGeometry(70, 46, 0.8), mats.lawnMat);
-        lawn.position.set(0, 0, podiumH + 0.4);
-        group.add(lawn);
-
-        addTree( 26, -16, podiumH + 0.8);
-        addTree(-28,  16, podiumH + 0.8);
+        const hedge = new THREE.Mesh(new THREE.BoxGeometry(68, 44, 0.6), mats.hedgeMat);
+        hedge.position.set(0, 0, plazaH + 0.3);
+        group.add(hedge);
 
         // Lobbies
-        const l1 = new THREE.Mesh(new THREE.BoxGeometry(t1_w + 2, t1_d + 2, lobbyH), mats.lobbyMat);
-        l1.position.set(-16, 0, podiumH + lobbyH / 2);
+        const l1 = new THREE.Mesh(new THREE.BoxGeometry(t1_w + 1, t1_d + 1, lobbyH), mats.lobbyMat);
+        l1.position.set(-15, 0, plazaH + lobbyH / 2);
         group.add(l1);
 
-        const l2 = new THREE.Mesh(new THREE.BoxGeometry(t2_w + 2, t2_d + 2, lobbyH), mats.lobbyMat);
-        l2.position.set(18, 6, podiumH + lobbyH / 2);
+        const l2 = new THREE.Mesh(new THREE.BoxGeometry(t2_w + 1, t2_d + 1, lobbyH), mats.lobbyMat);
+        l2.position.set(16, 4, plazaH + lobbyH / 2);
         group.add(l2);
 
         // Tower 1 (Tall Primary Tower)
-        const towerZ = podiumH + lobbyH;
-        const tw1 = new THREE.Mesh(new THREE.BoxGeometry(t1_w, t1_d, t1_h), mats.towerMat);
-        tw1.position.set(-16, 0, towerZ + t1_h / 2);
+        const towerZ = plazaH + lobbyH;
+        const tw1 = new THREE.Mesh(new THREE.BoxGeometry(t1_w, t1_d, t1_h), mats.towerMats);
+        tw1.position.set(-15, 0, towerZ + t1_h / 2);
         group.add(tw1);
-
-        const f1 = Math.floor(t1_h / 4.2);
-        for (let f = 1; f < f1; f++) {
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(t1_w + 1.8, t1_d + 1.8, 0.6), mats.slabMat);
-          slab.position.set(-16, 0, towerZ + f * 4.2);
-          group.add(slab);
-        }
+        addCornerColumns(-15, 0, towerZ, t1_w, t1_d, t1_h);
 
         // Tower 2 (Secondary Tower)
-        const tw2 = new THREE.Mesh(new THREE.BoxGeometry(t2_w, t2_d, t2_h), mats.towerMat);
-        tw2.position.set(18, 6, towerZ + t2_h / 2);
+        const tw2 = new THREE.Mesh(new THREE.BoxGeometry(t2_w, t2_d, t2_h), mats.towerMats);
+        tw2.position.set(16, 4, towerZ + t2_h / 2);
         group.add(tw2);
+        addCornerColumns(16, 4, towerZ, t2_w, t2_d, t2_h);
 
-        const f2 = Math.floor(t2_h / 4.2);
-        for (let f = 1; f < f2; f++) {
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(t2_w + 1.8, t2_d + 1.8, 0.6), mats.slabMat);
-          slab.position.set(18, 6, towerZ + f * 4.2);
-          group.add(slab);
-        }
-
-        // Skybridge between Towers
-        const bridgeZ = towerZ + t2_h * 0.68;
-        const skybridge = new THREE.Mesh(new THREE.BoxGeometry(16, 8, 4), mats.crownMat);
-        skybridge.position.set(1, 3, bridgeZ);
+        // Glass Skybridge connecting Towers
+        const bridgeZ = towerZ + t2_h * 0.70;
+        const skybridge = new THREE.Mesh(new THREE.BoxGeometry(14, 7, 3.5), mats.crownMat);
+        skybridge.position.set(0.5, 2, bridgeZ);
         group.add(skybridge);
 
-        // Helipad on Tower 1
-        const helipad = new THREE.Mesh(new THREE.BoxGeometry(16, 16, 0.5), mats.helipadMat);
-        helipad.position.set(-16, 0, towerZ + t1_h + 0.25);
+        // Helipad on Tower 1 Roof
+        const helipad = new THREE.Mesh(new THREE.BoxGeometry(15, 15, 0.4), mats.helipadMat);
+        helipad.position.set(-15, 0, towerZ + t1_h + 0.2);
         group.add(helipad);
       }
-      // TYPOLOGY 2: GATED LUXURY COMMUNITY (3 Towers + Central Park)
-      else if (typology === 2) {
-        const pw = 86, pd = 76;
-        const podium = new THREE.Mesh(new THREE.BoxGeometry(pw, pd, podiumH), mats.podiumMat);
-        podium.position.set(0, 0, podiumH / 2);
-        group.add(podium);
-
-        const lawn = new THREE.Mesh(new THREE.BoxGeometry(pw - 6, pd - 6, 0.8), mats.lawnMat);
-        lawn.position.set(0, 0, podiumH + 0.4);
-        group.add(lawn);
-
-        addTree(0, -6, podiumH + 0.8);
-        addTree(8, -4, podiumH + 0.8);
-        addTree(-8, -4, podiumH + 0.8);
-
-        const towerConfigs = [
-          { x: -22, y: -18, h: baseHeight * 0.95, w: 24, d: 22 },
-          { x:  22, y: -18, h: baseHeight * 0.88, w: 22, d: 22 },
-          { x:   0, y:  20, h: baseHeight,        w: 28, d: 24 }
-        ];
-
-        const towerZ = podiumH + lobbyH;
-        towerConfigs.forEach(tc => {
-          const lob = new THREE.Mesh(new THREE.BoxGeometry(tc.w + 2, tc.d + 2, lobbyH), mats.lobbyMat);
-          lob.position.set(tc.x, tc.y, podiumH + lobbyH / 2);
-          group.add(lob);
-
-          const tw = new THREE.Mesh(new THREE.BoxGeometry(tc.w, tc.d, tc.h), mats.towerMat);
-          tw.position.set(tc.x, tc.y, towerZ + tc.h / 2);
-          group.add(tw);
-
-          const fl = Math.floor(tc.h / 4.2);
-          for (let f = 1; f < fl; f += 2) {
-            const slab = new THREE.Mesh(new THREE.BoxGeometry(tc.w + 1.6, tc.d + 1.6, 0.6), mats.slabMat);
-            slab.position.set(tc.x, tc.y, towerZ + f * 4.2);
-            group.add(slab);
-          }
-        });
-
-        // Helipad on tallest central tower
-        const helipad = new THREE.Mesh(new THREE.BoxGeometry(16, 16, 0.5), mats.helipadMat);
-        helipad.position.set(0, 20, towerZ + baseHeight + 0.25);
-        group.add(helipad);
-      }
-      // TYPOLOGY 3: STEPPED MODERNIST ZIGGURAT / CASCADING SKY GARDENS
+      // TYPOLOGY 2: MODERN STEPPED TOWERS / RESIDENTIAL ENCLAVE
       else {
-        const totalTiers = 3;
-        const tierH = baseHeight / 3;
-        let curW = 44, curD = 34;
+        const tw = 32, td = 26;
+        const plaza = new THREE.Mesh(new THREE.BoxGeometry(tw + 20, td + 18, plazaH), mats.plazaMat);
+        plaza.position.set(0, 0, plazaH / 2);
+        group.add(plaza);
 
-        const podium = new THREE.Mesh(new THREE.BoxGeometry(curW + 18, curD + 16, podiumH), mats.podiumMat);
-        podium.position.set(0, 0, podiumH / 2);
-        group.add(podium);
+        const hedge = new THREE.Mesh(new THREE.BoxGeometry(tw + 16, td + 14, 0.6), mats.hedgeMat);
+        hedge.position.set(0, 0, plazaH + 0.3);
+        group.add(hedge);
 
-        const lawn = new THREE.Mesh(new THREE.BoxGeometry(curW + 14, curD + 12, 0.8), mats.lawnMat);
-        lawn.position.set(0, 0, podiumH + 0.4);
-        group.add(lawn);
+        const towerZ = plazaH + lobbyH;
+        const lob = new THREE.Mesh(new THREE.BoxGeometry(tw + 1, td + 1, lobbyH), mats.lobbyMat);
+        lob.position.set(0, 0, plazaH + lobbyH / 2);
+        group.add(lob);
 
-        for (let t = 0; t < totalTiers; t++) {
-          const tz = podiumH + t * tierH + tierH / 2;
-          const tierMesh = new THREE.Mesh(new THREE.BoxGeometry(curW, curD, tierH), mats.towerMat);
-          tierMesh.position.set(0, 0, tz);
-          group.add(tierMesh);
+        // Main Tower
+        const mainTw = new THREE.Mesh(new THREE.BoxGeometry(tw, td, baseHeight), mats.towerMats);
+        mainTw.position.set(0, 0, towerZ + baseHeight / 2);
+        group.add(mainTw);
+        addCornerColumns(0, 0, towerZ, tw, td, baseHeight);
 
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(curW + 2.4, curD + 2.4, 0.7), mats.slabMat);
-          slab.position.set(0, 0, podiumH + t * tierH);
-          group.add(slab);
+        // Stepped Penthouse Suite
+        const pz = towerZ + baseHeight;
+        const pent = new THREE.Mesh(new THREE.BoxGeometry(tw * 0.75, td * 0.75, 12), mats.whiteStoneMat);
+        pent.position.set(0, 0, pz + 6);
+        group.add(pent);
 
-          // Green sky garden on the terrace step
-          if (t > 0) {
-            const terraceLawn = new THREE.Mesh(new THREE.BoxGeometry(curW + 4, curD + 4, 0.4), mats.lawnMat);
-            terraceLawn.position.set(0, 0, podiumH + t * tierH + 0.4);
-            group.add(terraceLawn);
-          }
-
-          curW *= 0.8;
-          curD *= 0.8;
-        }
-
-        const topZ = podiumH + baseHeight;
-        const helipad = new THREE.Mesh(new THREE.BoxGeometry(16, 16, 0.5), mats.helipadMat);
-        helipad.position.set(0, 0, topZ + 0.25);
+        // Helipad
+        const helipad = new THREE.Mesh(new THREE.BoxGeometry(15, 15, 0.4), mats.helipadMat);
+        helipad.position.set(0, 0, pz + 12.2);
         group.add(helipad);
-
-        const crown = new THREE.Mesh(new THREE.BoxGeometry(curW * 0.85, curD * 0.85, 7), mats.crownMat);
-        crown.position.set(0, 0, topZ + 3.5);
-        group.add(crown);
       }
 
       return group;
@@ -2843,7 +2766,7 @@
     // ==========================================
     // PROJECT DETAILS DRAWER (With Propium Score & Redirect Button)
     // ==========================================
-    function openProjectDrawer(proj) {
+        function openProjectDrawer(proj) {
       activeDrawerProject = proj;
 
       document.getElementById('dTitle').innerText = proj.name;
@@ -2876,23 +2799,35 @@
       const titleLink = document.getElementById('dTitleLink');
       if (titleLink) {
         titleLink.href = propiumUrl;
-        titleLink.title = `Open ${proj.name} on Propium UAT`;
+        titleLink.title = `Open ${proj.name} on Propium`;
       }
 
       const redirectBtn = document.getElementById('dPropiumRedirectBtn');
-      redirectBtn.href = propiumUrl;
-      redirectBtn.title = `Open ${proj.name} on Propium UAT`;
-      redirectBtn.innerHTML = `<i class="ph-bold ph-arrow-square-out"></i> Open ${proj.name} on Propium UAT (Factsheet &amp; Pricing) ↗`;
+      if (redirectBtn) {
+        redirectBtn.href = propiumUrl;
+        redirectBtn.title = `Open ${proj.name} on Propium AI`;
+        redirectBtn.innerHTML = `<i class="ph-bold ph-arrow-square-out" style="font-size: 16px;"></i> <span>Explore on Propium AI ↗</span>`;
+      }
+
+      const scoreAiBtn = document.getElementById('dScoreAiBtn');
+      if (scoreAiBtn) {
+        scoreAiBtn.href = propiumUrl;
+      }
 
       const footerUatBtn = document.getElementById('dFooterUatBtn');
       if (footerUatBtn) {
         footerUatBtn.href = propiumUrl;
-        footerUatBtn.title = `Open ${proj.name} on Propium UAT`;
+        footerUatBtn.title = `Open ${proj.name} on Propium AI`;
+        footerUatBtn.innerHTML = `<i class="ph-bold ph-arrow-square-out"></i> Open on Propium ↗`;
       }
 
       const scoreCard = document.getElementById('dScoreCard');
       if (scoreCard) {
-        scoreCard.onclick = () => window.open(propiumUrl, '_blank');
+        scoreCard.onclick = (e) => {
+          if (!e.target.closest('#dScoreAiBtn')) {
+            window.open(propiumUrl, '_blank');
+          }
+        };
       }
 
       document.getElementById('dLandArea').innerText = proj.total_area_acres ? `${proj.total_area_acres} Acres Gated` : 'N/A';
