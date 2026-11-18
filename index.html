@@ -1449,7 +1449,7 @@
       </div>
 
       <!-- Direct Propium UAT Link -->
-      <a href="https://property.p2s.ai/auth" target="_blank" class="uat-link-btn" title="Open proPIUM Platform">
+      <a href="https://property.p2s.ai" target="_blank" class="uat-link-btn" title="Open proPIUM Platform">
         <i class="ph-bold ph-globe"></i> proPIUM ↗
       </a>
 
@@ -1547,7 +1547,7 @@
           </div>
         </div>
 
-        <a href="https://property.p2s.ai/auth" target="_blank" class="score-card-footer-btn" id="dScoreAiBtn" title="Open AI Due-Diligence Report on Propium">
+        <a href="https://property.p2s.ai" target="_blank" class="score-card-footer-btn" id="dScoreAiBtn" title="Open AI Due-Diligence Report on Propium">
           <div style="display: flex; align-items: center; gap: 6px;">
             <i class="ph-bold ph-shield-check" style="font-size: 15px; color: #4f46e5;"></i>
             <span>AI Investment Factsheet</span>
@@ -1691,9 +1691,10 @@
       return name.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
     }
 
-        function getPropiumProjectUrl(project) {
-      // Direct redirect to live auth/app as explicitly requested by user
-      return 'https://property.p2s.ai/auth';
+    function getPropiumProjectUrl(project) {
+      const slug = getProjectSlug(project);
+      // Dynamically redirect to exact project on https://property.p2s.ai/
+      return `https://property.p2s.ai/project/${slug}`;
     }
 
     function getPropiumScoreData(project) {
@@ -2797,7 +2798,8 @@
 
       const scoreAiBtn = document.getElementById('dScoreAiBtn');
       if (scoreAiBtn) {
-        scoreAiBtn.href = propiumUrl;
+        scoreAiBtn.href = `${propiumUrl}/analysis`;
+        scoreAiBtn.title = `View ${proj.name} AI Due-Diligence Analysis on proPIUM`;
       }
 
       const footerUatBtn = document.getElementById('dFooterUatBtn');
