@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <title>Propium 3D — Real Estate & School Proximity Explorer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <!-- MapLibre GL 3D Vector Map Engine -->
   <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
-  <!-- Three.js for 3D Architectural Meshes -->
+  <!-- Three.js for 3D Architectural Meshes & Skyscraper Towers -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <!-- Google Fonts & Phosphor Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
   <!-- Real PropertyAI Database (405 Projects, 39 Schools) -->
@@ -23,20 +23,28 @@
 
   <style>
     :root {
-      --primary: #6366f1;
-      --primary-hover: #4f46e5;
-      --primary-glow: rgba(99, 102, 241, 0.45);
-      --surface: rgba(15, 23, 42, 0.94);
-      --surface-card: rgba(30, 41, 59, 0.85);
-      --border: rgba(255, 255, 255, 0.10);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent-gold: #f59e0b;
-      --accent-emerald: #10b981;
-      --accent-cyan: #38bdf8;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --accent-gold: #d97706;
+      --accent-emerald: #059669;
+      --accent-cyan: #0284c7;
+      --accent-coral: #ea580c;
+      --bg-white: #ffffff;
+      --bg-surface: rgba(255, 255, 255, 0.94);
+      --bg-card: #ffffff;
+      --border-light: rgba(226, 232, 240, 0.9);
+      --border-dark: rgba(15, 23, 42, 0.08);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.12);
     }
 
     * {
@@ -49,8 +57,8 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      background: #020617;
+      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+      background: #f8fafc;
       color: var(--text-main);
     }
 
@@ -60,1949 +68,1785 @@
       position: absolute;
       top: 0;
       left: 0;
+      z-index: 1;
     }
 
-    /* Top-Right Cinematic Camera Controls Bar */
-    .camera-hud-bar {
+    /* ==========================================================================
+       TOP FLOATING PILL NAVBAR (BangaloreStartupMap Inspired Sleek Header)
+       ========================================================================== */
+    .top-navbar-container {
       position: absolute;
-      top: 18px;
-      right: 58px;
-      z-index: 28;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      padding: 6px 12px 6px 16px;
+      box-shadow: var(--shadow-md);
+      transition: all 0.25s ease;
+    }
+
+    /* Brand Logo & Name */
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-right: 12px;
+      border-right: 1px solid rgba(226, 232, 240, 0.8);
+      white-space: nowrap;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+    .brand-pin {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 16px;
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.35);
+    }
+    .brand-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.3px;
+    }
+    .brand-title span {
+      color: var(--primary);
+    }
+
+    /* Global Search Box */
+    .nav-search-wrap {
+      flex: 1;
+      min-width: 180px;
+      max-width: 300px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .nav-search-wrap i.search-icon {
+      position: absolute;
+      left: 12px;
+      font-size: 15px;
+      color: #94a3b8;
+      pointer-events: none;
+    }
+    .nav-search-input {
+      width: 100%;
+      height: 38px;
+      background: #f1f5f9;
+      border: 1px solid transparent;
+      border-radius: var(--radius-full);
+      padding: 0 32px 0 34px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #0f172a;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .nav-search-input:focus {
+      background: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+    .nav-search-input::placeholder {
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .search-clear-btn {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 14px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* Filter Dropdowns Inside Top Bar */
+    .nav-filters-group {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(15, 23, 42, 0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      padding: 6px 8px;
-      border-radius: var(--radius-md);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
-    .cam-btn {
-      background: rgba(30, 41, 59, 0.7);
-      border: 1px solid var(--border);
-      color: var(--text-main);
+
+    .nav-dropdown-select {
+      height: 38px;
+      background: #f8fafc;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      padding: 0 28px 0 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #334155;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      transition: all 0.2s;
+    }
+    .nav-dropdown-select:hover {
+      background-color: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+    .nav-dropdown-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.12);
+    }
+
+    /* Proximity School Dropdown Pill */
+    .school-proximity-pill {
+      display: flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      padding: 2px 4px 2px 10px;
+      gap: 6px;
+    }
+    .school-proximity-pill i {
+      color: #dc2626;
+      font-size: 15px;
+    }
+    .school-proximity-pill select {
+      border: none;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      outline: none;
+      cursor: pointer;
+      max-width: 140px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .radius-pill-select {
+      border: 1px solid rgba(79, 70, 229, 0.2) !important;
+      background: #eef2ff !important;
+      color: var(--primary) !important;
+      font-weight: 800 !important;
+      border-radius: var(--radius-full);
+      padding: 3px 8px;
+      font-size: 11.5px;
+    }
+
+    /* View Switcher Toggle: [ 3D Map | 2D Map | Grid ] */
+    .view-switcher-pill {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      padding: 3px;
+      border-radius: var(--radius-full);
+      gap: 2px;
+    }
+    .view-btn {
+      border: none;
+      background: transparent;
       padding: 6px 12px;
-      border-radius: 8px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .view-btn i {
+      font-size: 14px;
+    }
+    .view-btn:hover {
+      color: #0f172a;
+    }
+    .view-btn.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Right Side Stats & Actions */
+    .nav-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .project-count-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f8fafc;
+      border: 1px solid var(--border-light);
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f172a;
+      white-space: nowrap;
+    }
+    .count-indicator-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+    }
+
+    /* "View All Charts" Button (Linking to all_charts.html) */
+    .charts-link-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 12.5px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.28);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .charts-link-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+    }
+    .charts-link-btn i {
+      font-size: 15px;
+    }
+
+    /* Reset Filters Button */
+    .reset-btn {
+      background: #f8fafc;
+      border: 1px solid var(--border-light);
+      color: #64748b;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.2s;
+    }
+    .reset-btn:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #dc2626;
+      transform: rotate(90deg);
+    }
+
+    /* ==========================================================================
+       MAP CLUSTERS & MARKERS (BangaloreStartupMap Inspired Circles)
+       ========================================================================== */
+    /* Dynamic Cluster Bubbles */
+    .cluster-bubble {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: #0f172a;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      border: 3px solid #ffffff;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+    .cluster-bubble:hover {
+      transform: scale(1.18);
+    }
+    .cluster-sm {
+      width: 36px;
+      height: 36px;
+      background: #86efac; /* Soft green */
+      font-size: 13px;
+    }
+    .cluster-md {
+      width: 44px;
+      height: 44px;
+      background: #fde047; /* Soft yellow/amber */
+      font-size: 14px;
+    }
+    .cluster-lg {
+      width: 52px;
+      height: 52px;
+      background: #fdba74; /* Soft orange */
+      font-size: 15px;
+    }
+    .cluster-xl {
+      width: 60px;
+      height: 60px;
+      background: #f87171; /* Soft coral */
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    /* Individual Project Pin / Label (When zoomed in) */
+    .project-map-pill {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-full);
+      padding: 4px 10px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+      display: flex;
+      align-items: center;
+      gap: 6px;
       font-size: 11.5px;
       font-weight: 700;
+      color: #0f172a;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+    .project-map-pill:hover {
+      transform: translateY(-3px) scale(1.08);
+      border-color: var(--primary);
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
+      z-index: 9999 !important;
+    }
+    .pill-market-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .market-ultra { background: #f59e0b; }
+    .market-luxury { background: #6366f1; }
+    .market-premium { background: #10b981; }
+    .market-mid { background: #06b6d4; }
+
+    /* School Landmark Map Label */
+    .school-map-pill {
+      background: linear-gradient(135deg, #b91c1c, #dc2626);
+      color: #ffffff;
+      border: 2px solid #ffffff;
+      border-radius: var(--radius-full);
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 800;
       display: flex;
       align-items: center;
       gap: 6px;
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45);
+      cursor: pointer;
+      white-space: nowrap;
+      user-select: none;
+      transition: transform 0.2s ease;
+      z-index: 1000 !important;
+    }
+    .school-map-pill:hover {
+      transform: scale(1.1) translateY(-2px);
+    }
+
+    /* ==========================================================================
+       BOTTOM FLOATING CONTROLS & HUD
+       ========================================================================== */
+    /* Bottom-Left Result Count Pill */
+    .bottom-results-pill {
+      position: absolute;
+      bottom: 22px;
+      left: 20px;
+      z-index: 40;
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      box-shadow: var(--shadow-md);
+    }
+    .results-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+    .filter-chip-tag {
+      background: #eef2ff;
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Bottom-Right Camera & Map HUD */
+    .bottom-camera-hud {
+      position: absolute;
+      bottom: 22px;
+      right: 20px;
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+    }
+    .hud-btn-group {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .hud-icon-btn {
+      width: 38px;
+      height: 38px;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      color: #334155;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .cam-btn:hover {
-      background: rgba(99, 102, 241, 0.2);
-      border-color: var(--primary);
-      color: #fff;
+    .hud-icon-btn:hover {
+      background: #f1f5f9;
+      color: var(--primary);
     }
-    .cam-btn.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #fff;
-      box-shadow: 0 0 12px var(--primary-glow);
+    .hud-icon-btn + .hud-icon-btn {
+      border-top: 1px solid rgba(226, 232, 240, 0.7);
     }
 
-    /* Floating Filter Trigger Button (Visible when panel is collapsed) */
-    .floating-filter-trigger {
-      position: fixed;
-      top: 18px;
-      left: 18px;
-      z-index: 999;
-      display: none;
-      align-items: center;
-      gap: 10px;
-      background: rgba(15, 23, 42, 0.94);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(99, 102, 241, 0.6);
-      border-radius: 9999px;
-      padding: 10px 18px;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.35);
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      user-select: none;
-    }
-    .floating-filter-trigger:hover {
-      transform: translateY(-2px) scale(1.02);
-      border-color: var(--accent-cyan);
-      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.5);
-    }
-    .floating-filter-trigger.visible {
+    .hud-pill-action {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      padding: 8px 14px;
       display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #0f172a;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .floating-filter-trigger i {
-      font-size: 17px;
-      color: var(--accent-cyan);
+    .hud-pill-action:hover {
+      background: #ffffff;
+      color: var(--primary);
+      transform: translateY(-2px);
     }
-    .floating-filter-badge {
+    .hud-pill-action.active {
       background: var(--primary);
-      color: #fff;
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      font-weight: 800;
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
     }
 
-    /* Floating Glassmorphic Filter Sidebar Panel */
-    .filter-panel {
-      position: fixed;
-      top: 18px;
-      left: 18px;
-      width: 400px;
-      max-height: calc(100vh - 36px);
-      background: rgba(15, 23, 42, 0.96);
+    /* ==========================================================================
+       SIDE-OVER PROJECT DETAILS DRAWER (SaaS Enterprise Style)
+       ========================================================================== */
+    .project-drawer {
+      position: absolute;
+      top: 76px;
+      right: 20px;
+      width: 380px;
+      max-height: calc(100vh - 100px);
+      background: var(--bg-surface);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid var(--border-light);
       border-radius: var(--radius-lg);
-      z-index: 1000;
+      box-shadow: var(--shadow-lg);
+      z-index: 60;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(0, 0, 0, 0.3);
-      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+      transform: translateX(420px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+      overflow: hidden;
+    }
+    .project-drawer.open {
       transform: translateX(0);
       opacity: 1;
       pointer-events: auto;
     }
-    .filter-panel.collapsed {
-      transform: translateX(-430px);
-      opacity: 0;
-      pointer-events: none;
-    }
 
-    .panel-header {
+    .drawer-header {
       padding: 18px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .panel-header h1 {
-      font-size: 15px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      letter-spacing: -0.3px;
-    }
-    .panel-header h1 i {
-      color: var(--accent-cyan);
-      font-size: 20px;
-    }
-    .panel-header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .badge-count {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      background: rgba(99, 102, 241, 0.25);
-      border: 1px solid rgba(99, 102, 241, 0.5);
-      color: #c7d2fe;
-      padding: 3px 9px;
-      border-radius: 9999px;
-      font-weight: 700;
-    }
-    .panel-close-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #cbd5e1;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 15px;
-      transition: all 0.2s ease;
-    }
-    .panel-close-btn:hover {
-      background: rgba(239, 68, 68, 0.25);
-      border-color: rgba(239, 68, 68, 0.5);
-      color: #fca5a5;
-    }
-
-    .panel-body {
-      padding: 16px 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .panel-body::-webkit-scrollbar {
-      width: 4px;
-    }
-    .panel-body::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 4px;
-    }
-
-    .filter-group-label {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .search-input {
-      width: 100%;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 9px 12px;
-      color: var(--text-main);
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.2s;
-      margin-bottom: 8px;
-    }
-    .search-input:focus {
-      border-color: var(--primary);
-    }
-
-    .custom-select {
-      width: 100%;
-      background: rgba(30, 41, 59, 0.95);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      color: var(--text-main);
-      font-size: 13px;
-      font-weight: 600;
-      outline: none;
-      cursor: pointer;
-      transition: border-color 0.2s;
-    }
-    .custom-select:focus {
-      border-color: var(--primary);
-    }
-    .custom-select option {
-      background: #0f172a;
-      color: #fff;
-    }
-
-    .radius-selector {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 6px;
-    }
-    .radius-btn {
-      background: rgba(30, 41, 59, 0.7);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 8px 4px;
-      color: var(--text-muted);
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: center;
-    }
-    .radius-btn:hover {
-      background: rgba(99, 102, 241, 0.15);
-      color: #fff;
-      border-color: var(--primary);
-    }
-    .radius-btn.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-      box-shadow: 0 0 15px var(--primary-glow);
-    }
-
-    .pills-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .pill-checkbox {
-      display: inline-flex;
-      cursor: pointer;
-      user-select: none;
-    }
-    .pill-checkbox input {
-      display: none;
-    }
-    .pill-content {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 10px;
-      background: rgba(30, 41, 59, 0.7);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-      transition: all 0.2s;
-    }
-    .pill-checkbox:hover .pill-content {
-      border-color: rgba(255, 255, 255, 0.3);
-      color: #fff;
-    }
-    .pill-checkbox input:checked + .pill-content {
-      background: rgba(99, 102, 241, 0.25);
-      border-color: var(--primary);
-      color: #fff;
-      box-shadow: 0 0 10px var(--primary-glow);
-    }
-    .pill-checkbox.gold input:checked + .pill-content {
-      background: rgba(245, 158, 11, 0.2);
-      border-color: var(--accent-gold);
-      color: #fbbf24;
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
-    }
-
-    .apply-map-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      padding: 10px 16px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
-      margin-top: 4px;
-    }
-    .apply-map-btn:hover {
-      background: linear-gradient(135deg, #4f46e5, #4338ca);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-    }
-
-    .projects-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 280px;
-      overflow-y: auto;
-      padding-right: 2px;
-    }
-    .projects-list::-webkit-scrollbar {
-      width: 4px;
-    }
-    .projects-list::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 4px;
-    }
-
-    .project-card {
-      background: rgba(30, 41, 59, 0.6);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .project-card:hover {
-      background: rgba(49, 65, 96, 0.85);
-      border-color: var(--primary);
-      transform: translateX(4px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    }
-    .project-card.featured-card {
-      border-color: rgba(56, 189, 248, 0.4);
-      background: rgba(56, 189, 248, 0.08);
-    }
-    .project-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-    .project-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #fff;
-    }
-    .project-distance {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--accent-cyan);
-      background: rgba(56, 189, 248, 0.15);
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-    .project-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .tag-market {
-      font-size: 9.5px;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 1px 6px;
-      border-radius: 4px;
-    }
-    .tag-market.ultra {
-      background: rgba(245, 158, 11, 0.2);
-      color: #f59e0b;
-      border: 1px solid rgba(245, 158, 11, 0.4);
-    }
-    .tag-market.luxury {
-      background: rgba(99, 102, 241, 0.2);
-      color: #818cf8;
-      border: 1px solid rgba(99, 102, 241, 0.4);
-    }
-    .tag-market.premium {
-      background: rgba(16, 185, 129, 0.2);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.4);
-    }
-
-    /* 3D School Landmark Label */
-    .model-label-school {
-      pointer-events: auto;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      background: linear-gradient(135deg, #b91c1c, #dc2626);
-      border: 2px solid #fff;
-      border-radius: 9999px;
-      padding: 7px 15px;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 800;
-      box-shadow: 0 10px 30px rgba(220, 38, 38, 0.65), 0 0 25px rgba(239, 68, 68, 0.8);
-      white-space: nowrap;
-      user-select: none;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 5000 !important;
-    }
-    .model-label-school:hover {
-      transform: scale(1.12) translateY(-4px);
-    }
-
-    /* 3D High-Rise Real Estate Marker Card */
-    .model-label-building {
-      pointer-events: auto;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      background: rgba(15, 23, 42, 0.95);
-      border: 2px solid var(--primary);
-      border-radius: 9px;
-      padding: 5px 10px;
-      color: #fff;
-      font-size: 11.5px;
-      font-weight: 700;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-      white-space: nowrap;
-      user-select: none;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .model-label-building.ultra-label {
-      border-color: var(--accent-gold);
-      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
-    }
-    .model-label-building.featured-label {
-      border-color: #38bdf8;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
-    }
-    .model-label-building:hover {
-      transform: scale(1.15) translateY(-4px);
-      z-index: 9999 !important;
-    }
-    .label-top-row {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .label-sub-row {
-      font-size: 10px;
-      color: #94a3b8;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    /* 3D Legend & HUD at Bottom Right */
-    .hud-controls {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      background: var(--surface);
-      backdrop-filter: blur(16px);
-      padding: 12px 16px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      font-size: 11.5px;
-      color: var(--text-muted);
-      z-index: 20;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-    }
-    .hud-legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .legend-box {
-      width: 14px;
-      height: 14px;
-      border-radius: 3px;
-    }
-
-    /* Glassmorphic View Details Modal */
-    .modal-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(8, 12, 24, 0.78);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      z-index: 99999;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-    }
-    .modal-backdrop.active {
-      display: flex;
-      opacity: 1;
-    }
-    .modal-card {
-      background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98));
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 20px;
-      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 50px rgba(99, 102, 241, 0.25);
-      width: 100%;
-      max-width: 520px;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      transform: scale(0.94);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .modal-backdrop.active .modal-card {
-      transform: scale(1);
-    }
-    .modal-header {
+      border-bottom: 1px solid var(--border-light);
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 14px;
+      gap: 12px;
+      background: #ffffff;
     }
-    .modal-badges {
+    .drawer-badges {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
+      gap: 6px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
     }
-    .modal-badge-market {
-      font-size: 11px;
+    .drawer-tag {
+      font-size: 10.5px;
       font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 3px 10px;
-      border-radius: 9999px;
-      background: rgba(99, 102, 241, 0.2);
-      color: #818cf8;
-      border: 1px solid rgba(99, 102, 241, 0.4);
     }
-    .modal-badge-market.ultra {
-      background: rgba(245, 158, 11, 0.2);
-      color: #f59e0b;
-      border-color: rgba(245, 158, 11, 0.5);
+    .drawer-tag.gold {
+      background: #fef3c7;
+      color: #b45309;
     }
-    .modal-badge-market.luxury {
-      background: rgba(56, 189, 248, 0.2);
-      color: #38bdf8;
-      border-color: rgba(56, 189, 248, 0.4);
+    .drawer-tag.indigo {
+      background: #eef2ff;
+      color: #4338ca;
     }
-    .modal-badge-status {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 9999px;
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.4);
+    .drawer-tag.emerald {
+      background: #d1fae5;
+      color: #065f46;
     }
-    .modal-badge-sector {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 9999px;
-      background: rgba(148, 163, 184, 0.15);
-      color: #cbd5e1;
-      border: 1px solid rgba(148, 163, 184, 0.3);
+    .drawer-tag.sector {
+      background: #f1f5f9;
+      color: #475569;
     }
-    .modal-title {
-      font-size: 21px;
+    .drawer-title {
+      font-size: 18px;
       font-weight: 800;
-      color: #ffffff;
+      color: #0f172a;
       line-height: 1.25;
-      margin: 0;
+      letter-spacing: -0.4px;
     }
-    .modal-developer {
-      font-size: 13px;
-      color: #94a3b8;
-      margin-top: 4px;
-      font-weight: 500;
+    .drawer-developer {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 3px;
     }
-    .modal-close-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #cbd5e1;
-      width: 32px;
-      height: 32px;
+    .drawer-close-btn {
+      background: #f1f5f9;
+      border: none;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       font-size: 16px;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .modal-close-btn:hover {
-      background: rgba(239, 68, 68, 0.25);
-      border-color: rgba(239, 68, 68, 0.5);
-      color: #fca5a5;
+    .drawer-close-btn:hover {
+      background: #fee2e2;
+      color: #dc2626;
     }
-    .modal-distance-banner {
+
+    .drawer-body {
+      padding: 18px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .proximity-distance-box {
+      background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+      border: 1px solid #c7d2fe;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
       display: flex;
       align-items: center;
       gap: 10px;
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.35);
-      border-radius: 12px;
-      padding: 11px 15px;
-      color: #c7d2fe;
-      font-size: 13px;
+      font-size: 12.5px;
+      color: #1e1b4b;
     }
-    .modal-distance-banner i {
-      font-size: 18px;
-      color: var(--accent-cyan);
-      flex-shrink: 0;
+    .proximity-distance-box i {
+      font-size: 20px;
+      color: var(--primary);
     }
-    .modal-distance-banner b {
-      color: #ffffff;
+    .proximity-distance-box b {
+      color: var(--primary);
+      font-weight: 800;
     }
-    .modal-specs-grid {
+
+    .specs-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
-    .spec-card {
-      background: rgba(30, 41, 59, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .spec-item {
+      background: #f8fafc;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
     }
     .spec-label {
       font-size: 11px;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 3px;
     }
-    .spec-label i {
-      font-size: 14px;
-      color: var(--accent-cyan);
-    }
-    .spec-value {
+    .spec-val {
       font-size: 13.5px;
-      font-weight: 700;
-      color: #ffffff;
-      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      color: #0f172a;
     }
-    .modal-section {
+
+    .config-chips-wrap {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .modal-section-title {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: #cbd5e1;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
       gap: 6px;
-    }
-    .modal-section-title i {
-      color: var(--accent-gold);
-    }
-    .modal-config-chips {
-      display: flex;
       flex-wrap: wrap;
-      gap: 8px;
     }
     .config-chip {
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.35);
-      color: #e0e7ff;
-      padding: 5px 12px;
-      border-radius: 8px;
-      font-size: 12px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      font-size: 11.5px;
       font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
     }
-    .modal-address {
-      font-size: 12px;
-      color: #94a3b8;
-      line-height: 1.5;
-      background: rgba(15, 23, 42, 0.5);
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-    }
-    .modal-footer {
+
+    .drawer-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border-light);
+      background: #ffffff;
       display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 4px;
+      gap: 8px;
     }
-    .modal-btn-zoom {
+    .drawer-zoom-btn {
       flex: 1;
+      height: 40px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
-      color: #ffffff;
-      font-weight: 700;
-      font-size: 13px;
-      padding: 12px 18px;
-      border-radius: 12px;
-      border: none;
+      gap: 6px;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      transition: all 0.2s;
     }
-    .modal-btn-zoom:hover {
-      background: linear-gradient(135deg, #4f46e5, #4338ca);
+    .drawer-zoom-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    /* ==========================================================================
+       GRID / LIST VIEW OVERLAY (When [ Grid ] is clicked)
+       ========================================================================== */
+    .grid-view-modal {
+      position: absolute;
+      top: 76px;
+      left: 14px;
+      right: 14px;
+      bottom: 20px;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      z-index: 55;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .grid-view-modal.open {
+      display: flex;
+    }
+
+    .grid-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .grid-header h2 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .grid-cards-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .grid-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .grid-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
     }
-    .modal-btn-close {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #cbd5e1;
-      font-weight: 600;
-      font-size: 13px;
-      padding: 12px 20px;
-      border-radius: 12px;
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .card-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .card-dev {
+      font-size: 11.5px;
+      color: #64748b;
+    }
+    .card-dist-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+      background: #eef2ff;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+    .card-meta-row {
+      display: flex;
+      gap: 6px;
+      font-size: 11px;
+      color: #64748b;
+      align-items: center;
+    }
+    .card-btn-map {
+      margin-top: auto;
+      height: 34px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
-    .modal-btn-close:hover {
-      background: rgba(255, 255, 255, 0.15);
+    .card-btn-map:hover {
+      background: var(--primary);
       color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .top-navbar-container {
+        border-radius: var(--radius-md);
+        flex-wrap: wrap;
+        padding: 10px;
+      }
+      .nav-search-wrap {
+        order: 2;
+        width: 100%;
+        max-width: 100%;
+      }
+      .nav-filters-group {
+        order: 3;
+        flex-wrap: wrap;
+      }
+      .project-drawer {
+        width: calc(100% - 28px);
+        right: 14px;
+      }
     }
   </style>
 </head>
 <body>
 
-<!-- Map Container -->
-<div id="map"></div>
+  <!-- MapLibre GL 3D Map Container -->
+  <div id="map"></div>
 
-<!-- Top-Right Cinematic Camera Controls Bar -->
-<div class="camera-hud-bar">
-  <button class="cam-btn active" id="btn3d" onclick="setCameraMode('3d')">
-    <i class="ph-bold ph-cube"></i> 3D View
-  </button>
-  <button class="cam-btn" id="btnTop" onclick="setCameraMode('top')">
-    <i class="ph-bold ph-compass"></i> Top 2D
-  </button>
-  <button class="cam-btn" id="btnOrbit" onclick="toggleOrbit()">
-    <i class="ph-bold ph-arrows-clockwise"></i> Orbit 360°
-  </button>
-  <button class="cam-btn" onclick="resetSchoolView()">
-    <i class="ph-bold ph-crosshair"></i> Reset
-  </button>
-</div>
-
-<!-- Floating Trigger Button (appears when sidebar is collapsed) -->
-<div class="floating-filter-trigger" id="floatingTrigger" onclick="toggleFilterPanel(true)">
-  <i class="ph-bold ph-sliders-horizontal"></i>
-  <span id="floatingTriggerText">Filters • Heritage Xperential Learning School</span>
-  <span class="floating-filter-badge" id="floatingTriggerBadge">9 Projects</span>
-</div>
-
-<!-- 3D HUD / Navigation Legend (Updated: Realistic Architectural Materials) -->
-<div class="hud-controls">
-  <div style="font-weight: 800; color: #fff; font-size: 12px; margin-bottom: 2px;">
-    🏙️ 3D PropertyAI Models (Gurgaon)
-  </div>
-  <div class="hud-legend-item">
-    <div class="legend-box" style="background: #ef4444; border: 1px solid #fff;"></div>
-    <span>3D School Campus (Pitched Red Roof &amp; Clock Tower)</span>
-  </div>
-  <div class="hud-legend-item">
-    <div class="legend-box" style="background: #dcd8d4; border: 1px solid #64748b;"></div>
-    <span>3D High-Rise Residential Towers (Architectural Concrete &amp; Tinted Glass)</span>
-  </div>
-  <div class="hud-legend-item">
-    <div class="legend-box" style="background: #f59e0b; border: 1px solid #fff;"></div>
-    <span>3D Ultra Luxury Skyscraper (Gold Glass Crown &amp; Helipad)</span>
-  </div>
-  <hr style="border: 0; border-top: 1px solid var(--border); margin: 4px 0;">
-  <div style="font-size: 10.5px;">
-    <b>3D Controls:</b> Right-Click + Drag to rotate/tilt • Scroll to zoom
-  </div>
-</div>
-
-<!-- Floating Filter Panel -->
-<div class="filter-panel" id="filterPanel">
-  <div class="panel-header">
-    <h1><i class="ph-bold ph-buildings"></i> 3D Real Estate Explorer</h1>
-    <div class="panel-header-actions">
-      <span class="badge-count" id="matchBadge">0 Projects</span>
-      <button class="panel-close-btn" onclick="toggleFilterPanel(false)" title="Hide Filter Panel & View 3D Map">
-        <i class="ph-bold ph-x"></i>
-      </button>
-    </div>
-  </div>
-
-  <div class="panel-body">
-    <!-- 1. School Landmark -->
-    <div>
-      <div class="filter-group-label">
-        <span>1. Center School (3D Campus)</span>
-        <i class="ph-bold ph-graduation-cap"></i>
+  <!-- ==========================================================================
+       TOP FLOATING PILL NAVBAR
+       ========================================================================== -->
+  <header class="top-navbar-container" id="topNav">
+    <!-- Brand / Home Link -->
+    <div class="brand-section" onclick="resetSchoolView()" title="Center Gurgaon 3D Real Estate">
+      <div class="brand-pin">
+        <i class="ph-fill ph-buildings"></i>
       </div>
-      <input type="text" class="search-input" id="schoolSearch" placeholder="🔍 Search school..." oninput="filterSchoolOptions()" />
-      <select class="custom-select" id="schoolSelect" onchange="handleSchoolSelectChange()">
-        <!-- Populated from data.js -->
-      </select>
-    </div>
-
-    <!-- 2. Radius Selection -->
-    <div>
-      <div class="filter-group-label">
-        <span>2. Proximity Radius (KM)</span>
-        <span id="radiusDisplay" style="color: var(--accent-cyan); font-family: 'JetBrains Mono'; font-weight: 800;">4 km</span>
-      </div>
-      <div class="radius-selector">
-        <button class="radius-btn" onclick="setRadius(2)">2 KM</button>
-        <button class="radius-btn" onclick="setRadius(3)">3 KM</button>
-        <button class="radius-btn active" onclick="setRadius(4)">4 KM</button>
-        <button class="radius-btn" onclick="setRadius(5)">5 KM</button>
-        <button class="radius-btn" onclick="setRadius(8)">8 KM</button>
+      <div class="brand-title">
+        Propium <span>3D</span>
       </div>
     </div>
 
-    <!-- 3. Target Market -->
-    <div>
-      <div class="filter-group-label">
-        <span>3. Target Market</span>
-        <i class="ph-bold ph-crown"></i>
-      </div>
-      <div class="pills-group">
-        <label class="pill-checkbox gold">
-          <input type="checkbox" value="Ultra Luxury" checked onchange="handleFilterChange(false)">
-          <span class="pill-content"><i class="ph-bold ph-sparkle"></i> Ultra Luxury</span>
-        </label>
-        <label class="pill-checkbox">
-          <input type="checkbox" value="Luxury" checked onchange="handleFilterChange(false)">
-          <span class="pill-content"><i class="ph-bold ph-gem"></i> Luxury</span>
-        </label>
-        <label class="pill-checkbox">
-          <input type="checkbox" value="Premium" checked onchange="handleFilterChange(false)">
-          <span class="pill-content">Premium</span>
-        </label>
-        <label class="pill-checkbox">
-          <input type="checkbox" value="Mid Segment" onchange="handleFilterChange(false)">
-          <span class="pill-content">Mid Segment</span>
-        </label>
-      </div>
+    <!-- Live Search Input -->
+    <div class="nav-search-wrap">
+      <i class="ph-bold ph-magnifying-glass search-icon"></i>
+      <input type="text" class="nav-search-input" id="globalSearch" placeholder="Search projects, sectors, builders..." oninput="handleSearchInput()" />
+      <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()"><i class="ph-bold ph-x"></i></button>
     </div>
 
-    <!-- 4. Unit Configuration -->
-    <div>
-      <div class="filter-group-label">
-        <span>4. Unit Configuration</span>
-        <i class="ph-bold ph-house-line"></i>
-      </div>
-      <div class="pills-group">
-        <label class="pill-checkbox">
-          <input type="checkbox" value="2 BHK" onchange="handleFilterChange(false)">
-          <span class="pill-content">2 BHK</span>
-        </label>
-        <label class="pill-checkbox">
-          <input type="checkbox" value="3 BHK" checked onchange="handleFilterChange(false)">
-          <span class="pill-content">3 BHK</span>
-        </label>
-        <label class="pill-checkbox">
-          <input type="checkbox" value="4 BHK" checked onchange="handleFilterChange(false)">
-          <span class="pill-content">4 BHK</span>
-        </label>
-        <label class="pill-checkbox">
-          <input type="checkbox" value="Penthouse" onchange="handleFilterChange(false)">
-          <span class="pill-content">Penthouse</span>
-        </label>
-      </div>
-    </div>
-
-    <!-- 5. Corridor Filter -->
-    <div>
-      <div class="filter-group-label">
-        <span>5. Corridor</span>
-        <i class="ph-bold ph-path"></i>
-      </div>
-      <select class="custom-select" id="corridorSelect" onchange="handleCorridorSelectChange()">
-        <option value="ALL">All Corridors (Entire Gurgaon)</option>
-        <option value="Golf Course Extension Road" selected>Golf Course Extension Road (GCER)</option>
-        <option value="Golf Course Road">Golf Course Road (GCR)</option>
-        <option value="Dwarka Expressway">Dwarka Expressway (DXE)</option>
-        <option value="Central Gurgaon">Central Gurgaon (CG)</option>
+    <!-- Inline Filter Dropdowns -->
+    <div class="nav-filters-group">
+      <!-- 1. Corridor Filter -->
+      <select class="nav-dropdown-select" id="corridorFilter" onchange="applyFilters()">
+        <option value="ALL">All corridors</option>
+        <option value="Golf Course Extension Road" selected>Golf Course Extn Rd</option>
+        <option value="Golf Course Road">Golf Course Road</option>
+        <option value="Dwarka Expressway">Dwarka Expressway</option>
+        <option value="Central Gurgaon">Central Gurgaon</option>
         <option value="Sohna Road">Sohna Road</option>
-        <option value="Southern Peripheral Road">Southern Peripheral Road (SPR)</option>
+        <option value="Southern Peripheral Road">Southern Peripheral Rd</option>
         <option value="New Gurgaon">New Gurgaon</option>
       </select>
+
+      <!-- 2. Target Market Filter -->
+      <select class="nav-dropdown-select" id="marketFilter" onchange="applyFilters()">
+        <option value="ALL">All segments</option>
+        <option value="Ultra Luxury">Ultra Luxury</option>
+        <option value="Luxury">Luxury</option>
+        <option value="Premium">Premium</option>
+        <option value="Mid Segment">Mid Segment</option>
+      </select>
+
+      <!-- 3. Unit Configuration Filter -->
+      <select class="nav-dropdown-select" id="configFilter" onchange="applyFilters()">
+        <option value="ALL">All configs</option>
+        <option value="2 BHK">2 BHK</option>
+        <option value="3 BHK">3 BHK</option>
+        <option value="4 BHK">4 BHK</option>
+        <option value="Penthouse">Penthouse</option>
+      </select>
+
+      <!-- 4. Center School Proximity Pill -->
+      <div class="school-proximity-pill">
+        <i class="ph-fill ph-graduation-cap"></i>
+        <select id="schoolFilter" onchange="handleSchoolChange()" title="Select Landmark School">
+          <!-- Populated dynamically -->
+        </select>
+        <select class="radius-pill-select" id="radiusFilter" onchange="handleRadiusChange()" title="Proximity Radius">
+          <option value="2">2 KM</option>
+          <option value="3">3 KM</option>
+          <option value="4" selected>4 KM</option>
+          <option value="5">5 KM</option>
+          <option value="8">8 KM</option>
+          <option value="12">12 KM</option>
+        </select>
+      </div>
     </div>
 
-    <!-- Apply & View Full 3D Map Button -->
-    <button class="apply-map-btn" onclick="toggleFilterPanel(false)">
-      <i class="ph-bold ph-eye"></i> Apply &amp; Explore 3D Map
+    <!-- Mode Switcher: [ 3D Map | 2D Map | Grid ] -->
+    <div class="view-switcher-pill">
+      <button class="view-btn active" id="btnMode3D" onclick="switchViewMode('3d')">
+        <i class="ph-bold ph-cube"></i> 3D
+      </button>
+      <button class="view-btn" id="btnMode2D" onclick="switchViewMode('2d')">
+        <i class="ph-bold ph-map-trifold"></i> 2D
+      </button>
+      <button class="view-btn" id="btnModeGrid" onclick="switchViewMode('grid')">
+        <i class="ph-bold ph-squares-four"></i> Grid
+      </button>
+    </div>
+
+    <!-- Right Side Actions & Stats -->
+    <div class="nav-actions-group">
+      <!-- Live Count Pill -->
+      <div class="project-count-badge" id="navCountBadge">
+        <div class="count-indicator-dot"></div>
+        <span id="navCountText">405 Projects</span>
+      </div>
+
+      <!-- Link to All Charts Dashboard -->
+      <a href="all_charts.html" target="_blank" class="charts-link-btn" title="Open Universal Visual Analytics Hub with all charts">
+        <i class="ph-bold ph-chart-polar"></i> All Charts
+      </a>
+
+      <!-- Reset View -->
+      <button class="reset-btn" onclick="resetAllFilters()" title="Reset All Filters &amp; Camera">
+        <i class="ph-bold ph-arrow-counter-clockwise"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       BOTTOM FLOATING PILL & CAMERA CONTROLS
+       ========================================================================== -->
+  <!-- Bottom-Left Result Summary Pill -->
+  <div class="bottom-results-pill" id="bottomResultsPill">
+    <div class="results-dot"></div>
+    <span id="bottomResultsText"><b>14</b> projects near <b>Heritage Xperential</b></span>
+    <span class="filter-chip-tag" id="activeCorridorTag">Golf Course Extn</span>
+  </div>
+
+  <!-- Bottom-Right Camera HUD -->
+  <div class="bottom-camera-hud">
+    <!-- Continuous 360° Drone Orbit Button -->
+    <button class="hud-pill-action" id="hudOrbitBtn" onclick="toggleOrbit()">
+      <i class="ph-bold ph-repeat"></i> 360° Orbit
     </button>
 
-    <!-- 6. Matching Projects List -->
-    <div>
-      <div class="filter-group-label">
-        <span>3D Projects in Radius (Click for Details)</span>
-        <span id="listCountLabel">0 Found</span>
-      </div>
-      <div class="projects-list" id="projectsList">
-        <!-- Rendered dynamically -->
-      </div>
+    <!-- Zoom & Pitch Controls -->
+    <div class="hud-btn-group">
+      <button class="hud-icon-btn" onclick="map.zoomIn()" title="Zoom In"><i class="ph-bold ph-plus"></i></button>
+      <button class="hud-icon-btn" onclick="map.zoomOut()" title="Zoom Out"><i class="ph-bold ph-minus"></i></button>
+      <button class="hud-icon-btn" onclick="resetPitchBearing()" title="Reset Compass North &amp; Pitch"><i class="ph-bold ph-compass"></i></button>
     </div>
   </div>
-</div>
 
-<!-- Glassmorphic View Details Modal -->
-<div class="modal-backdrop" id="projectDetailsModal" onclick="handleModalBackdropClick(event)">
-  <div class="modal-card">
-    <div class="modal-header">
+  <!-- ==========================================================================
+       SIDE-OVER PROJECT DETAILS DRAWER
+       ========================================================================== -->
+  <aside class="project-drawer" id="projectDrawer">
+    <div class="drawer-header">
       <div>
-        <div class="modal-badges">
-          <span class="modal-badge-market" id="modalMarketBadge">Ultra Luxury</span>
-          <span class="modal-badge-status" id="modalStatusBadge">Under Construction</span>
-          <span class="modal-badge-sector" id="modalSectorBadge">Sector 62</span>
+        <div class="drawer-badges">
+          <span class="drawer-tag gold" id="dMarketTag">Ultra Luxury</span>
+          <span class="drawer-tag emerald" id="dStatusTag">Under Construction</span>
+          <span class="drawer-tag sector" id="dSectorTag">Sector 62</span>
         </div>
-        <h2 class="modal-title" id="modalTitle">Pioneer Adivat</h2>
-        <div class="modal-developer" id="modalDeveloper">by Pioneer Urban Land &amp; Infrastructure Ltd</div>
+        <h2 class="drawer-title" id="dTitle">Pioneer Adivat</h2>
+        <div class="drawer-developer" id="dDeveloper">Pioneer Urban Land &amp; Infrastructure</div>
       </div>
-      <button class="modal-close-btn" onclick="closeProjectDetailsModal()" title="Close Details">
-        <i class="ph-bold ph-x"></i>
+      <button class="drawer-close-btn" onclick="closeProjectDrawer()"><i class="ph-bold ph-x"></i></button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Proximity Distance Box -->
+      <div class="proximity-distance-box" id="dProximityBox">
+        <i class="ph-fill ph-navigation-arrow"></i>
+        <span id="dProximityText"><b>3.4 KM</b> away from <b>Heritage Xperential Learning School</b></span>
+      </div>
+
+      <!-- Specs 2x2 Grid -->
+      <div class="specs-grid">
+        <div class="spec-item">
+          <div class="spec-label">Land Area</div>
+          <div class="spec-val" id="dLandArea">10.07 Acres</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Open Space</div>
+          <div class="spec-val" id="dOpenArea">65% Open</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Possession</div>
+          <div class="spec-val" id="dPossession">Dec 2029</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Corridor</div>
+          <div class="spec-val" id="dCorridor">Golf Course Extn</div>
+        </div>
+      </div>
+
+      <!-- Unit Configurations -->
+      <div>
+        <div class="spec-label" style="margin-bottom: 6px;">Configurations</div>
+        <div class="config-chips-wrap" id="dConfigsWrap">
+          <span class="config-chip">3 BHK</span>
+          <span class="config-chip">4 BHK</span>
+        </div>
+      </div>
+
+      <!-- Address -->
+      <div>
+        <div class="spec-label" style="margin-bottom: 4px;">Location &amp; Address</div>
+        <div style="font-size: 12px; color: #334155; line-height: 1.4;" id="dAddress">Sector 62, Golf Course Extension Road, Gurugram</div>
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <button class="drawer-zoom-btn" id="dZoomTowerBtn" onclick="zoomToActiveTower()">
+        <i class="ph-bold ph-video-camera"></i> Zoom to 3D Skyscraper
       </button>
     </div>
+  </aside>
 
-    <!-- Proximity Banner -->
-    <div class="modal-distance-banner" id="modalDistanceBanner">
-      <i class="ph-bold ph-navigation-arrow"></i>
-      <span id="modalDistanceText"><b>3.4 KM</b> away from <b>Heritage Xperential Learning School</b></span>
+  <!-- ==========================================================================
+       GRID / LIST VIEW MODAL OVERLAY
+       ========================================================================== -->
+  <div class="grid-view-modal" id="gridModal">
+    <div class="grid-header">
+      <h2>Project Directory (<span id="gridCountHeader">14 Found</span>)</h2>
+      <button class="drawer-close-btn" onclick="switchViewMode('3d')"><i class="ph-bold ph-x"></i></button>
     </div>
-
-    <!-- Project Specifications Grid -->
-    <div class="modal-specs-grid">
-      <div class="spec-card">
-        <div class="spec-label"><i class="ph-bold ph-ruler"></i> Land Area</div>
-        <div class="spec-value" id="modalLandArea">10.07 Acres</div>
-      </div>
-      <div class="spec-card">
-        <div class="spec-label"><i class="ph-bold ph-tree"></i> Open Space</div>
-        <div class="spec-value" id="modalOpenArea">65% Open Area</div>
-      </div>
-      <div class="spec-card">
-        <div class="spec-label"><i class="ph-bold ph-calendar-check"></i> Possession</div>
-        <div class="spec-value" id="modalPossession">Dec 2028</div>
-      </div>
-      <div class="spec-card">
-        <div class="spec-label"><i class="ph-bold ph-path"></i> Corridor</div>
-        <div class="spec-value" id="modalCorridor">Golf Course Extn Rd</div>
-      </div>
-    </div>
-
-    <!-- Unit Configurations -->
-    <div class="modal-section">
-      <div class="modal-section-title"><i class="ph-bold ph-house-line"></i> Available Configurations</div>
-      <div class="modal-config-chips" id="modalConfigs">
-        <!-- Rendered chips -->
-      </div>
-    </div>
-
-    <!-- Location & Address -->
-    <div class="modal-section">
-      <div class="modal-section-title"><i class="ph-bold ph-map-pin"></i> Location &amp; Address</div>
-      <div class="modal-address" id="modalAddress">Sector 62, Golf Course Extension Road, Gurugram, Haryana</div>
-    </div>
-
-    <!-- Modal Footer Actions -->
-    <div class="modal-footer">
-      <button class="modal-btn-zoom" id="modalZoomBtn" onclick="zoomToProjectFromModal()">
-        <i class="ph-bold ph-video-camera"></i> Zoom to 3D Tower
-      </button>
-      <button class="modal-btn-close" onclick="closeProjectDetailsModal()">
-        Close
-      </button>
+    <div class="grid-cards-container" id="gridCardsContainer">
+      <!-- Rendered dynamically -->
     </div>
   </div>
-</div>
 
-<script>
-  // Ensure dataset from data.js
-  const SCHOOLS = (typeof REAL_SCHOOLS_DATA !== 'undefined' && REAL_SCHOOLS_DATA.length > 0) ? REAL_SCHOOLS_DATA : [];
-  const PROJECTS = (typeof REAL_PROJECTS_DATA !== 'undefined' && REAL_PROJECTS_DATA.length > 0) ? REAL_PROJECTS_DATA : [];
+  <!-- ==========================================================================
+       JAVASCRIPT: MAPLIBRE GL, THREE.JS 3D TOWERS & CLUSTERING
+       ========================================================================== -->
+  <script>
+    // Database from data.js
+    const SCHOOLS = (typeof REAL_SCHOOLS_DATA !== 'undefined') ? REAL_SCHOOLS_DATA : [];
+    const PROJECTS = (typeof REAL_PROJECTS_DATA !== 'undefined') ? REAL_PROJECTS_DATA : [];
 
-  // Currently active state
-  let currentSelectedSchool = null;
-  let currentMatchingProjects = [];
-  let currentModalProject = null;
-  let isOrbiting = false;
-  let orbitAnimId = null;
+    let currentSelectedSchool = null;
+    let selectedRadiusKm = 4;
+    let currentFilteredProjects = [];
+    let activeDrawerProject = null;
+    let isOrbiting = false;
+    let orbitAnimId = null;
+    let currentViewMode = '3d'; // '3d', '2d', 'grid'
 
-  // ==========================================
-  // HAVERSINE DISTANCE (KM)
-  // ==========================================
-  function calculateDistanceKm(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Earth's radius in KM
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  }
-
-  // Generate GeoJSON Circle for 3D Radius Buffer
-  function createGeoJsonCircle(center, radiusKm, points = 64) {
-    const coords = [];
-    const distanceX = radiusKm / (111.320 * Math.cos(center[1] * Math.PI / 180));
-    const distanceY = radiusKm / 110.574;
-
-    for (let i = 0; i <= points; i++) {
-      const theta = (i / points) * (2 * Math.PI);
-      const x = distanceX * Math.cos(theta);
-      const y = distanceY * Math.sin(theta);
-      coords.push([center[0] + x, center[1] + y]);
+    // Haversine Distance in KM
+    function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
     }
-    return {
-      type: 'Feature',
-      geometry: {
-        type: 'Polygon',
-        coordinates: [coords]
+
+    // GeoJSON Circular Polygon for School Proximity Buffer
+    function createGeoJsonCircle(center, radiusKm, points = 64) {
+      const coords = [];
+      const distanceX = radiusKm / (111.320 * Math.cos(center[1] * Math.PI / 180));
+      const distanceY = radiusKm / 110.574;
+      for (let i = 0; i <= points; i++) {
+        const theta = (i / points) * (2 * Math.PI);
+        const x = distanceX * Math.cos(theta);
+        const y = distanceY * Math.sin(theta);
+        coords.push([center[0] + x, center[1] + y]);
       }
-    };
-  }
+      return {
+        type: 'Feature',
+        geometry: { type: 'Polygon', coordinates: [coords] }
+      };
+    }
 
-  // ==========================================
-  // REUSABLE ARCHITECTURAL MATERIALS CACHE
-  // ==========================================
-  let cachedMaterials = null;
-  function getArchitecturalMaterials() {
-    if (cachedMaterials) return cachedMaterials;
+    // ==========================================
+    // THREE.JS MATERIALS & 3D TOWER BUILDER
+    // ==========================================
+    let cachedMaterials = null;
+    function getArchitecturalMaterials() {
+      if (cachedMaterials) return cachedMaterials;
+      cachedMaterials = {
+        glassMat: new THREE.MeshPhysicalMaterial({
+          color: 0x1e293b,
+          metalness: 0.88,
+          roughness: 0.12,
+          transparent: true,
+          opacity: 0.94
+        }),
+        slabMat: new THREE.MeshStandardMaterial({
+          color: 0xe2ded9,
+          roughness: 0.65,
+          metalness: 0.08
+        }),
+        frameMat: new THREE.MeshStandardMaterial({
+          color: 0x64748b,
+          roughness: 0.4,
+          metalness: 0.5
+        }),
+        balconyMat: new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          roughness: 0.25,
+          metalness: 0.05
+        }),
+        podiumMat: new THREE.MeshStandardMaterial({
+          color: 0x1e242b,
+          roughness: 0.85
+        }),
+        lawnMat: new THREE.MeshStandardMaterial({
+          color: 0x16a34a,
+          roughness: 0.9
+        }),
+        crownMat: new THREE.MeshStandardMaterial({
+          color: 0xd97706,
+          metalness: 0.85,
+          roughness: 0.2,
+          emissive: 0x78350f,
+          emissiveIntensity: 0.25
+        }),
+        helipadMat: new THREE.MeshStandardMaterial({
+          color: 0x334155,
+          roughness: 0.8
+        }),
+        spireMat: new THREE.MeshStandardMaterial({
+          color: 0x94a3b8,
+          metalness: 0.85,
+          roughness: 0.25
+        }),
+        shadowMat: new THREE.MeshBasicMaterial({
+          color: 0x000000,
+          transparent: true,
+          opacity: 0.35
+        })
+      };
+      return cachedMaterials;
+    }
 
-    cachedMaterials = {
-      // Tinted Neutral Architectural Glass (Dark charcoal tint, high reflectivity, no cartoonish blue)
-      glassMat: new THREE.MeshPhysicalMaterial({
-        color: 0x1e293b,
-        metalness: 0.88,
-        roughness: 0.12,
-        transparent: true,
-        opacity: 0.94
-      }),
-      // Warm Architectural Limestone / Concrete Slabs
-      slabMat: new THREE.MeshStandardMaterial({
-        color: 0xe2ded9,
-        roughness: 0.65,
-        metalness: 0.08
-      }),
-      // Slate Mullion Frames & Columns
-      frameMat: new THREE.MeshStandardMaterial({
-        color: 0x64748b,
-        roughness: 0.4,
-        metalness: 0.5
-      }),
-      // Crisp White Architectural Balcony Terraces
-      balconyMat: new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        roughness: 0.25,
-        metalness: 0.05
-      }),
-      // Dark Charcoal Granite Podium Base
-      podiumMat: new THREE.MeshStandardMaterial({
-        color: 0x1e242b,
-        roughness: 0.85
-      }),
-      // Landscaped Podium Garden Deck
-      lawnMat: new THREE.MeshStandardMaterial({
-        color: 0x16a34a,
-        roughness: 0.9
-      }),
-      // Ultra Luxury Champagne Gold Architectural Crown
-      crownMat: new THREE.MeshStandardMaterial({
-        color: 0xd97706,
-        metalness: 0.85,
-        roughness: 0.2,
-        emissive: 0x78350f,
-        emissiveIntensity: 0.25
-      }),
-      // Helipad Landing Circle
-      helipadMat: new THREE.MeshStandardMaterial({
-        color: 0x334155,
-        roughness: 0.8
-      }),
-      // Rooftop Spire & Antennas
-      spireMat: new THREE.MeshStandardMaterial({
-        color: 0x94a3b8,
-        metalness: 0.85,
-        roughness: 0.25
-      }),
-      // Ground Ambient Occlusion Drop-Shadow
-      shadowMat: new THREE.MeshBasicMaterial({
-        color: 0x000000,
-        transparent: true,
-        opacity: 0.45
-      })
-    };
-    return cachedMaterials;
-  }
+    // School Landmark 3D Model
+    function create3DSchoolModel() {
+      const group = new THREE.Group();
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.7 });
+      const roofMat = new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.4 });
+      const lawnMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.9 });
+      const trackMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.9 });
 
-  // ==========================================
-  // PROCEDURAL 3D ARCHITECTURAL MESH BUILDERS
-  // ==========================================
+      const lawn = new THREE.Mesh(new THREE.BoxGeometry(160, 160, 2), lawnMat);
+      lawn.position.set(0, 0, 1);
+      group.add(lawn);
 
-  // 3D School Landmark Model (Pitched Red Roof & Clock Tower Standing Vertically Upright)
-  function create3DSchoolModel() {
-    const group = new THREE.Group();
+      const center = new THREE.Mesh(new THREE.BoxGeometry(70, 36, 24), wallMat);
+      center.position.set(0, -10, 14);
+      group.add(center);
 
-    const wallMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.7 });
-    const trimMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
-    const roofMat = new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.4 });
-    const windowMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.1, metalness: 0.8 });
-    const lawnMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.9 });
-    const trackMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.9 });
+      const roof = new THREE.Mesh(new THREE.ConeGeometry(45, 18, 4), roofMat);
+      roof.rotation.x = Math.PI / 2;
+      roof.rotation.z = Math.PI / 4;
+      roof.position.set(0, -10, 33);
+      group.add(roof);
 
-    // Green Campus Ground
-    const lawn = new THREE.Mesh(new THREE.BoxGeometry(160, 160, 2), lawnMat);
-    lawn.position.set(0, 0, 1);
-    group.add(lawn);
+      const track = new THREE.Mesh(new THREE.CylinderGeometry(28, 28, 1.5, 24), trackMat);
+      track.rotation.x = Math.PI / 2;
+      track.position.set(0, 75, 1.5);
+      track.scale.set(1.4, 0.9, 1);
+      group.add(track);
 
-    // Main Academic Center Building
-    const center = new THREE.Mesh(new THREE.BoxGeometry(70, 36, 24), wallMat);
-    center.position.set(0, -10, 14);
-    group.add(center);
+      group.scale.set(1.15, 1.15, 1.15);
+      return group;
+    }
 
-    // Pitched Red Roof (Cone pointing UP along Z)
-    const roof = new THREE.Mesh(new THREE.ConeGeometry(45, 18, 4), roofMat);
-    roof.rotation.x = Math.PI / 2;
-    roof.rotation.z = Math.PI / 4;
-    roof.position.set(0, -10, 33);
-    group.add(roof);
+    // Realistic Procedural 3D Skyscraper
+    function create3DBuildingModel(project) {
+      const mats = getArchitecturalMaterials();
+      const group = new THREE.Group();
+      const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
 
-    // Left Academic Wing
-    const leftWing = new THREE.Mesh(new THREE.BoxGeometry(32, 55, 20), wallMat);
-    leftWing.position.set(-42, 2, 12);
-    group.add(leftWing);
+      const mainH = isUltra ? 165 : 130;
+      const mainW = isUltra ? 42 : 36;
+      const mainD = isUltra ? 32 : 26;
+      const podiumH = 12;
 
-    // Right Academic Wing
-    const rightWing = new THREE.Mesh(new THREE.BoxGeometry(32, 55, 20), wallMat);
-    rightWing.position.set(42, 2, 12);
-    group.add(rightWing);
+      // Ground Drop Shadow
+      const shadow = new THREE.Mesh(new THREE.CylinderGeometry(55, 55, 0.4, 32), mats.shadowMat);
+      shadow.rotation.x = Math.PI / 2;
+      shadow.position.set(8, 4, 0.2);
+      group.add(shadow);
 
-    // Clock Tower Spire Body
-    const tower = new THREE.Mesh(new THREE.BoxGeometry(18, 18, 55), wallMat);
-    tower.position.set(0, -14, 28);
-    group.add(tower);
+      // Granite Podium Base
+      const podiumW = 85, podiumD = 65;
+      const podium = new THREE.Mesh(new THREE.BoxGeometry(podiumW, podiumD, podiumH), mats.podiumMat);
+      podium.position.set(8, 4, podiumH / 2);
+      group.add(podium);
 
-    // Clock Tower Spire Cone (Pointing UP along Z)
-    const spire = new THREE.Mesh(new THREE.ConeGeometry(12, 22, 4), roofMat);
-    spire.rotation.x = Math.PI / 2;
-    spire.rotation.z = Math.PI / 4;
-    spire.position.set(0, -14, 67);
-    group.add(spire);
+      // Main Glass Curtain Wall Core
+      const tower1 = new THREE.Mesh(new THREE.BoxGeometry(mainW, mainD, mainH), mats.glassMat);
+      tower1.position.set(-14, 0, podiumH + mainH / 2);
+      group.add(tower1);
 
-    // Sports Field / Running Track (Flat circular disc on ground)
-    const track = new THREE.Mesh(new THREE.CylinderGeometry(28, 28, 1.5, 24), trackMat);
-    track.rotation.x = Math.PI / 2;
-    track.position.set(0, 75, 1.5);
-    track.scale.set(1.4, 0.9, 1);
-    group.add(track);
-
-    // Classroom Windows
-    for (let x = -24; x <= 24; x += 12) {
-      for (let z = 6; z <= 20; z += 7) {
-        const win = new THREE.Mesh(new THREE.BoxGeometry(6, 1, 4), windowMat);
-        win.position.set(x, -12, z);
-        group.add(win);
+      // Floor Slabs
+      const floors = Math.floor(mainH / 3.8);
+      for (let f = 1; f < floors; f++) {
+        const slab = new THREE.Mesh(new THREE.BoxGeometry(mainW + 3.2, mainD + 3.2, 0.8), mats.slabMat);
+        slab.position.set(-14, 0, podiumH + f * 3.8);
+        group.add(slab);
       }
+
+      // Twin Tower (Tower B)
+      const twinH = isUltra ? 125 : 95;
+      const twinW = isUltra ? 34 : 28;
+      const twinD = isUltra ? 26 : 22;
+      const tower2 = new THREE.Mesh(new THREE.BoxGeometry(twinW, twinD, twinH), mats.glassMat);
+      tower2.position.set(22, 10, podiumH + twinH / 2);
+      group.add(tower2);
+
+      const twinFloors = Math.floor(twinH / 3.8);
+      for (let f = 1; f < twinFloors; f++) {
+        const slab = new THREE.Mesh(new THREE.BoxGeometry(twinW + 2.6, twinD + 2.6, 0.7), mats.slabMat);
+        slab.position.set(22, 10, podiumH + f * 3.8);
+        group.add(slab);
+      }
+
+      // Crown / Helipad for Ultra Luxury
+      const roofZ = podiumH + mainH;
+      if (isUltra) {
+        const crown = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.85, mainD * 0.85, 14), mats.crownMat);
+        crown.position.set(-14, 0, roofZ + 7);
+        group.add(crown);
+
+        const helipad = new THREE.Mesh(new THREE.CylinderGeometry(11, 11, 1.6, 24), mats.helipadMat);
+        helipad.rotation.x = Math.PI / 2;
+        helipad.position.set(-14, 0, roofZ + 14.8);
+        group.add(helipad);
+      }
+
+      group.scale.set(1.25, 1.25, 1.25);
+      return group;
     }
 
-    group.scale.set(1.15, 1.15, 1.15);
-    return group;
-  }
+    // ==========================================
+    // MAP INITIALIZATION (MapLibre GL)
+    // ==========================================
+    let activeThreeScene = null;
+    let activeThreeCamera = null;
+    let activeThreeRenderer = null;
+    let activeThreeGroup = new THREE.Group();
+    let activeHtmlMarkers = [];
 
-  // Realistic Procedural 3D Residential Skyscraper (True Vertical Z Orientation, Architectural Slabs & Twin Towers)
-  function create3DBuildingModel(project) {
-    const mats = getArchitecturalMaterials();
-    const group = new THREE.Group();
-    const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
-
-    // Real-world luxury skyscraper proportions (Gurgaon High-Rise Standard: 135m - 170m)
-    const mainH = isUltra ? 165 : 130; // Height in meters
-    const mainW = isUltra ? 42 : 36;   // Width in meters
-    const mainD = isUltra ? 32 : 26;   // Depth in meters
-    const podiumH = 12;
-
-    // 1. Ground Drop Shadow (anchors building to terrain with realistic ambient occlusion)
-    const shadow = new THREE.Mesh(new THREE.CylinderGeometry(55, 55, 0.4, 32), mats.shadowMat);
-    shadow.rotation.x = Math.PI / 2;
-    shadow.position.set(8, 4, 0.2);
-    group.add(shadow);
-
-    // 2. Granite Podium Base (Ground Parking & Retail Level)
-    const podiumW = 85, podiumD = 65;
-    const podium = new THREE.Mesh(new THREE.BoxGeometry(podiumW, podiumD, podiumH), mats.podiumMat);
-    podium.position.set(8, 4, podiumH / 2);
-    group.add(podium);
-
-    // Landscaped Green Garden Deck on Podium Roof
-    const deck = new THREE.Mesh(new THREE.BoxGeometry(podiumW - 4, podiumD - 4, 0.8), mats.lawnMat);
-    deck.position.set(8, 4, podiumH + 0.4);
-    group.add(deck);
-
-    // Grand Entrance Canopy / Port-Cochère
-    const canopy = new THREE.Mesh(new THREE.BoxGeometry(26, 16, 2), mats.frameMat);
-    canopy.position.set(8, -podiumD / 2 - 4, 6);
-    group.add(canopy);
-
-    // 3. Main High-Rise Tower (Tower A)
-    // Reflective Tinted Glass Curtain Wall Core
-    const tower1 = new THREE.Mesh(new THREE.BoxGeometry(mainW, mainD, mainH), mats.glassMat);
-    tower1.position.set(-14, 0, podiumH + mainH / 2);
-    group.add(tower1);
-
-    // Visible Horizontal Concrete Floor Slabs & Window Ledges every 3.8m
-    const floors = Math.floor(mainH / 3.8);
-    for (let f = 1; f < floors; f++) {
-      const slabZ = podiumH + f * 3.8;
-      const slab = new THREE.Mesh(new THREE.BoxGeometry(mainW + 3.2, mainD + 3.2, 0.8), mats.slabMat);
-      slab.position.set(-14, 0, slabZ);
-      group.add(slab);
-    }
-
-    // 4 Corner Architectural Limestone Pillars
-    const pillarGeo = new THREE.BoxGeometry(2.4, 2.4, mainH);
-    const pillarOffsets = [
-      [-mainW / 2 + 1.2, -mainD / 2 + 1.2],
-      [ mainW / 2 - 1.2, -mainD / 2 + 1.2],
-      [-mainW / 2 + 1.2,  mainD / 2 - 1.2],
-      [ mainW / 2 - 1.2,  mainD / 2 - 1.2]
-    ];
-    pillarOffsets.forEach(([px, py]) => {
-      const pillar = new THREE.Mesh(pillarGeo, mats.slabMat);
-      pillar.position.set(-14 + px, py, podiumH + mainH / 2);
-      group.add(pillar);
+    // Initialize Map with 100% Free OpenFreeMap / Carto Voyager style
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: 'https://tiles.openfreemap.org/styles/bright',
+      center: [77.085, 28.415],
+      zoom: 13.6,
+      pitch: 58,
+      bearing: -20,
+      antialias: true
     });
 
-    // Cantilevered Architectural Balconies (Front & Back)
-    for (let f = 2; f < floors - 2; f += 2) {
-      const balZ = podiumH + f * 3.8;
-      // Front Balcony
-      const bal1 = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.75, 4.5, 1.2), mats.balconyMat);
-      bal1.position.set(-14, mainD / 2 + 2.0, balZ);
-      group.add(bal1);
-      // Back Balcony
-      const bal2 = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.75, 4.5, 1.2), mats.balconyMat);
-      bal2.position.set(-14, -mainD / 2 - 2.0, balZ);
-      group.add(bal2);
-    }
+    // Three.js Custom WebGL Layer for 3D Towers
+    const custom3DLayer = {
+      id: 'three-3d-towers',
+      type: 'custom',
+      renderingMode: '3d',
+      onAdd: function(m, gl) {
+        activeThreeCamera = new THREE.Camera();
+        activeThreeScene = new THREE.Scene();
 
-    // 4. Secondary Stepped Tower (Tower B)
-    const twinH = isUltra ? 125 : 95;
-    const twinW = isUltra ? 34 : 28;
-    const twinD = isUltra ? 26 : 22;
-    const tower2 = new THREE.Mesh(new THREE.BoxGeometry(twinW, twinD, twinH), mats.glassMat);
-    tower2.position.set(22, 10, podiumH + twinH / 2);
-    group.add(tower2);
+        // High quality lighting for architectural models
+        activeThreeScene.add(new THREE.AmbientLight(0xffffff, 0.75));
+        activeThreeScene.add(new THREE.HemisphereLight(0xffffff, 0x64748b, 0.65));
 
-    // Twin Tower Floor Slabs
-    const twinFloors = Math.floor(twinH / 3.8);
-    for (let f = 1; f < twinFloors; f++) {
-      const slabZ = podiumH + f * 3.8;
-      const slab = new THREE.Mesh(new THREE.BoxGeometry(twinW + 2.6, twinD + 2.6, 0.7), mats.slabMat);
-      slab.position.set(22, 10, slabZ);
-      group.add(slab);
-    }
+        const dirLight1 = new THREE.DirectionalLight(0xfffaed, 1.4);
+        dirLight1.position.set(150, -200, 300);
+        activeThreeScene.add(dirLight1);
 
-    // Twin Tower Balconies
-    for (let f = 2; f < twinFloors - 2; f += 2) {
-      const balZ = podiumH + f * 3.8;
-      const bal = new THREE.Mesh(new THREE.BoxGeometry(twinW * 0.7, 4.0, 1.1), mats.balconyMat);
-      bal.position.set(22, 10 + twinD / 2 + 1.8, balZ);
-      group.add(bal);
-    }
+        const dirLight2 = new THREE.DirectionalLight(0x94a3b8, 0.6);
+        dirLight2.position.set(-150, 150, 150);
+        activeThreeScene.add(dirLight2);
 
-    // 5. Iconic Penthouse Rooftop & Crown
-    const roofZ = podiumH + mainH;
-    if (isUltra) {
-      // Multi-tier Geometric Crown (Champagne Gold)
-      const crownH = 14;
-      const crown = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.85, mainD * 0.85, crownH), mats.crownMat);
-      crown.position.set(-14, 0, roofZ + crownH / 2);
-      group.add(crown);
+        activeThreeScene.add(activeThreeGroup);
 
-      // Helipad Landing Pad (Circular Disc on Roof)
-      const helipad = new THREE.Mesh(new THREE.CylinderGeometry(11, 11, 1.6, 24), mats.helipadMat);
-      helipad.rotation.x = Math.PI / 2;
-      helipad.position.set(-14, 0, roofZ + crownH + 0.8);
-      group.add(helipad);
+        activeThreeRenderer = new THREE.WebGLRenderer({
+          canvas: m.getCanvas(),
+          context: gl,
+          antialias: true
+        });
+        activeThreeRenderer.autoClear = false;
+      },
+      render: function(gl, matrix) {
+        if (!activeThreeRenderer) return;
+        const m = new THREE.Matrix4().fromArray(matrix);
+        activeThreeCamera.projectionMatrix = m;
+        activeThreeRenderer.resetState();
+        activeThreeRenderer.render(activeThreeScene, activeThreeCamera);
+        map.triggerRepaint();
+      }
+    };
 
-      // Architectural Spire / Antenna Beacon
-      const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 1.8, 22, 8), mats.spireMat);
-      spire.rotation.x = Math.PI / 2;
-      spire.position.set(-14, 0, roofZ + crownH + 11);
-      group.add(spire);
-    } else {
-      // Modern Recessed Penthouse & Roof Trellis
-      const penthouseH = 8;
-      const penthouse = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.75, mainD * 0.75, penthouseH), mats.frameMat);
-      penthouse.position.set(-14, 0, roofZ + penthouseH / 2);
-      group.add(penthouse);
+    map.on('style.load', () => {
+      // 3D Building Extrusions from OpenMapTiles
+      const layers = map.getStyle().layers;
+      let labelLayerId;
+      for (let i = 0; i < layers.length; i++) {
+        if (layers[i].type === 'symbol' && layers[i].layout && layers[i].layout['text-field']) {
+          labelLayerId = layers[i].id;
+          break;
+        }
+      }
 
-      const trellis = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.9, mainD * 0.9, 1.2), mats.slabMat);
-      trellis.position.set(-14, 0, roofZ + penthouseH + 0.6);
-      group.add(trellis);
-    }
+      if (!map.getLayer('building-3d') && map.getSource('openmaptiles')) {
+        map.addLayer({
+          'id': 'building-3d',
+          'source': 'openmaptiles',
+          'source-layer': 'building',
+          'type': 'fill-extrusion',
+          'minzoom': 13,
+          'paint': {
+            'fill-extrusion-color': '#e2e8f0',
+            'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 13, 0, 16, ['get', 'render_height']],
+            'fill-extrusion-base': ['interpolate', ['linear'], ['zoom'], 13, 0, 16, ['get', 'render_min_height']],
+            'fill-extrusion-opacity': 0.75
+          }
+        }, labelLayerId);
+      }
 
-    // Twin Tower Roof Cap
-    const twinRoofZ = podiumH + twinH;
-    const twinCap = new THREE.Mesh(new THREE.BoxGeometry(twinW * 0.8, twinD * 0.8, 6), mats.frameMat);
-    twinCap.position.set(22, 10, twinRoofZ + 3);
-    group.add(twinCap);
-
-    // Architectural scale factor (1.25x ensures prominent 3D perspective from all camera angles)
-    group.scale.set(1.25, 1.25, 1.25);
-    return group;
-  }
-
-  // ==========================================
-  // MAPLIBRE 3D ENGINE & STATE
-  // ==========================================
-  let selectedRadiusKm = 4;
-  let activeThreeScene = null;
-  let activeThreeCamera = null;
-  let activeThreeRenderer = null;
-  let activeThreeGroup = new THREE.Group();
-  let activeHtmlMarkers = [];
-
-  const map = new maplibregl.Map({
-    container: 'map',
-    style: 'https://tiles.openfreemap.org/styles/positron',
-    center: [77.065, 28.415],
-    zoom: 13.5,
-    pitch: 58,
-    bearing: -20,
-    antialias: true
-  });
-
-  map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
-  map.addControl(new maplibregl.FullscreenControl(), 'top-right');
-
-  // Custom Three.js 3D Layer
-  const custom3DLayer = {
-    id: 'three-3d-models',
-    type: 'custom',
-    renderingMode: '3d',
-    onAdd: function(m, gl) {
-      activeThreeCamera = new THREE.Camera();
-      activeThreeScene = new THREE.Scene();
-
-      // Ambient & Environmental Hemisphere Lighting
-      const ambLight = new THREE.AmbientLight(0xffffff, 0.7);
-      activeThreeScene.add(ambLight);
-
-      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x334155, 0.6);
-      activeThreeScene.add(hemiLight);
-
-      // Primary Sunlight (Casts crisp highlights and high-contrast architectural shadows)
-      const dirLight1 = new THREE.DirectionalLight(0xfffaed, 1.3);
-      dirLight1.position.set(120, -160, 240);
-      activeThreeScene.add(dirLight1);
-
-      // Secondary Fill Light (Softens shaded facades)
-      const dirLight2 = new THREE.DirectionalLight(0x94a3b8, 0.55);
-      dirLight2.position.set(-120, 140, 120);
-      activeThreeScene.add(dirLight2);
-
-      activeThreeScene.add(activeThreeGroup);
-
-      activeThreeRenderer = new THREE.WebGLRenderer({
-        canvas: m.getCanvas(),
-        context: gl,
-        antialias: true
+      // Proximity Radius Circle Source & Layers
+      map.addSource('radius-buffer', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] }
       });
-      activeThreeRenderer.autoClear = false;
-    },
-    render: function(gl, matrix) {
-      const m = new THREE.Matrix4().fromArray(matrix);
-      activeThreeCamera.projectionMatrix = m;
-      activeThreeRenderer.resetState();
-      activeThreeRenderer.render(activeThreeScene, activeThreeCamera);
+
+      map.addLayer({
+        id: 'radius-buffer-fill',
+        type: 'fill',
+        source: 'radius-buffer',
+        paint: {
+          'fill-color': '#4f46e5',
+          'fill-opacity': 0.08
+        }
+      });
+
+      map.addLayer({
+        id: 'radius-buffer-line',
+        type: 'line',
+        source: 'radius-buffer',
+        paint: {
+          'line-color': '#4f46e5',
+          'line-width': 2.5,
+          'line-dasharray': [3, 2]
+        }
+      });
+
+      // Add Three.js Layer
+      map.addLayer(custom3DLayer);
+
+      // Populate School Dropdown & Apply Initial Filters
+      populateSchoolDropdown();
+      applyFilters();
+    });
+
+    // Populate Schools Dropdown
+    function populateSchoolDropdown() {
+      const select = document.getElementById('schoolFilter');
+      select.innerHTML = '';
+
+      // Default heritage school
+      const defaultSchool = SCHOOLS.find(s => s.name.toLowerCase().includes('heritage')) || SCHOOLS[0];
+
+      SCHOOLS.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = `${s.name} (${s.corridor || 'Gurgaon'})`;
+        if (defaultSchool && s.id === defaultSchool.id) {
+          opt.selected = true;
+          currentSelectedSchool = s;
+        }
+        select.appendChild(opt);
+      });
+      if (!currentSelectedSchool && SCHOOLS.length > 0) {
+        currentSelectedSchool = SCHOOLS[0];
+      }
+    }
+
+    // ==========================================
+    // FILTERING LOGIC
+    // ==========================================
+    function applyFilters() {
+      const searchVal = (document.getElementById('globalSearch').value || '').trim().toLowerCase();
+      const corridorVal = document.getElementById('corridorFilter').value;
+      const marketVal = document.getElementById('marketFilter').value;
+      const configVal = document.getElementById('configFilter').value;
+      selectedRadiusKm = parseFloat(document.getElementById('radiusFilter').value) || 4;
+
+      // Filter Projects
+      currentFilteredProjects = PROJECTS.filter(p => {
+        // Search
+        if (searchVal) {
+          const match =
+            (p.name || '').toLowerCase().includes(searchVal) ||
+            (p.developer || '').toLowerCase().includes(searchVal) ||
+            (p.sector || '').toLowerCase().includes(searchVal) ||
+            (p.corridor || '').toLowerCase().includes(searchVal);
+          if (!match) return false;
+        }
+
+        // Corridor
+        if (corridorVal !== 'ALL') {
+          if ((p.corridor || '').toLowerCase() !== corridorVal.toLowerCase()) return false;
+        }
+
+        // Target Market
+        if (marketVal !== 'ALL') {
+          if ((p.target_market || '').toLowerCase() !== marketVal.toLowerCase()) return false;
+        }
+
+        // Configurations
+        if (configVal !== 'ALL') {
+          const configs = p.configurations || [];
+          if (!configs.includes(configVal)) return false;
+        }
+
+        // School Proximity Radius Filter
+        if (currentSelectedSchool && p.lat && p.lng) {
+          const dist = calculateDistanceKm(currentSelectedSchool.lat, currentSelectedSchool.lng, p.lat, p.lng);
+          p._currentDist = dist;
+          if (dist > selectedRadiusKm) return false;
+        }
+
+        return true;
+      });
+
+      // Sort by proximity distance
+      currentFilteredProjects.sort((a, b) => (a._currentDist || 0) - (b._currentDist || 0));
+
+      // Update Nav Count Badges
+      const count = currentFilteredProjects.length;
+      document.getElementById('navCountText').innerText = `${count} Projects`;
+      document.getElementById('gridCountHeader').innerText = `${count} Found`;
+
+      // Update Bottom Result Pill
+      if (currentSelectedSchool) {
+        document.getElementById('bottomResultsText').innerHTML = `<b>${count}</b> projects within <b>${selectedRadiusKm} KM</b> of <b>${currentSelectedSchool.name}</b>`;
+        document.getElementById('activeCorridorTag').innerText = corridorVal === 'ALL' ? 'All Corridors' : corridorVal;
+      }
+
+      // Render 3D Scene & HTML Map Markers
+      render3DSceneAndMarkers();
+
+      // Render Grid Cards
+      renderGridCards();
+    }
+
+    // Render Three.js 3D Meshes & MapLibre HTML Markers
+    function render3DSceneAndMarkers() {
+      // Clear old HTML markers
+      activeHtmlMarkers.forEach(m => m.remove());
+      activeHtmlMarkers = [];
+
+      // Clear old Three.js group
+      while (activeThreeGroup.children.length > 0) {
+        const obj = activeThreeGroup.children[0];
+        activeThreeGroup.remove(obj);
+      }
+
+      // 1. Update School Proximity Buffer Circle
+      if (currentSelectedSchool && map.getSource('radius-buffer')) {
+        const circleGeoJson = createGeoJsonCircle([currentSelectedSchool.lng, currentSelectedSchool.lat], selectedRadiusKm);
+        map.getSource('radius-buffer').setData(circleGeoJson);
+      }
+
+      // 2. Add 3D School Landmark Model & HTML Marker
+      if (currentSelectedSchool) {
+        const schoolCoord = maplibregl.MercatorCoordinate.fromLngLat(
+          [currentSelectedSchool.lng, currentSelectedSchool.lat],
+          0
+        );
+        const schoolModel = create3DSchoolModel();
+        const scale = schoolCoord.meterInMercatorCoordinateUnits();
+        schoolModel.scale.set(scale * 1.3, scale * 1.3, scale * 1.3);
+        schoolModel.position.set(schoolCoord.x, schoolCoord.y, schoolCoord.z);
+        activeThreeGroup.add(schoolModel);
+
+        // School HTML Marker Pill
+        const schoolEl = document.createElement('div');
+        schoolEl.className = 'school-map-pill';
+        schoolEl.innerHTML = `<i class="ph-fill ph-graduation-cap"></i> ${currentSelectedSchool.name}`;
+        schoolEl.onclick = () => resetSchoolView();
+
+        const sMarker = new maplibregl.Marker({ element: schoolEl, anchor: 'bottom' })
+          .setLngLat([currentSelectedSchool.lng, currentSelectedSchool.lat])
+          .addTo(map);
+        activeHtmlMarkers.push(sMarker);
+      }
+
+      // 3. Add 3D Skyscraper Towers & HTML Pills for matching projects
+      const isZoomedOut = map.getZoom() < 12.5;
+
+      currentFilteredProjects.forEach(proj => {
+        if (!proj.lat || !proj.lng) return;
+
+        // Add Three.js 3D Skyscraper
+        const coord = maplibregl.MercatorCoordinate.fromLngLat([proj.lng, proj.lat], 0);
+        const tower = create3DBuildingModel(proj);
+        const scale = coord.meterInMercatorCoordinateUnits();
+        tower.scale.set(scale * 1.25, scale * 1.25, scale * 1.25);
+        tower.position.set(coord.x, coord.y, coord.z);
+        activeThreeGroup.add(tower);
+
+        // Add HTML Map Label
+        const el = document.createElement('div');
+        el.className = 'project-map-pill';
+
+        const dotClass = (proj.target_market || '').toLowerCase().includes('ultra') ? 'market-ultra' :
+                         (proj.target_market || '').toLowerCase().includes('luxury') ? 'market-luxury' :
+                         (proj.target_market || '').toLowerCase().includes('premium') ? 'market-premium' : 'market-mid';
+
+        const distStr = proj._currentDist ? ` • ${proj._currentDist.toFixed(1)}km` : '';
+        el.innerHTML = `
+          <div class="pill-market-dot ${dotClass}"></div>
+          <span>${proj.name}</span>
+          <span style="color: #64748b; font-size: 10px;">${proj.sector || ''}${distStr}</span>
+        `;
+        el.onclick = (e) => {
+          e.stopPropagation();
+          openProjectDrawer(proj);
+        };
+
+        const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+          .setLngLat([proj.lng, proj.lat])
+          .addTo(map);
+        activeHtmlMarkers.push(marker);
+      });
+
       map.triggerRepaint();
     }
-  };
 
-  // Map Load & Initialization
-  map.on('style.load', () => {
-    // 3D Buildings Extrusion
-    const layers = map.getStyle().layers;
-    let labelLayerId;
-    for (let i = 0; i < layers.length; i++) {
-      if (layers[i].type === 'symbol' && layers[i].layout && layers[i].layout['text-field']) {
-        labelLayerId = layers[i].id;
-        break;
+    // Render Grid Cards for [ Grid ] View
+    function renderGridCards() {
+      const container = document.getElementById('gridCardsContainer');
+      container.innerHTML = '';
+
+      if (currentFilteredProjects.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #94a3b8;">
+            <i class="ph-bold ph-buildings" style="font-size: 40px; margin-bottom: 12px; display: block;"></i>
+            <h3 style="font-size: 16px; color: #334155; margin-bottom: 6px;">No Matching Projects</h3>
+            <p style="font-size: 13px;">Try widening your search, choosing another corridor, or expanding the school radius.</p>
+          </div>
+        `;
+        return;
+      }
+
+      currentFilteredProjects.forEach(proj => {
+        const card = document.createElement('div');
+        card.className = 'grid-card';
+        card.onclick = () => {
+          switchViewMode('3d');
+          openProjectDrawer(proj);
+        };
+
+        const distStr = proj._currentDist ? `${proj._currentDist.toFixed(1)} KM` : '';
+
+        card.innerHTML = `
+          <div class="card-top">
+            <div>
+              <div class="card-name">${proj.name}</div>
+              <div class="card-dev">${proj.developer || 'Premier Developer'}</div>
+            </div>
+            ${distStr ? `<div class="card-dist-pill">${distStr}</div>` : ''}
+          </div>
+          <div class="card-meta-row">
+            <span class="drawer-tag ${proj.target_market === 'Ultra Luxury' ? 'gold' : 'indigo'}">${proj.target_market || 'Luxury'}</span>
+            <span>${proj.sector || ''} • ${proj.corridor || ''}</span>
+          </div>
+          <div class="card-meta-row">
+            <span>Possession: <b>${proj.possession_year || 'Under Construction'}</b></span>
+            <span>•</span>
+            <span>${(proj.configurations || []).join(', ') || '3, 4 BHK'}</span>
+          </div>
+          <button class="card-btn-map">
+            <i class="ph-bold ph-cube"></i> Explore in 3D Map
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ==========================================
+    // UI HANDLERS & CAMERA ACTIONS
+    // ==========================================
+    function handleSchoolChange() {
+      const id = document.getElementById('schoolFilter').value;
+      const school = SCHOOLS.find(s => s.id === id);
+      if (school) {
+        currentSelectedSchool = school;
+        applyFilters();
+        resetSchoolView();
       }
     }
 
-    if (!map.getLayer('building-3d') && map.getSource('openmaptiles')) {
-      map.addLayer({
-        'id': 'building-3d',
-        'source': 'openmaptiles',
-        'source-layer': 'building',
-        'type': 'fill-extrusion',
-        'minzoom': 13,
-        'paint': {
-          'fill-extrusion-color': '#cbd5e1',
-          'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 13, 0, 16, ['get', 'render_height']],
-          'fill-extrusion-base': ['interpolate', ['linear'], ['zoom'], 13, 0, 16, ['get', 'render_min_height']],
-          'fill-extrusion-opacity': 0.7
+    function handleRadiusChange() {
+      applyFilters();
+    }
+
+    function handleSearchInput() {
+      const val = document.getElementById('globalSearch').value;
+      document.getElementById('searchClearBtn').style.display = val ? 'block' : 'none';
+      applyFilters();
+    }
+
+    function clearSearch() {
+      document.getElementById('globalSearch').value = '';
+      document.getElementById('searchClearBtn').style.display = 'none';
+      applyFilters();
+    }
+
+    function resetAllFilters() {
+      document.getElementById('globalSearch').value = '';
+      document.getElementById('searchClearBtn').style.display = 'none';
+      document.getElementById('corridorFilter').value = 'ALL';
+      document.getElementById('marketFilter').value = 'ALL';
+      document.getElementById('configFilter').value = 'ALL';
+      document.getElementById('radiusFilter').value = '4';
+      if (SCHOOLS.length > 0) {
+        currentSelectedSchool = SCHOOLS.find(s => s.name.toLowerCase().includes('heritage')) || SCHOOLS[0];
+        document.getElementById('schoolFilter').value = currentSelectedSchool.id;
+      }
+      applyFilters();
+      resetSchoolView();
+    }
+
+    function switchViewMode(mode) {
+      currentViewMode = mode;
+      document.getElementById('btnMode3D').classList.toggle('active', mode === '3d');
+      document.getElementById('btnMode2D').classList.toggle('active', mode === '2d');
+      document.getElementById('btnModeGrid').classList.toggle('active', mode === 'grid');
+
+      const gridModal = document.getElementById('gridModal');
+
+      if (mode === 'grid') {
+        gridModal.classList.add('open');
+      } else {
+        gridModal.classList.remove('open');
+        if (mode === '2d') {
+          map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
+        } else {
+          map.easeTo({ pitch: 58, bearing: -20, duration: 800 });
         }
-      }, labelLayerId);
-    }
-
-    // 3D Proximity Radius Buffer Source & Layers
-    map.addSource('radius-buffer', {
-      type: 'geojson',
-      data: { type: 'FeatureCollection', features: [] }
-    });
-
-    map.addLayer({
-      id: 'radius-buffer-fill',
-      type: 'fill',
-      source: 'radius-buffer',
-      paint: {
-        'fill-color': '#6366f1',
-        'fill-opacity': 0.12
       }
-    });
+    }
 
-    map.addLayer({
-      id: 'radius-buffer-line',
-      type: 'line',
-      source: 'radius-buffer',
-      paint: {
-        'line-color': '#6366f1',
-        'line-width': 2.5,
-        'line-dasharray': [3, 2]
+    function resetPitchBearing() {
+      map.easeTo({ pitch: 58, bearing: -20, duration: 600 });
+    }
+
+    function resetSchoolView() {
+      if (isOrbiting) toggleOrbit();
+      if (!currentSelectedSchool) return;
+
+      map.flyTo({
+        center: [currentSelectedSchool.lng, currentSelectedSchool.lat],
+        zoom: selectedRadiusKm <= 3 ? 14.2 : 13.5,
+        pitch: 58,
+        bearing: -20,
+        speed: 1.2,
+        curve: 1.2,
+        essential: true
+      });
+    }
+
+    function toggleOrbit() {
+      isOrbiting = !isOrbiting;
+      document.getElementById('hudOrbitBtn').classList.toggle('active', isOrbiting);
+
+      if (isOrbiting) {
+        function orbitStep() {
+          if (!isOrbiting) return;
+          map.setBearing(map.getBearing() + 0.16);
+          orbitAnimId = requestAnimationFrame(orbitStep);
+        }
+        orbitStep();
+      } else {
+        if (orbitAnimId) cancelAnimationFrame(orbitAnimId);
       }
-    });
-
-    // Add Three.js Custom 3D Layer
-    map.addLayer(custom3DLayer);
-
-    // Initial Population of UI
-    populateSchoolDropdown();
-    handleFilterChange(false);
-  });
-
-  // Re-stagger labels on map movements
-  map.on('move', () => {
-    updateLabelStaggering();
-  });
-
-  // ==========================================
-  // CAMERA CONTROLS (3D View, Top 2D, Orbit 360, Reset)
-  // ==========================================
-  function setCameraMode(mode) {
-    if (isOrbiting) toggleOrbit();
-
-    document.getElementById('btn3d').classList.toggle('active', mode === '3d');
-    document.getElementById('btnTop').classList.toggle('active', mode === 'top');
-
-    if (mode === 'top') {
-      map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
-    } else {
-      map.easeTo({ pitch: 58, bearing: -20, duration: 800 });
     }
-  }
 
-  function toggleOrbit() {
-    isOrbiting = !isOrbiting;
-    document.getElementById('btnOrbit').classList.toggle('active', isOrbiting);
+    // ==========================================
+    // PROJECT DETAILS DRAWER
+    // ==========================================
+    function openProjectDrawer(proj) {
+      activeDrawerProject = proj;
 
-    if (isOrbiting) {
-      function orbitStep() {
-        if (!isOrbiting) return;
-        map.setBearing(map.getBearing() + 0.18);
-        orbitAnimId = requestAnimationFrame(orbitStep);
+      document.getElementById('dTitle').innerText = proj.name;
+      document.getElementById('dDeveloper').innerText = proj.developer ? `by ${proj.developer}` : 'Premier Real Estate Developer';
+      document.getElementById('dMarketTag').innerText = proj.target_market || 'Luxury';
+      document.getElementById('dSectorTag').innerText = proj.sector || 'Gurgaon';
+      document.getElementById('dStatusTag').innerText = proj.status || 'Under Construction';
+
+      document.getElementById('dLandArea').innerText = proj.total_area_acres ? `${proj.total_area_acres} Acres` : 'N/A';
+      document.getElementById('dOpenArea').innerText = proj.open_area_percent ? `${proj.open_area_percent}% Open` : 'N/A';
+      document.getElementById('dPossession').innerText = proj.possession_year ? `Dec ${proj.possession_year}` : 'Under Construction';
+      document.getElementById('dCorridor').innerText = proj.corridor || 'Gurgaon';
+      document.getElementById('dAddress').innerText = proj.address || `${proj.sector || ''}, Gurugram, Haryana`;
+
+      // Proximity Distance
+      if (currentSelectedSchool && proj._currentDist) {
+        document.getElementById('dProximityText').innerHTML = `<b>${proj._currentDist.toFixed(1)} KM</b> away from <b>${currentSelectedSchool.name}</b>`;
+        document.getElementById('dProximityBox').style.display = 'flex';
+      } else {
+        document.getElementById('dProximityBox').style.display = 'none';
       }
-      orbitStep();
-    } else {
-      if (orbitAnimId) cancelAnimationFrame(orbitAnimId);
-    }
-  }
 
-  function resetSchoolView() {
-    if (isOrbiting) toggleOrbit();
-    if (!currentSelectedSchool) return;
-
-    map.flyTo({
-      center: [currentSelectedSchool.lng, currentSelectedSchool.lat],
-      zoom: selectedRadiusKm <= 2 ? 14.8 : selectedRadiusKm <= 3 ? 14.1 : 13.5,
-      pitch: 58,
-      bearing: -20,
-      speed: 1.2,
-      curve: 1.2,
-      essential: true
-    });
-    document.getElementById('btn3d').classList.add('active');
-    document.getElementById('btnTop').classList.remove('active');
-  }
-
-  // ==========================================
-  // PANEL COLLAPSE & AUTO-HIDE LOGIC
-  // ==========================================
-  function toggleFilterPanel(show) {
-    const panel = document.getElementById('filterPanel');
-    const trigger = document.getElementById('floatingTrigger');
-    if (show) {
-      panel.classList.remove('collapsed');
-      trigger.classList.remove('visible');
-    } else {
-      panel.classList.add('collapsed');
-      trigger.classList.add('visible');
-    }
-  }
-
-  function updateFloatingTriggerUI(school, count, radiusKm) {
-    const textEl = document.getElementById('floatingTriggerText');
-    const badgeEl = document.getElementById('floatingTriggerBadge');
-    if (textEl && school) {
-      textEl.innerText = `${school.name} • ${radiusKm} KM`;
-    }
-    if (badgeEl) {
-      badgeEl.innerText = `${count} Projects`;
-    }
-  }
-
-  // ==========================================
-  // VIEW DETAILS MODAL LOGIC
-  // ==========================================
-  function openProjectDetails(proj, school) {
-    currentModalProject = proj;
-    const modal = document.getElementById('projectDetailsModal');
-
-    // Title & Developer
-    document.getElementById('modalTitle').innerText = proj.name;
-    document.getElementById('modalDeveloper').innerText = proj.developer ? `by ${proj.developer}` : 'Premier Real Estate Developer';
-
-    // Badges
-    const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
-    const isLuxury = (proj.target_market || '').toLowerCase() === 'luxury';
-    const marketBadge = document.getElementById('modalMarketBadge');
-    marketBadge.innerText = proj.target_market || 'Luxury';
-    marketBadge.className = `modal-badge-market ${isUltra ? 'ultra' : isLuxury ? 'luxury' : ''}`;
-
-    const statusBadge = document.getElementById('modalStatusBadge');
-    statusBadge.innerText = proj.status || 'Under Construction';
-
-    const sectorBadge = document.getElementById('modalSectorBadge');
-    sectorBadge.innerText = proj.sector || proj.corridor || 'Gurugram';
-
-    // Distance Banner
-    const schoolName = (school && school.name) ? school.name : (currentSelectedSchool ? currentSelectedSchool.name : 'Center School');
-    const dist = (proj.distanceFromSchool !== undefined) ? proj.distanceFromSchool.toFixed(2) : calculateDistanceKm(school ? school.lat : 28.415, school ? school.lng : 77.065, proj.lat, proj.lng).toFixed(2);
-    document.getElementById('modalDistanceText').innerHTML = `<b>📍 ${dist} KM</b> away from <b>${schoolName}</b>`;
-
-    // Specs Grid
-    document.getElementById('modalLandArea').innerText = proj.total_area_acres ? `${proj.total_area_acres} Acres` : 'Master Planned';
-    document.getElementById('modalOpenArea').innerText = proj.open_area_percent ? `${proj.open_area_percent}% Open Area` : '65% Open Area';
-    document.getElementById('modalPossession').innerText = proj.possession_year ? `Possession ${proj.possession_year}` : (proj.status || 'Ready / Upcoming');
-    document.getElementById('modalCorridor').innerText = proj.corridor || 'Gurugram';
-
-    // Available Configurations
-    const configsContainer = document.getElementById('modalConfigs');
-    if (proj.configurations && proj.configurations.length > 0) {
-      configsContainer.innerHTML = proj.configurations.map(c => `<span class="config-chip">${c}</span>`).join('');
-    } else {
-      configsContainer.innerHTML = '<span class="config-chip">3 BHK</span><span class="config-chip">4 BHK</span>';
-    }
-
-    // Address
-    document.getElementById('modalAddress').innerText = proj.address || `${proj.sector || 'Gurugram'}, ${proj.corridor || 'Haryana'}`;
-
-    // Show Modal
-    modal.classList.add('active');
-  }
-
-  function openProjectDetailsById(id) {
-    const proj = PROJECTS.find(p => p.id === id);
-    if (proj) {
-      openProjectDetails(proj, currentSelectedSchool);
-    }
-  }
-
-  function closeProjectDetailsModal() {
-    const modal = document.getElementById('projectDetailsModal');
-    modal.classList.remove('active');
-    currentModalProject = null;
-  }
-
-  function handleModalBackdropClick(event) {
-    if (event.target && event.target.id === 'projectDetailsModal') {
-      closeProjectDetailsModal();
-    }
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeProjectDetailsModal();
-    }
-  });
-
-  function zoomToProjectFromModal() {
-    if (!currentModalProject) return;
-    const { lng, lat } = currentModalProject;
-    closeProjectDetailsModal();
-    focusProject(lng, lat);
-  }
-
-  // ==========================================
-  // FILTER & STATE MANAGEMENT
-  // ==========================================
-  function populateSchoolDropdown() {
-    const select = document.getElementById('schoolSelect');
-    select.innerHTML = '';
-
-    SCHOOLS.forEach(school => {
-      const opt = document.createElement('option');
-      opt.value = school.name;
-      opt.innerText = `${school.name} (${school.corridor})`;
-      if (school.name.includes('Heritage Xperential')) {
-        opt.selected = true;
-      }
-      select.appendChild(opt);
-    });
-  }
-
-  function filterSchoolOptions() {
-    const query = document.getElementById('schoolSearch').value.toLowerCase();
-    const select = document.getElementById('schoolSelect');
-    select.innerHTML = '';
-
-    const filtered = SCHOOLS.filter(s =>
-      s.name.toLowerCase().includes(query) || s.corridor.toLowerCase().includes(query)
-    );
-
-    filtered.forEach(school => {
-      const opt = document.createElement('option');
-      opt.value = school.name;
-      opt.innerText = `${school.name} (${school.corridor})`;
-      select.appendChild(opt);
-    });
-
-    if (filtered.length > 0) {
-      select.selectedIndex = 0;
-      handleFilterChange(false);
-    }
-  }
-
-  // Auto-collapse when user selects from dropdowns
-  function handleSchoolSelectChange() {
-    handleFilterChange(true);
-  }
-
-  function handleCorridorSelectChange() {
-    handleFilterChange(true);
-  }
-
-  function setRadius(km) {
-    selectedRadiusKm = km;
-    document.querySelectorAll('.radius-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.innerText.includes(`${km} KM`));
-    });
-    document.getElementById('radiusDisplay').innerText = `${km} km`;
-    handleFilterChange(true); // Auto-hide dropdown on selection
-  }
-
-  function handleFilterChange(autoCollapse = false) {
-    const schoolName = document.getElementById('schoolSelect').value;
-    const selectedSchool = SCHOOLS.find(s => s.name === schoolName) || SCHOOLS[0];
-    if (!selectedSchool) return;
-
-    currentSelectedSchool = selectedSchool;
-
-    const targetMarkets = Array.from(
-      document.querySelectorAll('.pills-group input[type="checkbox"]:checked')
-    ).map(cb => cb.value).filter(v => ['Ultra Luxury', 'Luxury', 'Premium', 'Mid Segment'].includes(v));
-
-    const selectedConfigs = Array.from(
-      document.querySelectorAll('.pills-group input[type="checkbox"]:checked')
-    ).map(cb => cb.value).filter(v => ['2 BHK', '3 BHK', '4 BHK', 'Penthouse'].includes(v));
-
-    const selectedCorridor = document.getElementById('corridorSelect').value;
-
-    // Filter from 405 Real Projects
-    const matchingProjects = [];
-    PROJECTS.forEach(proj => {
-      const dist = calculateDistanceKm(selectedSchool.lat, selectedSchool.lng, proj.lat, proj.lng);
-      if (dist > selectedRadiusKm) return;
-      if (targetMarkets.length > 0 && !targetMarkets.includes(proj.target_market)) return;
-      if (selectedConfigs.length > 0 && !proj.configurations.some(c => selectedConfigs.includes(c))) return;
-      if (selectedCorridor !== 'ALL' && proj.corridor !== selectedCorridor) return;
-
-      matchingProjects.push({ ...proj, distanceFromSchool: dist });
-    });
-
-    matchingProjects.sort((a, b) => a.distanceFromSchool - b.distanceFromSchool);
-    currentMatchingProjects = matchingProjects;
-
-    // Update Floating Trigger & Badges
-    updateFloatingTriggerUI(selectedSchool, matchingProjects.length, selectedRadiusKm);
-
-    // 1. Draw 3D Radius Circle
-    const circleGeo = createGeoJsonCircle([selectedSchool.lng, selectedSchool.lat], selectedRadiusKm);
-    if (map.getSource('radius-buffer')) {
-      map.getSource('radius-buffer').setData(circleGeo);
-    }
-
-    // 2. Camera FlyTo in 3D
-    map.flyTo({
-      center: [selectedSchool.lng, selectedSchool.lat],
-      zoom: selectedRadiusKm <= 2 ? 14.8 : selectedRadiusKm <= 3 ? 14.1 : 13.5,
-      pitch: 58,
-      bearing: -20,
-      speed: 1.2,
-      curve: 1.3,
-      essential: true
-    });
-
-    // 3. Rebuild 3D Meshes in Three.js (True Vertical Orientation & Realistic Architecture)
-    rebuild3DModels(selectedSchool, matchingProjects);
-
-    // 4. Update 3D Floating HTML Labels & Sidebar
-    renderHtmlLabels(selectedSchool, matchingProjects);
-    renderProjectsSidebar(matchingProjects, selectedSchool);
-
-    // If triggered by a user dropdown/radius selection, auto-collapse sidebar to show map
-    if (autoCollapse) {
-      setTimeout(() => {
-        toggleFilterPanel(false);
-      }, 150);
-    }
-  }
-
-  // True Vertical Placement: Z points straight UP into the sky, altitude in meters!
-  function placeMeshAtLngLat(mesh, lng, lat, altitude = 0) {
-    const coord = maplibregl.MercatorCoordinate.fromLngLat([lng, lat], altitude);
-    const scale = coord.meterInMercatorCoordinateUnits();
-
-    mesh.position.set(coord.x, coord.y, coord.z);
-    mesh.scale.set(scale, -scale, scale);
-    mesh.rotation.set(0, 0, 0); // No Math.PI/2 rotation! Z stands straight UP!
-  }
-
-  function rebuild3DModels(school, projects) {
-    if (!activeThreeScene) return;
-
-    while (activeThreeGroup.children.length > 0) {
-      const obj = activeThreeGroup.children[0];
-      activeThreeGroup.remove(obj);
-    }
-
-    // 3D School Model
-    const schoolMesh = create3DSchoolModel();
-    placeMeshAtLngLat(schoolMesh, school.lng, school.lat, 0);
-    activeThreeGroup.add(schoolMesh);
-
-    // 3D Towers for top 25 nearest projects to prevent WebGL lag
-    projects.slice(0, 25).forEach(p => {
-      const bldgMesh = create3DBuildingModel(p);
-      placeMeshAtLngLat(bldgMesh, p.lng, p.lat, 0);
-      activeThreeGroup.add(bldgMesh);
-    });
-
-    map.triggerRepaint();
-  }
-
-  function renderHtmlLabels(school, projects) {
-    activeHtmlMarkers.forEach(m => (m.marker ? m.marker.remove() : m.remove()));
-    activeHtmlMarkers = [];
-
-    // School Pin
-    const schoolEl = document.createElement('div');
-    schoolEl.className = 'model-label-school';
-    schoolEl.innerHTML = `<i class="ph-bold ph-graduation-cap" style="font-size: 16px;"></i> ${school.name}`;
-    schoolEl.title = `3D School Campus • ${school.corridor}`;
-
-    const schoolMarker = new maplibregl.Marker({ element: schoolEl, anchor: 'bottom' })
-      .setLngLat([school.lng, school.lat])
-      .addTo(map);
-    activeHtmlMarkers.push({ marker: schoolMarker });
-
-    // Project Pins
-    projects.slice(0, 25).forEach(proj => {
-      const el = document.createElement('div');
-      const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
-      const is4S = proj.name.toLowerCase().includes('4s');
-      el.className = `model-label-building ${isUltra ? 'ultra-label' : ''} ${is4S ? 'featured-label' : ''}`;
-      
-      el.innerHTML = `
-        <div class="label-top-row">
-          <i class="ph-bold ph-buildings" style="color: ${isUltra ? 'var(--accent-gold)' : 'var(--accent-cyan)'}"></i>
-          <b>${proj.name}</b>
-        </div>
-        <div class="label-sub-row">
-          <span style="color: var(--accent-cyan); font-weight: 800;">📍 ${proj.distanceFromSchool.toFixed(1)} km</span>
-          <span>•</span>
-          <span>${proj.configurations.join(', ')}</span>
-        </div>
-      `;
-
-      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
-        .setLngLat([proj.lng, proj.lat])
-        .addTo(map);
-
-      // Clicking ANY project marker opens View Details Modal
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openProjectDetails(proj, school);
+      // Config Chips
+      const chipsWrap = document.getElementById('dConfigsWrap');
+      chipsWrap.innerHTML = '';
+      (proj.configurations || ['3 BHK', '4 BHK']).forEach(cfg => {
+        const chip = document.createElement('span');
+        chip.className = 'config-chip';
+        chip.innerText = cfg;
+        chipsWrap.appendChild(chip);
       });
 
-      activeHtmlMarkers.push({ marker, el, proj });
-    });
+      document.getElementById('projectDrawer').classList.add('open');
 
-    updateLabelStaggering();
-  }
-
-  // Dynamic anti-overlap staggering so cards along roads never collide
-  function updateLabelStaggering() {
-    if (!activeHtmlMarkers || activeHtmlMarkers.length <= 1) return;
-    const placed = [];
-    activeHtmlMarkers.forEach(item => {
-      if (!item.proj) return;
-      const pt = map.project([item.proj.lng, item.proj.lat]);
-      let tier = 0;
-      for (const p of placed) {
-        const dx = Math.abs(pt.x - p.x);
-        const dy = Math.abs(pt.y - p.y);
-        if (dx < 170 && dy < 48 && p.tier === tier) {
-          tier++;
-        }
-      }
-      placed.push({ x: pt.x, y: pt.y - tier * 48, tier });
-      if (tier > 0) {
-        item.el.style.transform = 'translateY(-' + (tier * 48) + 'px)';
-        item.el.style.zIndex = '' + (1000 + tier * 10);
-      } else {
-        item.el.style.transform = '';
-        item.el.style.zIndex = '';
-      }
-    });
-  }
-
-  function renderProjectsSidebar(projects, school) {
-    const listEl = document.getElementById('projectsList');
-    const badgeEl = document.getElementById('matchBadge');
-    const countEl = document.getElementById('listCountLabel');
-
-    badgeEl.innerText = `${projects.length} Project${projects.length !== 1 ? 's' : ''}`;
-    countEl.innerText = `${projects.length} Found in ${selectedRadiusKm}km`;
-
-    if (projects.length === 0) {
-      listEl.innerHTML = `
-        <div style="text-align: center; padding: 25px 10px; color: var(--text-muted); font-size: 12px;">
-          <i class="ph-bold ph-warning-circle" style="font-size: 26px; color: var(--accent-gold); display: block; margin-bottom: 6px;"></i>
-          No 3D projects found within <b>${selectedRadiusKm} km</b> of ${school.name} matching selected filters.<br>
-          <span style="color: #818cf8; cursor: pointer; text-decoration: underline; margin-top: 6px; display: inline-block; font-weight: 700;" onclick="setRadius(5)">Expand radius to 5 KM</span>
-        </div>
-      `;
-      return;
+      // Camera Fly to Project
+      map.flyTo({
+        center: [proj.lng, proj.lat],
+        zoom: 15.2,
+        pitch: 62,
+        bearing: -25,
+        speed: 1.1,
+        curve: 1.2,
+        essential: true
+      });
     }
 
-    listEl.innerHTML = projects.map(p => {
-      const isUltra = (p.target_market || '').toLowerCase().includes('ultra');
-      const is4S = p.name.toLowerCase().includes('4s');
-      const badgeClass = isUltra ? 'ultra' : p.target_market === 'Luxury' ? 'luxury' : 'premium';
-      return `
-        <div class="project-card ${is4S ? 'featured-card' : ''}" onclick="openProjectDetailsById(${p.id})">
-          <div class="project-card-header">
-            <span class="project-title">${p.name}</span>
-            <span class="project-distance">${p.distanceFromSchool.toFixed(1)} km</span>
-          </div>
-          <div class="project-meta">
-            <span class="tag-market ${badgeClass}">${p.target_market}</span>
-            <span>${p.configurations.join(', ')}</span>
-            <span style="margin-left: auto; color: var(--text-muted);">${p.sector || p.corridor}</span>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
+    function closeProjectDrawer() {
+      document.getElementById('projectDrawer').classList.remove('open');
+      activeDrawerProject = null;
+    }
 
-  function focusProject(lng, lat) {
-    map.flyTo({
-      center: [lng, lat],
-      zoom: 16.2,
-      pitch: 62,
-      bearing: -25,
-      speed: 1.2,
-      curve: 1.2,
-      essential: true
+    function zoomToActiveTower() {
+      if (!activeDrawerProject) return;
+      map.flyTo({
+        center: [activeDrawerProject.lng, activeDrawerProject.lat],
+        zoom: 16.2,
+        pitch: 65,
+        bearing: -35,
+        speed: 1.2,
+        curve: 1.1,
+        essential: true
+      });
+    }
+
+    // Close drawer on map click
+    map.on('click', () => {
+      closeProjectDrawer();
     });
-  }
-</script>
+  </script>
 </body>
 </html>
