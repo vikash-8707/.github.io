@@ -1061,6 +1061,136 @@
         right: 12px;
       }
     }
+  
+    /* ==========================================================================
+       BANGALORESTARTUPMAP STYLE CLUSTERS & MARKERS
+       ========================================================================== */
+    .bsm-cluster-badge {
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      color: #ffffff;
+      user-select: none;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+      z-index: 100;
+    }
+    .bsm-cluster-badge:hover {
+      transform: scale(1.18);
+      z-index: 9999 !important;
+    }
+
+    /* Small Clusters (< 15 projects) - Fresh Emerald Green */
+    .bsm-cluster-badge.cluster-small {
+      width: 36px;
+      height: 36px;
+      font-size: 12px;
+      background: radial-gradient(circle at 35% 35%, #34d399, #059669);
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35), 0 0 0 4px rgba(52, 211, 153, 0.35);
+    }
+    .bsm-cluster-badge.cluster-small:hover {
+      box-shadow: 0 6px 18px rgba(5, 150, 105, 0.5), 0 0 0 6px rgba(52, 211, 153, 0.45);
+    }
+
+    /* Medium Clusters (15 - 49 projects) - Vibrant Amber/Gold */
+    .bsm-cluster-badge.cluster-medium {
+      width: 44px;
+      height: 44px;
+      font-size: 13.5px;
+      background: radial-gradient(circle at 35% 35%, #fbbf24, #d97706);
+      border: 3px solid #ffffff;
+      box-shadow: 0 6px 16px rgba(217, 119, 6, 0.4), 0 0 0 5px rgba(251, 191, 36, 0.4);
+    }
+    .bsm-cluster-badge.cluster-medium:hover {
+      box-shadow: 0 8px 22px rgba(217, 119, 6, 0.55), 0 0 0 7px rgba(251, 191, 36, 0.5);
+    }
+
+    /* Large Clusters (50+ projects) - Radiant Coral/Orange */
+    .bsm-cluster-badge.cluster-large {
+      width: 52px;
+      height: 52px;
+      font-size: 15px;
+      background: radial-gradient(circle at 35% 35%, #fb923c, #ea580c);
+      border: 3.5px solid #ffffff;
+      box-shadow: 0 8px 22px rgba(234, 88, 12, 0.45), 0 0 0 6px rgba(251, 146, 60, 0.45);
+      animation: clusterPulse 2.4s infinite;
+    }
+    .bsm-cluster-badge.cluster-large:hover {
+      box-shadow: 0 10px 28px rgba(234, 88, 12, 0.6), 0 0 0 8px rgba(251, 146, 60, 0.55);
+    }
+
+    @keyframes clusterPulse {
+      0%, 100% {
+        box-shadow: 0 8px 22px rgba(234, 88, 12, 0.45), 0 0 0 6px rgba(251, 146, 60, 0.45);
+      }
+      50% {
+        box-shadow: 0 10px 26px rgba(234, 88, 12, 0.6), 0 0 0 10px rgba(251, 146, 60, 0.2);
+      }
+    }
+
+    /* UAT Link Button on Marker Pill */
+    .pill-uat-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #eef2ff;
+      color: #4f46e5;
+      font-size: 11px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      margin-left: 2px;
+      flex-shrink: 0;
+    }
+    .pill-uat-link:hover {
+      background: #4f46e5;
+      color: #ffffff;
+      transform: scale(1.15);
+    }
+
+    /* UAT Link in Top Nav */
+    .uat-link-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #ffffff;
+      color: #4f46e5 !important;
+      border: 1px solid #c7d2fe;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 11.5px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.1);
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .uat-link-btn:hover {
+      background: #eef2ff;
+      border-color: #818cf8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    }
+
+    .drawer-title-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: inherit;
+      transition: color 0.15s;
+    }
+    .drawer-title-link:hover .drawer-title {
+      color: var(--primary);
+    }
+
   </style>
 </head>
 <body>
@@ -1158,6 +1288,11 @@
         <span id="navCountText">405 Projects</span>
       </div>
 
+      <!-- Direct Propium UAT Link -->
+      <a href="https://app.propium.ai" target="_blank" class="uat-link-btn" title="Open Propium AI Main Platform">
+        <i class="ph-bold ph-globe"></i> Propium UAT ↗
+      </a>
+
       <!-- Link to All Charts Dashboard -->
       <a href="all_charts.html" target="_blank" class="charts-link-btn" title="Open Universal Visual Analytics Hub with all charts">
         <i class="ph-bold ph-chart-polar"></i> All Charts
@@ -1202,7 +1337,10 @@
           <span class="drawer-tag emerald" id="dStatusTag">Under Construction</span>
           <span class="drawer-tag sector" id="dSectorTag">Sector 62</span>
         </div>
-        <h2 class="drawer-title" id="dTitle">Pioneer Adivat</h2>
+        <a href="#" target="_blank" id="dTitleLink" class="drawer-title-link" title="Open on Propium UAT">
+          <h2 class="drawer-title" id="dTitle" style="margin: 0;">Pioneer Adivat</h2>
+          <i class="ph-bold ph-arrow-square-out" style="font-size: 15px; color: #4f46e5;"></i>
+        </a>
         <div class="drawer-developer" id="dDeveloper">Pioneer Urban Land &amp; Infrastructure</div>
       </div>
       <button class="drawer-close-btn" onclick="closeProjectDrawer()"><i class="ph-bold ph-x"></i></button>
@@ -1210,7 +1348,7 @@
 
     <div class="drawer-body">
       <!-- PROPIUM AI INVESTMENT SCORECARD -->
-      <div class="propium-score-card">
+      <div class="propium-score-card" id="dScoreCard" style="cursor: pointer;" title="Click to view AI investment report on Propium UAT">
         <div class="score-card-top">
           <div class="score-badge-wrap">
             <div class="score-circle" id="dScoreCircle">92</div>
@@ -1231,7 +1369,7 @@
 
       <!-- REDIRECT TO PROPIUM FULL PROJECT PAGE -->
       <a href="#" target="_blank" class="propium-redirect-btn" id="dPropiumRedirectBtn">
-        <i class="ph-bold ph-arrow-square-out"></i> Open on Propium AI (Analysis &amp; Factsheet)
+        <i class="ph-bold ph-arrow-square-out"></i> Open on Propium UAT (Analysis &amp; Factsheet)
       </a>
 
       <!-- Proximity Distance Box -->
@@ -1291,10 +1429,13 @@
       </div>
     </div>
 
-    <div class="drawer-footer">
-      <button class="drawer-zoom-btn" id="dZoomTowerBtn" onclick="zoomToActiveTower()">
-        <i class="ph-bold ph-video-camera"></i> Zoom to 3D Skyscraper
+    <div class="drawer-footer" style="display: flex; gap: 8px;">
+      <button class="drawer-zoom-btn" id="dZoomTowerBtn" onclick="zoomToActiveTower()" style="flex: 1;">
+        <i class="ph-bold ph-video-camera"></i> 3D Skyscraper
       </button>
+      <a href="#" target="_blank" id="dFooterUatBtn" class="drawer-zoom-btn" style="flex: 1.2; background: linear-gradient(135deg, #4f46e5, #3b82f6); color: #ffffff; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <i class="ph-bold ph-arrow-square-out"></i> Open on UAT ↗
+      </a>
     </div>
   </aside>
 
@@ -1365,9 +1506,8 @@
 
     function getPropiumProjectUrl(project) {
       const slug = getProjectSlug(project);
-      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      // Local PropertyAI runs on port 5174; production on app.propium.ai
-      return isLocal ? `http://localhost:5174/project/${slug}` : `https://app.propium.ai/project/${slug}`;
+      // Strictly redirect to live UAT application as requested
+      return `https://app.propium.ai/project/${slug}`;
     }
 
     function getPropiumScoreData(project) {
@@ -1474,94 +1614,65 @@
       };
     }
 
-    function getProjectMaterials(project, rand) {
+        function getProjectMaterials(project, rand) {
       const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
       const paletteIndex = Math.floor(rand() * 4);
 
-      // Bright, high-end architectural glass palettes (Azure Blue, Sky Cyan, Sapphire, Aquamarine)
-      const glassColors = [
-        0x38bdf8, // Vibrant Sky Cyan Glass
-        0x60a5fa, // Azure Modern Blue Glass
-        0x818cf8, // Indigo Reflective Glass
-        0x2dd4bf  // Aquamarine Luxury Glass
-      ];
+      // High-end vibrant architectural glass colors (Radiant Sky-Blue, Azure, Cerulean, Emerald)
+      const glassColors = [0x38bdf8, 0x60a5fa, 0x0ea5e9, 0x34d399];
+      const glassEmissives = [0x0369a1, 0x1d4ed8, 0x0284c7, 0x047857];
 
-      // Warm Architectural Travertine & Clean White Concrete (NEVER BLACK)
-      const slabColors = [
-        0xffffff, // Pure Crisp White Slabs
-        0xf8fafc, // Off-white Architectural Marble
-        0xfef08a, // Warm Champagne Accent Slabs
-        0xe2e8f0  // Light Grey Travertine
-      ];
-
-      // Light Granite / Sandstone Podium (NEVER BLACK)
-      const podiumColors = [
-        0xe2e8f0, // Clean Light Granite
-        0xf1f5f9, // Pearl Sandstone
-        0xdbeafe, // Soft Blue Architectural Stone
-        0xfef3c7  // Warm Sandstone
-      ];
-
+      const slabColors = [0xffffff, 0xf8fafc, 0xf1f5f9, 0xffffff];
       const crownColors = isUltra 
-        ? [0xf59e0b, 0xd97706, 0xeab308, 0x6366f1] // Champagne Gold & Royal Crown
-        : [0x3b82f6, 0x10b981, 0x6366f1, 0x0ea5e9];
+        ? [0xf59e0b, 0xd97706, 0xfbbf24, 0x6366f1] // Champagne Gold & Royal
+        : [0x38bdf8, 0x10b981, 0x6366f1, 0x0ea5e9];
 
       return {
-        // Bright Sky Glass with subtle self-illumination (never renders black!)
-        glassMat: new THREE.MeshStandardMaterial({
+        // Radiant architectural curtain glass with self-illumination (never renders black!)
+        glassMat: new THREE.MeshPhongMaterial({
           color: glassColors[paletteIndex],
-          roughness: 0.18,
-          metalness: 0.25,
+          emissive: glassEmissives[paletteIndex],
+          emissiveIntensity: 0.35,
+          specular: 0xffffff,
+          shininess: 90,
           transparent: true,
-          opacity: 0.88,
-          emissive: 0x0284c7,
-          emissiveIntensity: 0.22
+          opacity: 0.92
         }),
-        // Crisp White Floor Slabs & Balconies
-        slabMat: new THREE.MeshStandardMaterial({
+        // Pure architectural white floor slabs (never renders black!)
+        slabMat: new THREE.MeshLambertMaterial({
           color: slabColors[paletteIndex],
-          roughness: 0.4,
-          metalness: 0.1
+          emissive: 0x334155,
+          emissiveIntensity: 0.15
         }),
-        balconyMat: new THREE.MeshStandardMaterial({
-          color: 0xffffff,
-          roughness: 0.25,
-          metalness: 0.05
+        balconyMat: new THREE.MeshLambertMaterial({
+          color: 0xffffff
         }),
-        // Light Sandstone Podium Base
-        podiumMat: new THREE.MeshStandardMaterial({
-          color: podiumColors[paletteIndex],
-          roughness: 0.6,
-          metalness: 0.1
+        // Clean light travertine podium base (low profile)
+        podiumMat: new THREE.MeshLambertMaterial({
+          color: 0xf8fafc,
+          emissive: 0x1e293b,
+          emissiveIntensity: 0.08
         }),
-        // Lush Golf Green Landscaped Podium Roof
-        lawnMat: new THREE.MeshStandardMaterial({
-          color: 0x22c55e,
-          roughness: 0.85
+        // Lush golf green manicured podium lawn
+        lawnMat: new THREE.MeshLambertMaterial({
+          color: 0x10b981
         }),
-        // Champagne Gold Architectural Crown
-        crownMat: new THREE.MeshStandardMaterial({
+        // Champagne Gold Penthouse Crown
+        crownMat: new THREE.MeshPhongMaterial({
           color: crownColors[paletteIndex],
-          metalness: 0.75,
-          roughness: 0.25,
           emissive: isUltra ? 0xb45309 : 0x1e40af,
-          emissiveIntensity: 0.3
+          emissiveIntensity: 0.4,
+          specular: 0xffffff,
+          shininess: 95
         }),
-        frameMat: new THREE.MeshStandardMaterial({
-          color: 0x94a3b8, // Light Brushed Aluminum (not black!)
-          roughness: 0.4,
-          metalness: 0.5
-        }),
-        shadowMat: new THREE.MeshBasicMaterial({
-          color: 0x000000,
-          transparent: true,
-          opacity: 0.25
+        frameMat: new THREE.MeshLambertMaterial({
+          color: 0xe2e8f0
         })
       };
     }
 
     // Distinct Procedural 3D Skyscraper Architecture Builder
-    function create3DBuildingModel(project) {
+        function create3DBuildingModel(project) {
       const rand = getSeededRandom(project.id * 31 + 47);
       const mats = getProjectMaterials(project, rand);
       const group = new THREE.Group();
@@ -1571,27 +1682,20 @@
       const acres = project.total_area_acres || 6.0;
 
       const typology = (acres > 18) ? 2 : Math.floor(rand() * 4);
-      const baseHeight = isUltra ? (150 + rand() * 45) : isLuxury ? (115 + rand() * 35) : (85 + rand() * 30);
-      const podiumH = 10 + rand() * 4;
-
-      // Ground Drop Shadow
-      const shadowRadius = (typology === 2) ? 65 : 45;
-      const shadow = new THREE.Mesh(new THREE.CylinderGeometry(shadowRadius, shadowRadius, 0.4, 24), mats.shadowMat);
-      shadow.rotation.x = Math.PI / 2;
-      shadow.position.set(0, 0, 0.2);
-      group.add(shadow);
+      const baseHeight = isUltra ? (140 + rand() * 40) : isLuxury ? (110 + rand() * 30) : (80 + rand() * 25);
+      const podiumH = 4; // Clean low-profile landscaped base (NO bulky black base!)
 
       // TYPOLOGY 0: SINGLE SLEEK ICONIC MONOLITH
       if (typology === 0) {
-        const tw = 38 + rand() * 8;
-        const td = 28 + rand() * 6;
+        const tw = 36 + rand() * 8;
+        const td = 26 + rand() * 6;
         const th = baseHeight;
 
-        const podium = new THREE.Mesh(new THREE.BoxGeometry(tw + 26, td + 22, podiumH), mats.podiumMat);
+        const podium = new THREE.Mesh(new THREE.BoxGeometry(tw + 20, td + 18, podiumH), mats.podiumMat);
         podium.position.set(0, 0, podiumH / 2);
         group.add(podium);
 
-        const park = new THREE.Mesh(new THREE.BoxGeometry(tw + 22, td + 18, 0.8), mats.lawnMat);
+        const park = new THREE.Mesh(new THREE.BoxGeometry(tw + 16, td + 14, 0.8), mats.lawnMat);
         park.position.set(0, 0, podiumH + 0.4);
         group.add(park);
 
@@ -1599,90 +1703,84 @@
         tower.position.set(0, 0, podiumH + th / 2);
         group.add(tower);
 
-        const floors = Math.floor(th / 3.8);
+        const floors = Math.floor(th / 4.0);
         for (let f = 1; f < floors; f++) {
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(tw + 2.4, td + 2.4, 0.7), mats.slabMat);
-          slab.position.set(0, 0, podiumH + f * 3.8);
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(tw + 1.8, td + 1.8, 0.6), mats.slabMat);
+          slab.position.set(0, 0, podiumH + f * 4.0);
           group.add(slab);
         }
 
-        for (let f = 2; f < floors - 2; f += 2) {
-          const bal = new THREE.Mesh(new THREE.BoxGeometry(tw * 0.8, 3.8, 1.1), mats.balconyMat);
-          bal.position.set(0, td / 2 + 1.8, podiumH + f * 3.8);
-          group.add(bal);
-        }
-
-        const crownH = 16;
+        const crownH = 15;
         const crown = new THREE.Mesh(new THREE.ConeGeometry(tw * 0.45, crownH, 4), mats.crownMat);
         crown.rotation.x = Math.PI / 2;
         crown.rotation.z = Math.PI / 4;
         crown.position.set(0, 0, podiumH + th + crownH / 2);
         group.add(crown);
 
-        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 1.2, 22, 8), mats.frameMat);
+        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 1.2, 20, 8), mats.crownMat);
         spire.rotation.x = Math.PI / 2;
-        spire.position.set(0, 0, podiumH + th + crownH + 11);
+        spire.position.set(0, 0, podiumH + th + crownH + 10);
         group.add(spire);
       }
       // TYPOLOGY 1: ASYMMETRIC TWIN TOWERS (With Skybridge)
       else if (typology === 1) {
-        const t1_w = 32, t1_d = 26, t1_h = baseHeight;
-        const t2_w = 26, t2_d = 22, t2_h = baseHeight * 0.75;
+        const t1_w = 30, t1_d = 24, t1_h = baseHeight;
+        const t2_w = 24, t2_d = 20, t2_h = baseHeight * 0.75;
 
-        const podium = new THREE.Mesh(new THREE.BoxGeometry(78, 55, podiumH), mats.podiumMat);
+        const podium = new THREE.Mesh(new THREE.BoxGeometry(72, 50, podiumH), mats.podiumMat);
         podium.position.set(0, 0, podiumH / 2);
         group.add(podium);
 
-        const park = new THREE.Mesh(new THREE.BoxGeometry(72, 49, 0.8), mats.lawnMat);
+        const park = new THREE.Mesh(new THREE.BoxGeometry(66, 44, 0.8), mats.lawnMat);
         park.position.set(0, 0, podiumH + 0.4);
         group.add(park);
 
         const tower1 = new THREE.Mesh(new THREE.BoxGeometry(t1_w, t1_d, t1_h), mats.glassMat);
-        tower1.position.set(-18, 0, podiumH + t1_h / 2);
+        tower1.position.set(-16, 0, podiumH + t1_h / 2);
         group.add(tower1);
 
-        const f1 = Math.floor(t1_h / 3.8);
+        const f1 = Math.floor(t1_h / 4.0);
         for (let f = 1; f < f1; f++) {
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(t1_w + 2.2, t1_d + 2.2, 0.7), mats.slabMat);
-          slab.position.set(-18, 0, podiumH + f * 3.8);
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(t1_w + 1.6, t1_d + 1.6, 0.6), mats.slabMat);
+          slab.position.set(-16, 0, podiumH + f * 4.0);
           group.add(slab);
         }
 
         const tower2 = new THREE.Mesh(new THREE.BoxGeometry(t2_w, t2_d, t2_h), mats.glassMat);
-        tower2.position.set(20, 8, podiumH + t2_h / 2);
+        tower2.position.set(18, 6, podiumH + t2_h / 2);
         group.add(tower2);
 
-        const f2 = Math.floor(t2_h / 3.8);
+        const f2 = Math.floor(t2_h / 4.0);
         for (let f = 1; f < f2; f++) {
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(t2_w + 2.2, t2_d + 2.2, 0.7), mats.slabMat);
-          slab.position.set(20, 8, podiumH + f * 3.8);
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(t2_w + 1.6, t2_d + 1.6, 0.6), mats.slabMat);
+          slab.position.set(18, 6, podiumH + f * 4.0);
           group.add(slab);
         }
 
         const bridgeZ = podiumH + t2_h * 0.65;
-        const skybridge = new THREE.Mesh(new THREE.BoxGeometry(16, 8, 4), mats.frameMat);
-        skybridge.position.set(1, 4, bridgeZ);
+        const skybridge = new THREE.Mesh(new THREE.BoxGeometry(14, 7, 3.5), mats.crownMat);
+        skybridge.position.set(1, 3, bridgeZ);
         group.add(skybridge);
 
-        const crown = new THREE.Mesh(new THREE.BoxGeometry(t1_w * 0.85, t1_d * 0.85, 10), mats.crownMat);
-        crown.position.set(-18, 0, podiumH + t1_h + 5);
+        const crown = new THREE.Mesh(new THREE.BoxGeometry(t1_w * 0.85, t1_d * 0.85, 8), mats.crownMat);
+        crown.position.set(-16, 0, podiumH + t1_h + 4);
         group.add(crown);
       }
       // TYPOLOGY 2: MULTI-TOWER GATED COMMUNITY (3 Towers around Park)
       else if (typology === 2) {
-        const pw = 90, pd = 80;
+        const pw = 84, pd = 74;
         const podium = new THREE.Mesh(new THREE.BoxGeometry(pw, pd, podiumH), mats.podiumMat);
         podium.position.set(0, 0, podiumH / 2);
         group.add(podium);
 
-        const park = new THREE.Mesh(new THREE.BoxGeometry(pw - 8, pd - 8, 0.8), mats.lawnMat);
+        const park = new THREE.Mesh(new THREE.BoxGeometry(pw - 6, pd - 6, 0.8), mats.lawnMat);
         park.position.set(0, 0, podiumH + 0.4);
         group.add(park);
 
         const towerConfigs = [
-          { x: -25, y: -20, h: baseHeight * 0.95, w: 26, d: 24 },
-          { x:  25, y: -20, h: baseHeight * 0.88, w: 24, d: 24 },
-          { x:   0, y:  22, h: baseHeight,        w: 30, d: 26 }
+          { x: -22, y: -18, h: baseHeight * 0.95, w: 24, d: 22 },
+          { x:  22, y: -18, h: baseHeight * 0.88, w: 22, d: 22 },
+          { x:   0, y:  20, h: baseHeight,        w: 28, d: 24 }
         ];
 
         towerConfigs.forEach(tc => {
@@ -1690,10 +1788,10 @@
           tw.position.set(tc.x, tc.y, podiumH + tc.h / 2);
           group.add(tw);
 
-          const fl = Math.floor(tc.h / 3.8);
+          const fl = Math.floor(tc.h / 4.0);
           for (let f = 1; f < fl; f += 2) {
-            const slab = new THREE.Mesh(new THREE.BoxGeometry(tc.w + 2.0, tc.d + 2.0, 0.8), mats.slabMat);
-            slab.position.set(tc.x, tc.y, podiumH + f * 3.8);
+            const slab = new THREE.Mesh(new THREE.BoxGeometry(tc.w + 1.6, tc.d + 1.6, 0.6), mats.slabMat);
+            slab.position.set(tc.x, tc.y, podiumH + f * 4.0);
             group.add(slab);
           }
         });
@@ -1702,7 +1800,7 @@
       else {
         const totalTiers = 3;
         const tierH = baseHeight / 3;
-        let curW = 48, curD = 38;
+        let curW = 44, curD = 34;
 
         for (let t = 0; t < totalTiers; t++) {
           const tz = podiumH + t * tierH + tierH / 2;
@@ -1710,21 +1808,20 @@
           tierMesh.position.set(0, 0, tz);
           group.add(tierMesh);
 
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(curW + 3, curD + 3, 0.8), mats.slabMat);
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(curW + 2.5, curD + 2.5, 0.7), mats.slabMat);
           slab.position.set(0, 0, podiumH + t * tierH);
           group.add(slab);
 
-          curW *= 0.78;
-          curD *= 0.78;
+          curW *= 0.8;
+          curD *= 0.8;
         }
 
         const topZ = podiumH + baseHeight;
-        const crown = new THREE.Mesh(new THREE.BoxGeometry(curW * 0.8, curD * 0.8, 8), mats.crownMat);
-        crown.position.set(0, 0, topZ + 4);
+        const crown = new THREE.Mesh(new THREE.BoxGeometry(curW * 0.85, curD * 0.85, 7), mats.crownMat);
+        crown.position.set(0, 0, topZ + 3.5);
         group.add(crown);
       }
 
-      group.scale.set(1.22, 1.22, 1.22);
       return group;
     }
 
@@ -1788,8 +1885,8 @@
         activeThreeScene = new THREE.Scene();
 
         // High-ambient daylight lighting so towers NEVER look dark or black
-        activeThreeScene.add(new THREE.AmbientLight(0xffffff, 1.1));
-        activeThreeScene.add(new THREE.HemisphereLight(0xffffff, 0xbae6fd, 0.85));
+        activeThreeScene.add(new THREE.AmbientLight(0xffffff, 1.4));
+        activeThreeScene.add(new THREE.HemisphereLight(0xffffff, 0xcfd8dc, 1.0));
 
         const dirLight1 = new THREE.DirectionalLight(0xfffaed, 1.6);
         dirLight1.position.set(160, -220, 320);
@@ -1953,6 +2050,61 @@
       renderGridCards();
     }
 
+        // ==========================================
+    // SPATIAL CLUSTERING (BangaloreStartupMap Style)
+    // ==========================================
+    function getClusters(projects, zoom) {
+      if (zoom >= 13.8) {
+        return projects.map(p => ({ isCluster: false, project: p, lat: p.lat, lng: p.lng }));
+      }
+
+      // Radius for grouping based on zoom
+      const radiusKm = (zoom < 11.2) ? 4.5 : (zoom < 12.6) ? 2.2 : 1.1;
+      const clusters = [];
+      const assigned = new Set();
+
+      for (let i = 0; i < projects.length; i++) {
+        if (assigned.has(i)) continue;
+        const p1 = projects[i];
+        if (!p1.lat || !p1.lng) continue;
+
+        const clusterProjects = [p1];
+        assigned.add(i);
+
+        for (let j = i + 1; j < projects.length; j++) {
+          if (assigned.has(j)) continue;
+          const p2 = projects[j];
+          if (!p2.lat || !p2.lng) continue;
+
+          const dist = calculateDistanceKm(p1.lat, p1.lng, p2.lat, p2.lng);
+          if (dist <= radiusKm) {
+            clusterProjects.push(p2);
+            assigned.add(j);
+          }
+        }
+
+        if (clusterProjects.length > 1) {
+          const avgLat = clusterProjects.reduce((s, p) => s + p.lat, 0) / clusterProjects.length;
+          const avgLng = clusterProjects.reduce((s, p) => s + p.lng, 0) / clusterProjects.length;
+          clusters.push({
+            isCluster: true,
+            count: clusterProjects.length,
+            lat: avgLat,
+            lng: avgLng,
+            projects: clusterProjects
+          });
+        } else {
+          clusters.push({
+            isCluster: false,
+            project: p1,
+            lat: p1.lat,
+            lng: p1.lng
+          });
+        }
+      }
+      return clusters;
+    }
+
     function render3DSceneAndMarkers() {
       activeHtmlMarkers.forEach(m => m.remove());
       activeHtmlMarkers = [];
@@ -1962,21 +2114,26 @@
         activeThreeGroup.remove(obj);
       }
 
+      const currentZoom = map.getZoom();
+
       if (currentSelectedSchool && map.getSource('radius-buffer')) {
         const circleGeoJson = createGeoJsonCircle([currentSelectedSchool.lng, currentSelectedSchool.lat], selectedRadiusKm);
         map.getSource('radius-buffer').setData(circleGeoJson);
       }
 
+      // Landmark School Model
       if (currentSelectedSchool) {
-        const schoolCoord = maplibregl.MercatorCoordinate.fromLngLat(
-          [currentSelectedSchool.lng, currentSelectedSchool.lat],
-          0
-        );
-        const schoolModel = create3DSchoolModel();
-        const scale = schoolCoord.meterInMercatorCoordinateUnits();
-        schoolModel.scale.set(scale * 1.3, scale * 1.3, scale * 1.3);
-        schoolModel.position.set(schoolCoord.x, schoolCoord.y, schoolCoord.z);
-        activeThreeGroup.add(schoolModel);
+        if (currentViewMode === '3d' && currentZoom >= 13.0) {
+          const schoolCoord = maplibregl.MercatorCoordinate.fromLngLat(
+            [currentSelectedSchool.lng, currentSelectedSchool.lat],
+            0
+          );
+          const schoolModel = create3DSchoolModel();
+          const scale = schoolCoord.meterInMercatorCoordinateUnits();
+          schoolModel.scale.set(scale * 1.3, scale * 1.3, scale * 1.3);
+          schoolModel.position.set(schoolCoord.x, schoolCoord.y, schoolCoord.z);
+          activeThreeGroup.add(schoolModel);
+        }
 
         const schoolEl = document.createElement('div');
         schoolEl.className = 'school-map-pill';
@@ -1989,37 +2146,76 @@
         activeHtmlMarkers.push(sMarker);
       }
 
-      currentFilteredProjects.forEach(proj => {
-        if (!proj.lat || !proj.lng) return;
+      // Get Clusters vs Individual Projects based on zoom
+      const clusters = getClusters(currentFilteredProjects, currentZoom);
 
-        // Render Distinct Procedural 3D Skyscraper
-        const coord = maplibregl.MercatorCoordinate.fromLngLat([proj.lng, proj.lat], 0);
-        const tower = create3DBuildingModel(proj);
-        const scale = coord.meterInMercatorCoordinateUnits();
-        tower.scale.set(scale * 1.25, scale * 1.25, scale * 1.25);
-        tower.position.set(coord.x, coord.y, coord.z);
-        activeThreeGroup.add(tower);
+      clusters.forEach(item => {
+        if (item.isCluster) {
+          // BANGALORESTARTUPMAP STYLE CIRCULAR CLUSTER BADGE
+          const count = item.count;
+          const el = document.createElement('div');
+          let sizeClass = 'cluster-small';
+          if (count >= 50) sizeClass = 'cluster-large';
+          else if (count >= 15) sizeClass = 'cluster-medium';
 
-        // Add HTML Map Label with Propium Score
-        const scoreData = getPropiumScoreData(proj);
-        const el = document.createElement('div');
-        el.className = 'project-map-pill';
+          el.className = `bsm-cluster-badge ${sizeClass}`;
+          el.innerHTML = `<span>${count}</span>`;
+          el.title = `${count} Projects in this cluster. Click to zoom in.`;
 
-        const distStr = proj._currentDist ? ` • ${proj._currentDist.toFixed(1)}km` : '';
-        el.innerHTML = `
-          <span class="pill-score-tag ${scoreData.score >= 90 ? 'high' : ''}">★ ${scoreData.score}</span>
-          <span>${proj.name}</span>
-          <span style="color: #64748b; font-size: 10px;">${proj.sector || ''}${distStr}</span>
-        `;
-        el.onclick = (e) => {
-          e.stopPropagation();
-          openProjectDrawer(proj);
-        };
+          el.onclick = (e) => {
+            e.stopPropagation();
+            map.flyTo({
+              center: [item.lng, item.lat],
+              zoom: Math.min(map.getZoom() + 2.5, 15.2),
+              duration: 750
+            });
+          };
 
-        const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
-          .setLngLat([proj.lng, proj.lat])
-          .addTo(map);
-        activeHtmlMarkers.push(marker);
+          const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
+            .setLngLat([item.lng, item.lat])
+            .addTo(map);
+          activeHtmlMarkers.push(marker);
+        } else {
+          // INDIVIDUAL PROJECT
+          const proj = item.project;
+          if (!proj || !proj.lat || !proj.lng) return;
+
+          // Render Radiant Three.js 3D Skyscraper only when in 3D mode and zoomed in
+          if (currentViewMode === '3d' && currentZoom >= 13.5) {
+            const coord = maplibregl.MercatorCoordinate.fromLngLat([proj.lng, proj.lat], 0);
+            const tower = create3DBuildingModel(proj);
+            const scale = coord.meterInMercatorCoordinateUnits();
+            tower.scale.set(scale * 1.25, scale * 1.25, scale * 1.25);
+            tower.position.set(coord.x, coord.y, coord.z);
+            activeThreeGroup.add(tower);
+          }
+
+          // Modern Pill with Propium Score & UAT Redirect Link
+          const scoreData = getPropiumScoreData(proj);
+          const propiumUrl = getPropiumProjectUrl(proj);
+          const el = document.createElement('div');
+          el.className = 'project-map-pill';
+
+          const distStr = proj._currentDist ? ` • ${proj._currentDist.toFixed(1)}km` : '';
+          el.innerHTML = `
+            <span class="pill-score-tag ${scoreData.score >= 90 ? 'high' : ''}">★ ${scoreData.score}</span>
+            <span>${proj.name}</span>
+            <span style="color: #64748b; font-size: 10px;">${proj.sector || ''}${distStr}</span>
+            <a href="${propiumUrl}" target="_blank" class="pill-uat-link" title="Open ${proj.name} on Propium UAT" onclick="event.stopPropagation();">
+              <i class="ph-bold ph-arrow-square-out"></i>
+            </a>
+          `;
+
+          el.onclick = (e) => {
+            e.stopPropagation();
+            openProjectDrawer(proj);
+          };
+
+          const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+            .setLngLat([proj.lng, proj.lat])
+            .addTo(map);
+          activeHtmlMarkers.push(marker);
+        }
       });
 
       map.triggerRepaint();
@@ -2146,8 +2342,10 @@
       } else {
         gridModal.classList.remove('open');
         if (mode === '2d') {
+          activeThreeGroup.visible = false;
           map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
         } else {
+          activeThreeGroup.visible = true;
           map.easeTo({ pitch: 58, bearing: -20, duration: 800 });
         }
       }
@@ -2210,9 +2408,28 @@
       document.getElementById('dAspectLive').innerText = scoreData.aspects.live;
 
       const propiumUrl = getPropiumProjectUrl(proj);
+      
+      const titleLink = document.getElementById('dTitleLink');
+      if (titleLink) {
+        titleLink.href = propiumUrl;
+        titleLink.title = `Open ${proj.name} on Propium UAT`;
+      }
+
       const redirectBtn = document.getElementById('dPropiumRedirectBtn');
       redirectBtn.href = propiumUrl;
-      redirectBtn.title = `Open ${proj.name} on Propium AI`;
+      redirectBtn.title = `Open ${proj.name} on Propium UAT`;
+      redirectBtn.innerHTML = `<i class="ph-bold ph-arrow-square-out"></i> Open ${proj.name} on Propium UAT (Analysis &amp; Factsheet) ↗`;
+
+      const footerUatBtn = document.getElementById('dFooterUatBtn');
+      if (footerUatBtn) {
+        footerUatBtn.href = propiumUrl;
+        footerUatBtn.title = `Open ${proj.name} on Propium UAT`;
+      }
+
+      const scoreCard = document.getElementById('dScoreCard');
+      if (scoreCard) {
+        scoreCard.onclick = () => window.open(propiumUrl, '_blank');
+      }
 
       document.getElementById('dLandArea').innerText = proj.total_area_acres ? `${proj.total_area_acres} Acres` : 'N/A';
       document.getElementById('dOpenArea').innerText = proj.open_area_percent ? `${proj.open_area_percent}% Open` : 'N/A';
@@ -2278,6 +2495,15 @@
         essential: true
       });
     }
+
+        map.on('zoomend', () => {
+      render3DSceneAndMarkers();
+    });
+    map.on('moveend', () => {
+      if (map.getZoom() < 13.8) {
+        render3DSceneAndMarkers();
+      }
+    });
 
     map.on('click', () => {
       closeProjectDrawer();
