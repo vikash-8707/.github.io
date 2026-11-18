@@ -250,7 +250,7 @@
       color: #334155;
       outline: none;
       cursor: pointer;
-      max-width: 125px;
+      max-width: 155px;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
@@ -1334,6 +1334,39 @@
       transform: scale(1.15);
     }
 
+    /* Cluster Clear Pill Button */
+    .cluster-clear-pill {
+      background: #4f46e5;
+      color: #ffffff;
+      border: none;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-left: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+      transition: all 0.2s ease;
+    }
+    .cluster-clear-pill:hover {
+      background: #4338ca;
+      transform: translateY(-1px);
+    }
+
+    /* Completely hide MapLibre / OpenFreeMap attribution footer */
+    .maplibregl-ctrl-attrib,
+    .maplibregl-ctrl-attrib-inner,
+    .maplibregl-compact,
+    .maplibregl-ctrl-bottom-right {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
     /* UAT Link in Top Nav */
     .uat-link-btn {
       display: flex;
@@ -1411,7 +1444,25 @@
         <option value="New Gurgaon">New Gurgaon</option>
       </select>
 
-      <!-- 2. Center School Proximity Pill (Spacious & No Truncation) -->
+      <!-- 2. Target Market Segment Filter -->
+      <select class="nav-dropdown-select" id="marketFilter" onchange="applyFilters()">
+        <option value="ALL">All segments</option>
+        <option value="Ultra Luxury">Ultra Luxury</option>
+        <option value="Luxury">Luxury</option>
+        <option value="Premium">Premium</option>
+        <option value="Mid Segment">Mid Segment</option>
+      </select>
+
+      <!-- 3. Configuration Filter -->
+      <select class="nav-dropdown-select" id="configFilter" onchange="applyFilters()">
+        <option value="ALL">All configs</option>
+        <option value="2 BHK">2 BHK</option>
+        <option value="3 BHK">3 BHK</option>
+        <option value="4 BHK">4 BHK</option>
+        <option value="5 BHK">5 BHK</option>
+      </select>
+
+      <!-- 4. Center School Proximity Pill (Spacious & No Truncation) -->
       <div class="school-proximity-pill">
         <i class="ph-fill ph-graduation-cap"></i>
         <select id="schoolFilter" onchange="handleSchoolChange()" title="Select Landmark School">
@@ -1425,19 +1476,6 @@
           <option value="8">8 KM</option>
         </select>
       </div>
-    </div>
-
-    <!-- Mode Switcher: [ 3D Map | 2D Map | Grid ] -->
-    <div class="view-switcher-pill">
-      <button class="view-btn active" id="btnMode3D" onclick="switchViewMode('3d')">
-        <i class="ph-bold ph-cube"></i> 3D
-      </button>
-      <button class="view-btn" id="btnMode2D" onclick="switchViewMode('2d')">
-        <i class="ph-bold ph-map-trifold"></i> 2D
-      </button>
-      <button class="view-btn" id="btnModeGrid" onclick="switchViewMode('grid')">
-        <i class="ph-bold ph-squares-four"></i> Grid
-      </button>
     </div>
 
     <!-- Right Side Actions & Stats -->
@@ -1583,8 +1621,8 @@
         </div>
       </div>
 
-      <!-- Specs 3-Item Grid (Clean & Non-Redundant) -->
-      <div class="specs-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+      <!-- Specs 4-Item Grid -->
+      <div class="specs-grid">
         <div class="spec-item">
           <div class="spec-label">Land Parcel</div>
           <div class="spec-val" id="dLandArea">10.07 Acres</div>
@@ -1596,6 +1634,10 @@
         <div class="spec-item">
           <div class="spec-label">Possession</div>
           <div class="spec-val" id="dPossession">Dec 2029</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">Corridor</div>
+          <div class="spec-val" id="dCorridor">Golf Course Extn</div>
         </div>
       </div>
 
@@ -2237,7 +2279,8 @@
       zoom: 13.6,
       pitch: 58,
       bearing: -20,
-      antialias: true
+      antialias: true,
+      attributionControl: false
     });
 
     const custom3DLayer = {
@@ -2360,7 +2403,10 @@
     // ==========================================
     // FILTERING LOGIC
     // ==========================================
+    let activeClusterFilter = null;
+
     function applyFilters() {
+      activeClusterFilter = null;
       const searchVal = (document.getElementById('globalSearch').value || '').trim().toLowerCase();
       const corridorVal = document.getElementById('corridorFilter').value;
       const marketVal = document.getElementById('marketFilter') ? document.getElementById('marketFilter').value : 'ALL';
@@ -2510,6 +2556,13 @@
         activeHtmlMarkers.push(sMarker);
       }
 
+      // IF CLUSTER IS ACTIVE: ONLY RENDER THIS CLUSTER'S PROJECTS!
+      if (activeClusterFilter && activeClusterFilter.length > 0) {
+        activeClusterFilter.forEach(p => renderSingleProject(p, currentZoom));
+        map.triggerRepaint();
+        return;
+      }
+
       // Get Clusters vs Individual Projects based on zoom
       const clusters = getClusters(currentFilteredProjects, currentZoom);
 
@@ -2524,15 +2577,11 @@
 
           el.className = `bsm-cluster-badge ${sizeClass}`;
           el.innerHTML = `<span>${count}</span>`;
-          el.title = `${count} Projects in this cluster. Click to zoom in.`;
+          el.title = `${count} Projects in this cluster. Click to open only these projects.`;
 
           el.onclick = (e) => {
             e.stopPropagation();
-            map.flyTo({
-              center: [item.lng, item.lat],
-              zoom: Math.min(map.getZoom() + 2.5, 15.2),
-              duration: 750
-            });
+            openClusterProjects(item);
           };
 
           const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
@@ -2540,49 +2589,97 @@
             .addTo(map);
           activeHtmlMarkers.push(marker);
         } else {
-          // INDIVIDUAL PROJECT
-          const proj = item.project;
-          if (!proj || !proj.lat || !proj.lng) return;
-
-          // Render Radiant Three.js 3D Skyscraper only when in 3D mode and zoomed in
-          if (currentViewMode === '3d' && currentZoom >= 13.5) {
-            const coord = maplibregl.MercatorCoordinate.fromLngLat([proj.lng, proj.lat], 0);
-            const tower = create3DBuildingModel(proj);
-            const scale = coord.meterInMercatorCoordinateUnits();
-            tower.scale.set(scale * 1.25, scale * 1.25, scale * 1.25);
-            tower.position.set(coord.x, coord.y, coord.z);
-            activeThreeGroup.add(tower);
-          }
-
-          // Modern Pill with Propium Score & UAT Redirect Link
-          const scoreData = getPropiumScoreData(proj);
-          const propiumUrl = getPropiumProjectUrl(proj);
-          const el = document.createElement('div');
-          el.className = 'project-map-pill';
-
-          const distStr = proj._currentDist ? ` • ${proj._currentDist.toFixed(1)}km` : '';
-          el.innerHTML = `
-            <span class="pill-score-tag ${scoreData.score >= 90 ? 'high' : ''}">★ ${scoreData.score}</span>
-            <span>${proj.name}</span>
-            <span style="color: #64748b; font-size: 10px;">${proj.sector || ''}${distStr}</span>
-            <a href="${propiumUrl}" target="_blank" class="pill-uat-link" title="Open ${proj.name} on proPIUM" onclick="event.stopPropagation();">
-              <i class="ph-bold ph-arrow-square-out"></i>
-            </a>
-          `;
-
-          el.onclick = (e) => {
-            e.stopPropagation();
-            openProjectDrawer(proj);
-          };
-
-          const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
-            .setLngLat([proj.lng, proj.lat])
-            .addTo(map);
-          activeHtmlMarkers.push(marker);
+          renderSingleProject(item.project, currentZoom);
         }
       });
 
       map.triggerRepaint();
+    }
+
+    function renderSingleProject(proj, currentZoom) {
+      if (!proj || !proj.lat || !proj.lng) return;
+
+      // Render Radiant Three.js 3D Skyscraper only when in 3D mode
+      if (currentViewMode === '3d' && (currentZoom >= 13.0 || activeClusterFilter)) {
+        const coord = maplibregl.MercatorCoordinate.fromLngLat([proj.lng, proj.lat], 0);
+        const tower = create3DBuildingModel(proj);
+        const scale = coord.meterInMercatorCoordinateUnits();
+        tower.scale.set(scale * 1.25, scale * 1.25, scale * 1.25);
+        tower.position.set(coord.x, coord.y, coord.z);
+        activeThreeGroup.add(tower);
+      }
+
+      // Modern Pill with proPIUM Score & Redirect Link
+      const scoreData = getPropiumScoreData(proj);
+      const propiumUrl = getPropiumProjectUrl(proj);
+      const el = document.createElement('div');
+      el.className = 'project-map-pill';
+
+      const distStr = proj._currentDist ? ` • ${proj._currentDist.toFixed(1)}km` : '';
+      el.innerHTML = `
+        <span class="pill-score-tag ${scoreData.score >= 90 ? 'high' : ''}">★ ${scoreData.score}</span>
+        <span>${proj.name}</span>
+        <span style="color: #64748b; font-size: 10px;">${proj.sector || ''}${distStr}</span>
+        <a href="${propiumUrl}" target="_blank" class="pill-uat-link" title="Open ${proj.name} on proPIUM" onclick="event.stopPropagation();">
+          <i class="ph-bold ph-arrow-square-out"></i>
+        </a>
+      `;
+
+      el.onclick = (e) => {
+        e.stopPropagation();
+        openProjectDrawer(proj);
+      };
+
+      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([proj.lng, proj.lat])
+        .addTo(map);
+      activeHtmlMarkers.push(marker);
+    }
+
+    function openClusterProjects(item) {
+      if (!item || !item.projects || item.projects.length === 0) return;
+
+      activeClusterFilter = item.projects;
+
+      // Fit bounds specifically to the cluster projects
+      if (item.projects.length === 1) {
+        map.flyTo({
+          center: [item.projects[0].lng, item.projects[0].lat],
+          zoom: 15.6,
+          pitch: 60,
+          bearing: -20,
+          duration: 800
+        });
+      } else {
+        const bounds = new maplibregl.LngLatBounds();
+        item.projects.forEach(p => bounds.extend([p.lng, p.lat]));
+        map.fitBounds(bounds, {
+          padding: { top: 110, bottom: 110, left: 110, right: 110 },
+          maxZoom: 16.2,
+          duration: 800,
+          pitch: 58,
+          bearing: -20
+        });
+      }
+
+      // Update UI counts and banner
+      const count = activeClusterFilter.length;
+      document.getElementById('navCountText').innerText = `${count} Projects`;
+      const bottomText = document.getElementById('bottomResultsText');
+      if (bottomText) {
+        bottomText.innerHTML = `Showing <b>${count}</b> projects from cluster &nbsp;<button class="cluster-clear-pill" onclick="clearClusterFilter(event)">✕ Show All (${currentFilteredProjects.length})</button>`;
+      }
+
+      render3DSceneAndMarkers();
+    }
+
+    function clearClusterFilter(e) {
+      if (e) e.stopPropagation();
+      activeClusterFilter = null;
+      applyFilters();
+      if (currentSelectedSchool) {
+        resetSchoolView();
+      }
     }
 
     function renderGridCards() {
@@ -2695,9 +2792,12 @@
 
     function switchViewMode(mode) {
       currentViewMode = mode;
-      document.getElementById('btnMode3D').classList.toggle('active', mode === '3d');
-      document.getElementById('btnMode2D').classList.toggle('active', mode === '2d');
-      document.getElementById('btnModeGrid').classList.toggle('active', mode === 'grid');
+      const b3 = document.getElementById('btnMode3D');
+      const b2 = document.getElementById('btnMode2D');
+      const bg = document.getElementById('btnModeGrid');
+      if (b3) b3.classList.toggle('active', mode === '3d');
+      if (b2) b2.classList.toggle('active', mode === '2d');
+      if (bg) bg.classList.toggle('active', mode === 'grid');
 
       const gridModal = document.getElementById('gridModal');
 
