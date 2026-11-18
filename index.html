@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Propium 3D — Real Estate & School Proximity Explorer</title>
+    <title>proPIUM 3D — Real Estate Explorer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Official proPIUM Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" href="site-icon.png" />
 
   <!-- MapLibre GL 3D Vector Map Engine -->
   <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
@@ -106,6 +112,16 @@
       cursor: pointer;
       flex-shrink: 0;
     }
+    
+    .brand-favicon-img {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      object-fit: contain;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
     .brand-pin {
       width: 30px;
       height: 30px;
@@ -1368,11 +1384,9 @@
   <header class="top-navbar-container" id="topNav">
     <!-- Brand / Home Link -->
     <div class="brand-section" onclick="resetSchoolView()" title="Center Gurgaon 3D Real Estate">
-      <div class="brand-pin">
-        <i class="ph-fill ph-buildings"></i>
-      </div>
+      <img src="favicon-32x32.png" alt="proPIUM" class="brand-favicon-img" />
       <div class="brand-title">
-        Propium <span>3D</span>
+        proPIUM <span>3D</span>
       </div>
     </div>
 
@@ -1397,25 +1411,7 @@
         <option value="New Gurgaon">New Gurgaon</option>
       </select>
 
-      <!-- 2. Target Market Filter -->
-      <select class="nav-dropdown-select" id="marketFilter" onchange="applyFilters()">
-        <option value="ALL">All segments</option>
-        <option value="Ultra Luxury">Ultra Luxury</option>
-        <option value="Luxury">Luxury</option>
-        <option value="Premium">Premium</option>
-        <option value="Mid Segment">Mid Segment</option>
-      </select>
-
-      <!-- 3. Unit Configuration Filter -->
-      <select class="nav-dropdown-select" id="configFilter" onchange="applyFilters()">
-        <option value="ALL">All configs</option>
-        <option value="2 BHK">2 BHK</option>
-        <option value="3 BHK">3 BHK</option>
-        <option value="4 BHK">4 BHK</option>
-        <option value="Penthouse">Penthouse</option>
-      </select>
-
-      <!-- 4. Center School Proximity Pill -->
+      <!-- 2. Center School Proximity Pill (Spacious & No Truncation) -->
       <div class="school-proximity-pill">
         <i class="ph-fill ph-graduation-cap"></i>
         <select id="schoolFilter" onchange="handleSchoolChange()" title="Select Landmark School">
@@ -1453,8 +1449,8 @@
       </div>
 
       <!-- Direct Propium UAT Link -->
-      <a href="https://property.p2s.ai/auth" target="_blank" class="uat-link-btn" title="Open Propium AI Main Platform">
-        <i class="ph-bold ph-globe"></i> Propium UAT ↗
+      <a href="https://property.p2s.ai/auth" target="_blank" class="uat-link-btn" title="Open proPIUM Platform">
+        <i class="ph-bold ph-globe"></i> proPIUM ↗
       </a>
 
       <!-- Link to All Charts Dashboard -->
@@ -1504,7 +1500,7 @@
           <span class="drawer-tag emerald" id="dStatusTag">Under Construction</span>
           <span class="drawer-tag sector" id="dSectorTag">Sector 62</span>
         </div>
-        <a href="#" target="_blank" id="dTitleLink" class="drawer-title-link" style="text-decoration: none;" title="Open on Propium UAT">
+        <a href="#" target="_blank" id="dTitleLink" class="drawer-title-link" style="text-decoration: none;" title="Open on proPIUM">
           <div class="drawer-title-row">
             <h2 class="drawer-title" id="dTitle">Pioneer Araya</h2>
             <i class="ph-fill ph-seal-check drawer-verified-icon" title="RERA Verified Project"></i>
@@ -1587,23 +1583,19 @@
         </div>
       </div>
 
-      <!-- Specs 2x2 Grid -->
-      <div class="specs-grid">
+      <!-- Specs 3-Item Grid (Clean & Non-Redundant) -->
+      <div class="specs-grid" style="grid-template-columns: 1fr 1fr 1fr;">
         <div class="spec-item">
           <div class="spec-label">Land Parcel</div>
           <div class="spec-val" id="dLandArea">10.07 Acres</div>
         </div>
         <div class="spec-item">
-          <div class="spec-label">Open Green Area</div>
-          <div class="spec-val" id="dOpenArea">65% Open</div>
+          <div class="spec-label">Open Space</div>
+          <div class="spec-val" id="dOpenArea">65% Green</div>
         </div>
         <div class="spec-item">
-          <div class="spec-label">Possession Date</div>
+          <div class="spec-label">Possession</div>
           <div class="spec-val" id="dPossession">Dec 2029</div>
-        </div>
-        <div class="spec-item">
-          <div class="spec-label">Corridor</div>
-          <div class="spec-val" id="dCorridor">Golf Course Extn</div>
         </div>
       </div>
 
@@ -1629,7 +1621,7 @@
         <i class="ph-bold ph-video-camera"></i> 360° Orbit View
       </button>
       <a href="#" target="_blank" id="dFooterUatBtn" class="drawer-zoom-btn" style="flex: 1.2; background: linear-gradient(135deg, #4f46e5, #3b82f6); color: #ffffff; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; border: none; font-weight: 800;">
-        <i class="ph-bold ph-arrow-square-out"></i> Open on UAT ↗
+        <i class="ph-bold ph-arrow-square-out"></i> Open on proPIUM ↗
       </a>
     </div>
   </aside>
@@ -2370,8 +2362,8 @@
     function applyFilters() {
       const searchVal = (document.getElementById('globalSearch').value || '').trim().toLowerCase();
       const corridorVal = document.getElementById('corridorFilter').value;
-      const marketVal = document.getElementById('marketFilter').value;
-      const configVal = document.getElementById('configFilter').value;
+      const marketVal = document.getElementById('marketFilter') ? document.getElementById('marketFilter').value : 'ALL';
+      const configVal = document.getElementById('configFilter') ? document.getElementById('configFilter').value : 'ALL';
       selectedRadiusKm = parseFloat(document.getElementById('radiusFilter').value) || 4;
 
       currentFilteredProjects = PROJECTS.filter(p => {
@@ -2689,8 +2681,8 @@
       document.getElementById('globalSearch').value = '';
       document.getElementById('searchClearBtn').style.display = 'none';
       document.getElementById('corridorFilter').value = 'ALL';
-      document.getElementById('marketFilter').value = 'ALL';
-      document.getElementById('configFilter').value = 'ALL';
+      if (document.getElementById('marketFilter')) document.getElementById('marketFilter').value = 'ALL';
+      if (document.getElementById('configFilter')) document.getElementById('configFilter').value = 'ALL';
       document.getElementById('radiusFilter').value = '4';
       if (SCHOOLS.length > 0) {
         currentSelectedSchool = SCHOOLS.find(s => s.name.toLowerCase().includes('heritage')) || SCHOOLS[0];
