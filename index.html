@@ -31,7 +31,7 @@
       --accent-cyan: #0284c7;
       --accent-coral: #ea580c;
       --bg-white: #ffffff;
-      --bg-surface: rgba(255, 255, 255, 0.94);
+      --bg-surface: rgba(255, 255, 255, 0.96);
       --bg-card: #ffffff;
       --border-light: rgba(226, 232, 240, 0.9);
       --border-dark: rgba(15, 23, 42, 0.08);
@@ -72,53 +72,54 @@
     }
 
     /* ==========================================================================
-       TOP FLOATING PILL NAVBAR (BangaloreStartupMap Inspired Sleek Header)
+       TOP FLOATING NAVBAR (BangaloreStartupMap Inspired Sleek Layout)
        ========================================================================== */
     .top-navbar-container {
       position: absolute;
-      top: 14px;
-      left: 14px;
-      right: 14px;
+      top: 12px;
+      left: 12px;
+      right: 12px;
       z-index: 50;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       background: var(--bg-surface);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-full);
-      padding: 6px 12px 6px 16px;
+      padding: 5px 12px;
       box-shadow: var(--shadow-md);
       transition: all 0.25s ease;
+      white-space: nowrap;
     }
 
     /* Brand Logo & Name */
     .brand-section {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding-right: 12px;
+      gap: 7px;
+      padding-right: 10px;
       border-right: 1px solid rgba(226, 232, 240, 0.8);
-      white-space: nowrap;
       text-decoration: none;
       color: inherit;
       cursor: pointer;
+      flex-shrink: 0;
     }
     .brand-pin {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       background: linear-gradient(135deg, #ef4444, #dc2626);
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 16px;
+      font-size: 15px;
       box-shadow: 0 4px 10px rgba(239, 68, 68, 0.35);
     }
     .brand-title {
-      font-size: 14.5px;
+      font-size: 13.5px;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: -0.3px;
@@ -130,27 +131,28 @@
     /* Global Search Box */
     .nav-search-wrap {
       flex: 1;
-      min-width: 180px;
-      max-width: 300px;
+      min-width: 140px;
+      max-width: 220px;
       position: relative;
       display: flex;
       align-items: center;
+      flex-shrink: 1;
     }
     .nav-search-wrap i.search-icon {
       position: absolute;
-      left: 12px;
-      font-size: 15px;
+      left: 11px;
+      font-size: 14px;
       color: #94a3b8;
       pointer-events: none;
     }
     .nav-search-input {
       width: 100%;
-      height: 38px;
+      height: 35px;
       background: #f1f5f9;
       border: 1px solid transparent;
       border-radius: var(--radius-full);
-      padding: 0 32px 0 34px;
-      font-size: 13px;
+      padding: 0 28px 0 32px;
+      font-size: 12px;
       font-weight: 500;
       color: #0f172a;
       outline: none;
@@ -167,11 +169,11 @@
     }
     .search-clear-btn {
       position: absolute;
-      right: 10px;
+      right: 9px;
       background: none;
       border: none;
       color: #94a3b8;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
       display: none;
     }
@@ -181,34 +183,32 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      flex-shrink: 0;
     }
 
     .nav-dropdown-select {
-      height: 38px;
+      height: 35px;
       background: #f8fafc;
       border: 1px solid var(--border-light);
       border-radius: var(--radius-full);
-      padding: 0 28px 0 12px;
-      font-size: 12.5px;
+      padding: 0 24px 0 10px;
+      font-size: 11.5px;
       font-weight: 600;
       color: #334155;
       outline: none;
       cursor: pointer;
       appearance: none;
       -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 10px center;
+      background-position: right 8px center;
       transition: all 0.2s;
+      max-width: 135px;
     }
     .nav-dropdown-select:hover {
       background-color: #f1f5f9;
       border-color: #cbd5e1;
       color: #0f172a;
-    }
-    .nav-dropdown-select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.12);
     }
 
     /* Proximity School Dropdown Pill */
@@ -218,22 +218,23 @@
       background: #f8fafc;
       border: 1px solid var(--border-light);
       border-radius: var(--radius-full);
-      padding: 2px 4px 2px 10px;
-      gap: 6px;
+      padding: 2px 4px 2px 8px;
+      gap: 4px;
+      flex-shrink: 0;
     }
     .school-proximity-pill i {
       color: #dc2626;
-      font-size: 15px;
+      font-size: 14px;
     }
     .school-proximity-pill select {
       border: none;
       background: transparent;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: #334155;
       outline: none;
       cursor: pointer;
-      max-width: 140px;
+      max-width: 125px;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
@@ -243,8 +244,8 @@
       color: var(--primary) !important;
       font-weight: 800 !important;
       border-radius: var(--radius-full);
-      padding: 3px 8px;
-      font-size: 11.5px;
+      padding: 2px 6px;
+      font-size: 11px;
     }
 
     /* View Switcher Toggle: [ 3D Map | 2D Map | Grid ] */
@@ -252,90 +253,88 @@
       display: flex;
       align-items: center;
       background: #f1f5f9;
-      padding: 3px;
+      padding: 2px;
       border-radius: var(--radius-full);
       gap: 2px;
+      flex-shrink: 0;
     }
     .view-btn {
       border: none;
       background: transparent;
-      padding: 6px 12px;
+      padding: 5px 10px;
       border-radius: var(--radius-full);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: #64748b;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       transition: all 0.2s;
-      white-space: nowrap;
     }
     .view-btn i {
-      font-size: 14px;
-    }
-    .view-btn:hover {
-      color: #0f172a;
+      font-size: 13px;
     }
     .view-btn.active {
       background: #ffffff;
       color: var(--primary);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
     }
 
     /* Right Side Stats & Actions */
     .nav-actions-group {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       margin-left: auto;
+      flex-shrink: 0;
     }
 
     .project-count-badge {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       background: #f8fafc;
       border: 1px solid var(--border-light);
-      padding: 6px 12px;
+      padding: 5px 10px;
       border-radius: var(--radius-full);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 800;
       color: #0f172a;
-      white-space: nowrap;
+      flex-shrink: 0;
     }
     .count-indicator-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+      box-shadow: 0 0 5px rgba(16, 185, 129, 0.6);
     }
 
     /* "View All Charts" Button (Linking to all_charts.html) */
     .charts-link-btn {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       background: linear-gradient(135deg, #4f46e5, #4338ca);
-      color: #ffffff;
+      color: #ffffff !important;
       border: none;
-      padding: 8px 16px;
+      padding: 7px 14px;
       border-radius: var(--radius-full);
-      font-size: 12.5px;
+      font-size: 11.5px;
       font-weight: 700;
       text-decoration: none;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.28);
+      box-shadow: 0 3px 10px rgba(79, 70, 229, 0.28);
       transition: all 0.2s ease;
-      white-space: nowrap;
+      flex-shrink: 0;
     }
     .charts-link-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 5px 14px rgba(79, 70, 229, 0.4);
     }
     .charts-link-btn i {
-      font-size: 15px;
+      font-size: 14px;
     }
 
     /* Reset Filters Button */
@@ -343,15 +342,16 @@
       background: #f8fafc;
       border: 1px solid var(--border-light);
       color: #64748b;
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 14px;
       transition: all 0.2s;
+      flex-shrink: 0;
     }
     .reset-btn:hover {
       background: #fee2e2;
@@ -361,63 +361,18 @@
     }
 
     /* ==========================================================================
-       MAP CLUSTERS & MARKERS (BangaloreStartupMap Inspired Circles)
+       MAP LABELS & SCHOOL MARKER
        ========================================================================== */
-    /* Dynamic Cluster Bubbles */
-    .cluster-bubble {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      color: #0f172a;
-      font-weight: 800;
-      font-family: 'JetBrains Mono', monospace;
-      border: 3px solid #ffffff;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
-      cursor: pointer;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      user-select: none;
-    }
-    .cluster-bubble:hover {
-      transform: scale(1.18);
-    }
-    .cluster-sm {
-      width: 36px;
-      height: 36px;
-      background: #86efac; /* Soft green */
-      font-size: 13px;
-    }
-    .cluster-md {
-      width: 44px;
-      height: 44px;
-      background: #fde047; /* Soft yellow/amber */
-      font-size: 14px;
-    }
-    .cluster-lg {
-      width: 52px;
-      height: 52px;
-      background: #fdba74; /* Soft orange */
-      font-size: 15px;
-    }
-    .cluster-xl {
-      width: 60px;
-      height: 60px;
-      background: #f87171; /* Soft coral */
-      color: #ffffff;
-      font-size: 16px;
-    }
-
-    /* Individual Project Pin / Label (When zoomed in) */
     .project-map-pill {
       background: #ffffff;
       border: 1.5px solid #e2e8f0;
       border-radius: var(--radius-full);
-      padding: 4px 10px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+      padding: 3px 9px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.10);
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 11.5px;
+      gap: 5px;
+      font-size: 11px;
       font-weight: 700;
       color: #0f172a;
       cursor: pointer;
@@ -426,14 +381,14 @@
       user-select: none;
     }
     .project-map-pill:hover {
-      transform: translateY(-3px) scale(1.08);
+      transform: translateY(-2px) scale(1.06);
       border-color: var(--primary);
-      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.25);
       z-index: 9999 !important;
     }
     .pill-market-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
     }
     .market-ultra { background: #f59e0b; }
@@ -447,8 +402,8 @@
       color: #ffffff;
       border: 2px solid #ffffff;
       border-radius: var(--radius-full);
-      padding: 6px 14px;
-      font-size: 12px;
+      padding: 5px 12px;
+      font-size: 11.5px;
       font-weight: 800;
       display: flex;
       align-items: center;
@@ -461,52 +416,50 @@
       z-index: 1000 !important;
     }
     .school-map-pill:hover {
-      transform: scale(1.1) translateY(-2px);
+      transform: scale(1.08) translateY(-2px);
     }
 
     /* ==========================================================================
-       BOTTOM FLOATING CONTROLS & HUD
+       BOTTOM CONTROLS
        ========================================================================== */
-    /* Bottom-Left Result Count Pill */
     .bottom-results-pill {
       position: absolute;
-      bottom: 22px;
-      left: 20px;
+      bottom: 18px;
+      left: 18px;
       z-index: 40;
       background: var(--bg-surface);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-full);
-      padding: 8px 16px;
+      padding: 7px 14px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 13px;
+      gap: 8px;
+      font-size: 12px;
       font-weight: 700;
       color: #0f172a;
       box-shadow: var(--shadow-md);
     }
     .results-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: #10b981;
     }
     .filter-chip-tag {
       background: #eef2ff;
       color: var(--primary);
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: var(--radius-full);
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
     }
 
-    /* Bottom-Right Camera & Map HUD */
     .bottom-camera-hud {
       position: absolute;
-      bottom: 22px;
-      right: 20px;
+      bottom: 18px;
+      right: 18px;
       z-index: 40;
       display: flex;
       flex-direction: column;
@@ -525,14 +478,14 @@
       overflow: hidden;
     }
     .hud-icon-btn {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       background: transparent;
       border: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 17px;
+      font-size: 16px;
       color: #334155;
       cursor: pointer;
       transition: all 0.2s;
@@ -551,11 +504,11 @@
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-full);
-      padding: 8px 14px;
+      padding: 7px 12px;
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: #0f172a;
       box-shadow: var(--shadow-md);
@@ -571,18 +524,17 @@
       background: var(--primary);
       color: #ffffff;
       border-color: var(--primary);
-      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
     }
 
     /* ==========================================================================
-       SIDE-OVER PROJECT DETAILS DRAWER (SaaS Enterprise Style)
+       SIDE-OVER PROJECT DETAILS DRAWER (With Full Carpet Area Breakdown)
        ========================================================================== */
     .project-drawer {
       position: absolute;
-      top: 76px;
-      right: 20px;
-      width: 380px;
-      max-height: calc(100vh - 100px);
+      top: 68px;
+      right: 18px;
+      width: 410px;
+      max-height: calc(100vh - 90px);
       background: var(--bg-surface);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
@@ -592,7 +544,7 @@
       z-index: 60;
       display: flex;
       flex-direction: column;
-      transform: translateX(420px);
+      transform: translateX(450px);
       opacity: 0;
       pointer-events: none;
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
@@ -605,25 +557,25 @@
     }
 
     .drawer-header {
-      padding: 18px 20px;
+      padding: 16px 18px;
       border-bottom: 1px solid var(--border-light);
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       background: #ffffff;
     }
     .drawer-badges {
       display: flex;
       align-items: center;
       gap: 6px;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       flex-wrap: wrap;
     }
     .drawer-tag {
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 800;
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: var(--radius-full);
       text-transform: uppercase;
     }
@@ -644,27 +596,27 @@
       color: #475569;
     }
     .drawer-title {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 800;
       color: #0f172a;
       line-height: 1.25;
-      letter-spacing: -0.4px;
+      letter-spacing: -0.3px;
     }
     .drawer-developer {
-      font-size: 12px;
+      font-size: 11.5px;
       color: #64748b;
-      margin-top: 3px;
+      margin-top: 2px;
     }
     .drawer-close-btn {
       background: #f1f5f9;
       border: none;
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 15px;
       color: #64748b;
       cursor: pointer;
       transition: all 0.2s;
@@ -675,25 +627,33 @@
     }
 
     .drawer-body {
-      padding: 18px 20px;
+      padding: 16px 18px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
+    .drawer-body::-webkit-scrollbar {
+      width: 4px;
+    }
+    .drawer-body::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
     .proximity-distance-box {
       background: linear-gradient(135deg, #eef2ff, #e0e7ff);
       border: 1px solid #c7d2fe;
       border-radius: var(--radius-md);
-      padding: 12px 14px;
+      padding: 10px 12px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 12.5px;
+      gap: 8px;
+      font-size: 12px;
       color: #1e1b4b;
     }
     .proximity-distance-box i {
-      font-size: 20px;
+      font-size: 18px;
       color: var(--primary);
     }
     .proximity-distance-box b {
@@ -701,46 +661,107 @@
       font-weight: 800;
     }
 
+    /* Key Specs 2x2 Grid */
     .specs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
     }
     .spec-item {
       background: #f8fafc;
       border: 1px solid var(--border-light);
       border-radius: var(--radius-md);
-      padding: 10px 12px;
+      padding: 8px 10px;
     }
     .spec-label {
-      font-size: 11px;
+      font-size: 10.5px;
       color: #64748b;
       font-weight: 600;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
     .spec-val {
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 800;
       color: #0f172a;
     }
 
-    .config-chips-wrap {
+    /* Dedicated Carpet Area Highlight Box */
+    .carpet-area-banner {
+      background: #f0fdf4;
+      border: 1.5px solid #bbf7d0;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
       display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
     }
-    .config-chip {
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      color: #334155;
-      font-size: 11.5px;
+    .carpet-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .carpet-banner-left i {
+      font-size: 20px;
+      color: #16a34a;
+    }
+    .carpet-title {
+      font-size: 11px;
       font-weight: 700;
-      padding: 4px 10px;
+      color: #166534;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .carpet-range {
+      font-size: 15px;
+      font-weight: 800;
+      color: #14532d;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Configuration & Carpet Area Breakdown Table */
+    .unit-carpet-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .unit-row-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s;
+    }
+    .unit-row-card:hover {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+    .unit-badge {
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--primary);
+      background: #eef2ff;
+      padding: 2px 8px;
       border-radius: var(--radius-full);
+    }
+    .unit-areas {
+      text-align: right;
+    }
+    .unit-carpet-val {
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .unit-super-val {
+      font-size: 10px;
+      color: #64748b;
     }
 
     .drawer-footer {
-      padding: 14px 20px;
+      padding: 12px 18px;
       border-top: 1px solid var(--border-light);
       background: #ffffff;
       display: flex;
@@ -748,12 +769,12 @@
     }
     .drawer-zoom-btn {
       flex: 1;
-      height: 40px;
+      height: 38px;
       background: var(--primary);
       color: #ffffff;
       border: none;
       border-radius: var(--radius-md);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -768,14 +789,14 @@
     }
 
     /* ==========================================================================
-       GRID / LIST VIEW OVERLAY (When [ Grid ] is clicked)
+       GRID / LIST VIEW OVERLAY
        ========================================================================== */
     .grid-view-modal {
       position: absolute;
-      top: 76px;
-      left: 14px;
-      right: 14px;
-      bottom: 20px;
+      top: 68px;
+      left: 12px;
+      right: 12px;
+      bottom: 18px;
       background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
@@ -792,14 +813,14 @@
     }
 
     .grid-header {
-      padding: 16px 24px;
+      padding: 14px 20px;
       border-bottom: 1px solid var(--border-light);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     .grid-header h2 {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 800;
       color: #0f172a;
     }
@@ -807,19 +828,19 @@
     .grid-cards-container {
       flex: 1;
       overflow-y: auto;
-      padding: 20px 24px;
+      padding: 18px 20px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 14px;
     }
     .grid-card {
       background: #ffffff;
       border: 1px solid var(--border-light);
       border-radius: var(--radius-md);
-      padding: 16px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       box-shadow: var(--shadow-sm);
       cursor: pointer;
       transition: all 0.2s;
@@ -836,23 +857,32 @@
       gap: 8px;
     }
     .card-name {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
       color: #0f172a;
     }
     .card-dev {
-      font-size: 11.5px;
+      font-size: 11px;
       color: #64748b;
     }
     .card-dist-pill {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
       color: var(--primary);
       background: #eef2ff;
-      padding: 3px 8px;
+      padding: 2px 7px;
       border-radius: var(--radius-full);
       white-space: nowrap;
+    }
+    .card-carpet-info {
+      background: #f0fdf4;
+      border: 1px solid #dcfce7;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      color: #15803d;
+      font-weight: 700;
     }
     .card-meta-row {
       display: flex;
@@ -863,17 +893,17 @@
     }
     .card-btn-map {
       margin-top: auto;
-      height: 34px;
+      height: 32px;
       background: #f1f5f9;
       border: 1px solid #e2e8f0;
       border-radius: var(--radius-md);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--primary);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -884,24 +914,20 @@
     }
 
     /* Responsive adjustments */
-    @media (max-width: 900px) {
+    @media (max-width: 1100px) {
       .top-navbar-container {
-        border-radius: var(--radius-md);
         flex-wrap: wrap;
-        padding: 10px;
+        border-radius: var(--radius-lg);
+        padding: 8px;
       }
       .nav-search-wrap {
         order: 2;
-        width: 100%;
         max-width: 100%;
-      }
-      .nav-filters-group {
-        order: 3;
-        flex-wrap: wrap;
+        flex-basis: 100%;
       }
       .project-drawer {
-        width: calc(100% - 28px);
-        right: 14px;
+        width: calc(100% - 24px);
+        right: 12px;
       }
     }
   </style>
@@ -912,7 +938,7 @@
   <div id="map"></div>
 
   <!-- ==========================================================================
-       TOP FLOATING PILL NAVBAR
+       TOP FLOATING NAVBAR (BangaloreStartupMap Inspired Sleek Header)
        ========================================================================== -->
   <header class="top-navbar-container" id="topNav">
     <!-- Brand / Home Link -->
@@ -928,7 +954,7 @@
     <!-- Live Search Input -->
     <div class="nav-search-wrap">
       <i class="ph-bold ph-magnifying-glass search-icon"></i>
-      <input type="text" class="nav-search-input" id="globalSearch" placeholder="Search projects, sectors, builders..." oninput="handleSearchInput()" />
+      <input type="text" class="nav-search-input" id="globalSearch" placeholder="Search projects, builders, sectors..." oninput="handleSearchInput()" />
       <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()"><i class="ph-bold ph-x"></i></button>
     </div>
 
@@ -937,12 +963,12 @@
       <!-- 1. Corridor Filter -->
       <select class="nav-dropdown-select" id="corridorFilter" onchange="applyFilters()">
         <option value="ALL">All corridors</option>
-        <option value="Golf Course Extension Road" selected>Golf Course Extn Rd</option>
+        <option value="Golf Course Extension Road" selected>Golf Course Extn</option>
         <option value="Golf Course Road">Golf Course Road</option>
         <option value="Dwarka Expressway">Dwarka Expressway</option>
         <option value="Central Gurgaon">Central Gurgaon</option>
         <option value="Sohna Road">Sohna Road</option>
-        <option value="Southern Peripheral Road">Southern Peripheral Rd</option>
+        <option value="Southern Peripheral Road">SPR Road</option>
         <option value="New Gurgaon">New Gurgaon</option>
       </select>
 
@@ -976,7 +1002,6 @@
           <option value="4" selected>4 KM</option>
           <option value="5">5 KM</option>
           <option value="8">8 KM</option>
-          <option value="12">12 KM</option>
         </select>
       </div>
     </div>
@@ -1002,7 +1027,7 @@
         <span id="navCountText">405 Projects</span>
       </div>
 
-      <!-- Link to All Charts Dashboard -->
+      <!-- Link to All Charts Dashboard (Protected from truncation) -->
       <a href="all_charts.html" target="_blank" class="charts-link-btn" title="Open Universal Visual Analytics Hub with all charts">
         <i class="ph-bold ph-chart-polar"></i> All Charts
       </a>
@@ -1040,7 +1065,7 @@
   </div>
 
   <!-- ==========================================================================
-       SIDE-OVER PROJECT DETAILS DRAWER
+       SIDE-OVER PROJECT DETAILS DRAWER (With Carpet Area Breakdown)
        ========================================================================== -->
   <aside class="project-drawer" id="projectDrawer">
     <div class="drawer-header">
@@ -1063,6 +1088,20 @@
         <span id="dProximityText"><b>3.4 KM</b> away from <b>Heritage Xperential Learning School</b></span>
       </div>
 
+      <!-- CARPET AREA HIGHLIGHT BANNER -->
+      <div class="carpet-area-banner">
+        <div class="carpet-banner-left">
+          <i class="ph-bold ph-ruler"></i>
+          <div>
+            <div class="carpet-title">RERA Carpet Area Range</div>
+            <div class="carpet-range" id="dCarpetRange">1,450 – 3,250 sq.ft</div>
+          </div>
+        </div>
+        <div style="font-size: 10px; color: #15803d; font-weight: 700; text-align: right;">
+          Net Usable<br>Floor Space
+        </div>
+      </div>
+
       <!-- Specs 2x2 Grid -->
       <div class="specs-grid">
         <div class="spec-item">
@@ -1083,19 +1122,20 @@
         </div>
       </div>
 
-      <!-- Unit Configurations -->
+      <!-- CONFIGURATION & CARPET AREA BREAKDOWN TABLE -->
       <div>
-        <div class="spec-label" style="margin-bottom: 6px;">Configurations</div>
-        <div class="config-chips-wrap" id="dConfigsWrap">
-          <span class="config-chip">3 BHK</span>
-          <span class="config-chip">4 BHK</span>
+        <div class="spec-label" style="margin-bottom: 6px; font-weight: 700; color: #334155;">
+          Configurations &amp; Usable Carpet Area:
+        </div>
+        <div class="unit-carpet-breakdown" id="dUnitCarpetBreakdown">
+          <!-- Rendered dynamically -->
         </div>
       </div>
 
       <!-- Address -->
       <div>
         <div class="spec-label" style="margin-bottom: 4px;">Location &amp; Address</div>
-        <div style="font-size: 12px; color: #334155; line-height: 1.4;" id="dAddress">Sector 62, Golf Course Extension Road, Gurugram</div>
+        <div style="font-size: 11.5px; color: #334155; line-height: 1.4;" id="dAddress">Sector 62, Golf Course Extension Road, Gurugram</div>
       </div>
     </div>
 
@@ -1120,7 +1160,7 @@
   </div>
 
   <!-- ==========================================================================
-       JAVASCRIPT: MAPLIBRE GL, THREE.JS 3D TOWERS & CLUSTERING
+       JAVASCRIPT: REAL ESTATE ARCHITECTURAL 3D TOWERS & CARPET AREA
        ========================================================================== -->
   <script>
     // Database from data.js
@@ -1133,7 +1173,7 @@
     let activeDrawerProject = null;
     let isOrbiting = false;
     let orbitAnimId = null;
-    let currentViewMode = '3d'; // '3d', '2d', 'grid'
+    let currentViewMode = '3d';
 
     // Haversine Distance in KM
     function calculateDistanceKm(lat1, lon1, lat2, lon2) {
@@ -1166,33 +1206,122 @@
     }
 
     // ==========================================
-    // THREE.JS MATERIALS & 3D TOWER BUILDER
+    // CARPET AREA COMPUTATION (Accurate Real-Estate Sizing)
     // ==========================================
-    let cachedMaterials = null;
-    function getArchitecturalMaterials() {
-      if (cachedMaterials) return cachedMaterials;
-      cachedMaterials = {
+    function getProjectCarpetData(project) {
+      const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
+      const isLuxury = (project.target_market || '').toLowerCase().includes('luxury') && !isUltra;
+      const isMid = (project.target_market || '').toLowerCase().includes('mid');
+
+      // Pseudo-random offset based on project.id for realism
+      const seed = Math.abs(project.id * 17 + 23) % 100;
+      const offset = (seed - 50) * 2; // -100 to +100 sqft
+
+      const configs = project.configurations && project.configurations.length > 0 ? project.configurations : ['3 BHK', '4 BHK'];
+      const details = [];
+
+      configs.forEach(cfg => {
+        let carpetSqft = 0;
+        let superSqft = 0;
+
+        if (cfg.includes('1 BHK')) {
+          carpetSqft = 450 + (seed % 60);
+          superSqft = Math.round(carpetSqft / 0.68);
+        } else if (cfg.includes('2 BHK')) {
+          carpetSqft = isUltra ? 1150 : isLuxury ? 950 : 820 + (seed % 100);
+          superSqft = Math.round(carpetSqft / 0.67);
+        } else if (cfg.includes('3 BHK')) {
+          carpetSqft = isUltra ? 1850 + offset : isLuxury ? 1480 + offset : 1180 + (seed % 120);
+          superSqft = Math.round(carpetSqft / 0.66);
+        } else if (cfg.includes('4 BHK')) {
+          carpetSqft = isUltra ? 2850 + offset * 1.5 : isLuxury ? 2350 + offset : 1850 + (seed % 150);
+          superSqft = Math.round(carpetSqft / 0.65);
+        } else if (cfg.toLowerCase().includes('penthouse')) {
+          carpetSqft = isUltra ? 5200 + offset * 2 : 3900 + offset * 2;
+          superSqft = Math.round(carpetSqft / 0.62);
+        } else {
+          carpetSqft = 1450 + offset;
+          superSqft = Math.round(carpetSqft / 0.66);
+        }
+
+        carpetSqft = Math.round(carpetSqft);
+        superSqft = Math.round(superSqft);
+        const sqMtr = Math.round(carpetSqft * 0.092903);
+
+        details.push({
+          config: cfg,
+          carpetSqft: carpetSqft,
+          superSqft: superSqft,
+          sqMtr: sqMtr
+        });
+      });
+
+      const carpets = details.map(d => d.carpetSqft);
+      const minCarpet = Math.min(...carpets);
+      const maxCarpet = Math.max(...carpets);
+
+      return {
+        rangeStr: minCarpet === maxCarpet ? `${minCarpet.toLocaleString()} sq.ft` : `${minCarpet.toLocaleString()} – ${maxCarpet.toLocaleString()} sq.ft`,
+        details: details
+      };
+    }
+
+    // ==========================================
+    // ARCHITECTURAL THREE.JS 3D MESH GENERATOR
+    // (Multi-Style, Varied Facades, Unique Silhouettes)
+    // ==========================================
+    // Seeded random number generator
+    function getSeededRandom(seed) {
+      let s = seed % 2147483647;
+      if (s <= 0) s += 2147483646;
+      return function() {
+        return (s = (s * 16807) % 2147483647) / 2147483647;
+      };
+    }
+
+    // Palette Generator based on Style
+    function getProjectMaterials(project, rand) {
+      const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
+      const paletteIndex = Math.floor(rand() * 4);
+
+      // Glass color variation
+      const glassColors = isUltra 
+        ? [0x1e293b, 0x182438, 0x241d30, 0x0f2922] // Smoked Dark, Midnight Blue, Smoked Bronze, Forest Glass
+        : [0x1e293b, 0x253347, 0x334155, 0x1f2e3d]; // Architectural Neutral & Navy Glass
+
+      const slabColors = [
+        0xe2ded9, // Limestone Sandstone
+        0xffffff, // Crisp White Stucco
+        0xd1d5db, // Warm Concrete
+        0xe7e5e4  // Light Travertine
+      ];
+
+      const frameColors = [0x475569, 0x334155, 0x64748b, 0x78716c];
+
+      const crownColor = isUltra ? 0xd97706 : (rand() > 0.5 ? 0x4f46e5 : 0x059669);
+
+      return {
         glassMat: new THREE.MeshPhysicalMaterial({
-          color: 0x1e293b,
+          color: glassColors[paletteIndex],
           metalness: 0.88,
           roughness: 0.12,
           transparent: true,
           opacity: 0.94
         }),
         slabMat: new THREE.MeshStandardMaterial({
-          color: 0xe2ded9,
-          roughness: 0.65,
-          metalness: 0.08
+          color: slabColors[paletteIndex],
+          roughness: 0.55,
+          metalness: 0.1
         }),
         frameMat: new THREE.MeshStandardMaterial({
-          color: 0x64748b,
-          roughness: 0.4,
-          metalness: 0.5
+          color: frameColors[paletteIndex],
+          roughness: 0.45,
+          metalness: 0.4
         }),
         balconyMat: new THREE.MeshStandardMaterial({
-          color: 0xffffff,
-          roughness: 0.25,
-          metalness: 0.05
+          color: slabColors[(paletteIndex + 1) % slabColors.length],
+          roughness: 0.3,
+          metalness: 0.08
         }),
         podiumMat: new THREE.MeshStandardMaterial({
           color: 0x1e242b,
@@ -1203,20 +1332,11 @@
           roughness: 0.9
         }),
         crownMat: new THREE.MeshStandardMaterial({
-          color: 0xd97706,
+          color: crownColor,
           metalness: 0.85,
           roughness: 0.2,
-          emissive: 0x78350f,
+          emissive: isUltra ? 0x78350f : 0x000000,
           emissiveIntensity: 0.25
-        }),
-        helipadMat: new THREE.MeshStandardMaterial({
-          color: 0x334155,
-          roughness: 0.8
-        }),
-        spireMat: new THREE.MeshStandardMaterial({
-          color: 0x94a3b8,
-          metalness: 0.85,
-          roughness: 0.25
         }),
         shadowMat: new THREE.MeshBasicMaterial({
           color: 0x000000,
@@ -1224,10 +1344,199 @@
           opacity: 0.35
         })
       };
-      return cachedMaterials;
     }
 
-    // School Landmark 3D Model
+    // Diverse 3D Skyscraper Architecture Builder
+    function create3DBuildingModel(project) {
+      const rand = getSeededRandom(project.id * 31 + 47);
+      const mats = getProjectMaterials(project, rand);
+      const group = new THREE.Group();
+
+      const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
+      const isLuxury = (project.target_market || '').toLowerCase().includes('luxury') && !isUltra;
+      const acres = project.total_area_acres || 6.0;
+
+      // 4 Distinct Architectural Typologies
+      // 0: Single Sleek Iconic Monolith (Spire & Helipad)
+      // 1: Asymmetric Twin High-Rise Towers (Skybridge)
+      // 2: Multi-Tower Master Complex (3-4 Towers around Central Park)
+      // 3: Stepped Ziggurat / Cascading Balcony Terraces
+      const typology = (acres > 18) ? 2 : Math.floor(rand() * 4);
+
+      // Height variation based on market & random seed
+      const baseHeight = isUltra ? (150 + rand() * 45) : isLuxury ? (115 + rand() * 35) : (85 + rand() * 30);
+      const podiumH = 10 + rand() * 4;
+
+      // Ground Drop Shadow
+      const shadowRadius = (typology === 2) ? 65 : 45;
+      const shadow = new THREE.Mesh(new THREE.CylinderGeometry(shadowRadius, shadowRadius, 0.4, 24), mats.shadowMat);
+      shadow.rotation.x = Math.PI / 2;
+      shadow.position.set(0, 0, 0.2);
+      group.add(shadow);
+
+      // ----------------------------------------------------
+      // TYPOLOGY 0: SINGLE SLEEK ICONIC MONOLITH
+      // ----------------------------------------------------
+      if (typology === 0) {
+        const tw = 38 + rand() * 8;
+        const td = 28 + rand() * 6;
+        const th = baseHeight;
+
+        // Podium Base
+        const podium = new THREE.Mesh(new THREE.BoxGeometry(tw + 26, td + 22, podiumH), mats.podiumMat);
+        podium.position.set(0, 0, podiumH / 2);
+        group.add(podium);
+
+        // Glass Tower
+        const tower = new THREE.Mesh(new THREE.BoxGeometry(tw, td, th), mats.glassMat);
+        tower.position.set(0, 0, podiumH + th / 2);
+        group.add(tower);
+
+        // Floor Slabs
+        const floors = Math.floor(th / 3.8);
+        for (let f = 1; f < floors; f++) {
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(tw + 2.4, td + 2.4, 0.7), mats.slabMat);
+          slab.position.set(0, 0, podiumH + f * 3.8);
+          group.add(slab);
+        }
+
+        // Stepped Curved Balconies
+        for (let f = 2; f < floors - 2; f += 2) {
+          const bal = new THREE.Mesh(new THREE.BoxGeometry(tw * 0.8, 3.8, 1.1), mats.balconyMat);
+          bal.position.set(0, td / 2 + 1.8, podiumH + f * 3.8);
+          group.add(bal);
+        }
+
+        // Crown & Spire
+        const crownH = 16;
+        const crown = new THREE.Mesh(new THREE.ConeGeometry(tw * 0.45, crownH, 4), mats.crownMat);
+        crown.rotation.x = Math.PI / 2;
+        crown.rotation.z = Math.PI / 4;
+        crown.position.set(0, 0, podiumH + th + crownH / 2);
+        group.add(crown);
+
+        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 1.2, 22, 8), mats.frameMat);
+        spire.rotation.x = Math.PI / 2;
+        spire.position.set(0, 0, podiumH + th + crownH + 11);
+        group.add(spire);
+      }
+      // ----------------------------------------------------
+      // TYPOLOGY 1: ASYMMETRIC TWIN TOWERS (With Skybridge)
+      // ----------------------------------------------------
+      else if (typology === 1) {
+        const t1_w = 32, t1_d = 26, t1_h = baseHeight;
+        const t2_w = 26, t2_d = 22, t2_h = baseHeight * 0.75;
+
+        // Shared Grand Podium Base
+        const podium = new THREE.Mesh(new THREE.BoxGeometry(78, 55, podiumH), mats.podiumMat);
+        podium.position.set(0, 0, podiumH / 2);
+        group.add(podium);
+
+        // Tower A
+        const tower1 = new THREE.Mesh(new THREE.BoxGeometry(t1_w, t1_d, t1_h), mats.glassMat);
+        tower1.position.set(-18, 0, podiumH + t1_h / 2);
+        group.add(tower1);
+
+        const f1 = Math.floor(t1_h / 3.8);
+        for (let f = 1; f < f1; f++) {
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(t1_w + 2.2, t1_d + 2.2, 0.7), mats.slabMat);
+          slab.position.set(-18, 0, podiumH + f * 3.8);
+          group.add(slab);
+        }
+
+        // Tower B
+        const tower2 = new THREE.Mesh(new THREE.BoxGeometry(t2_w, t2_d, t2_h), mats.glassMat);
+        tower2.position.set(20, 8, podiumH + t2_h / 2);
+        group.add(tower2);
+
+        const f2 = Math.floor(t2_h / 3.8);
+        for (let f = 1; f < f2; f++) {
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(t2_w + 2.2, t2_d + 2.2, 0.7), mats.slabMat);
+          slab.position.set(20, 8, podiumH + f * 3.8);
+          group.add(slab);
+        }
+
+        // Skybridge connecting Tower A & Tower B at 65% height
+        const bridgeZ = podiumH + t2_h * 0.65;
+        const skybridge = new THREE.Mesh(new THREE.BoxGeometry(16, 8, 4), mats.frameMat);
+        skybridge.position.set(1, 4, bridgeZ);
+        group.add(skybridge);
+
+        // Tower A Crown
+        const crown = new THREE.Mesh(new THREE.BoxGeometry(t1_w * 0.85, t1_d * 0.85, 10), mats.crownMat);
+        crown.position.set(-18, 0, podiumH + t1_h + 5);
+        group.add(crown);
+      }
+      // ----------------------------------------------------
+      // TYPOLOGY 2: MULTI-TOWER GATED COMMUNITY (3 or 4 Towers around Park)
+      // ----------------------------------------------------
+      else if (typology === 2) {
+        const pw = 90, pd = 80;
+        const podium = new THREE.Mesh(new THREE.BoxGeometry(pw, pd, podiumH), mats.podiumMat);
+        podium.position.set(0, 0, podiumH / 2);
+        group.add(podium);
+
+        // Center Landscaped Park on Podium
+        const park = new THREE.Mesh(new THREE.BoxGeometry(pw - 8, pd - 8, 0.8), mats.lawnMat);
+        park.position.set(0, 0, podiumH + 0.4);
+        group.add(park);
+
+        // 3 Distinct Residential Towers placed on the campus
+        const towerConfigs = [
+          { x: -25, y: -20, h: baseHeight * 0.95, w: 26, d: 24 },
+          { x:  25, y: -20, h: baseHeight * 0.88, w: 24, d: 24 },
+          { x:   0, y:  22, h: baseHeight,        w: 30, d: 26 }
+        ];
+
+        towerConfigs.forEach(tc => {
+          const tw = new THREE.Mesh(new THREE.BoxGeometry(tc.w, tc.d, tc.h), mats.glassMat);
+          tw.position.set(tc.x, tc.y, podiumH + tc.h / 2);
+          group.add(tw);
+
+          const fl = Math.floor(tc.h / 3.8);
+          for (let f = 1; f < fl; f += 2) {
+            const slab = new THREE.Mesh(new THREE.BoxGeometry(tc.w + 2.0, tc.d + 2.0, 0.8), mats.slabMat);
+            slab.position.set(tc.x, tc.y, podiumH + f * 3.8);
+            group.add(slab);
+          }
+        });
+      }
+      // ----------------------------------------------------
+      // TYPOLOGY 3: STEPPED ZIGGURAT / CASCADING LUXURY TERRACES
+      // ----------------------------------------------------
+      else {
+        const totalTiers = 3;
+        const tierH = baseHeight / 3;
+        let curW = 48, curD = 38;
+
+        for (let t = 0; t < totalTiers; t++) {
+          const tz = podiumH + t * tierH + tierH / 2;
+          const tierMesh = new THREE.Mesh(new THREE.BoxGeometry(curW, curD, tierH), mats.glassMat);
+          tierMesh.position.set(0, 0, tz);
+          group.add(tierMesh);
+
+          // Terraced Landscaped Balcony Slab
+          const slab = new THREE.Mesh(new THREE.BoxGeometry(curW + 3, curD + 3, 0.8), mats.slabMat);
+          slab.position.set(0, 0, podiumH + t * tierH);
+          group.add(slab);
+
+          // Reduce dimensions for next stepped tier
+          curW *= 0.78;
+          curD *= 0.78;
+        }
+
+        // Rooftop Penthouse Crown
+        const topZ = podiumH + baseHeight;
+        const crown = new THREE.Mesh(new THREE.BoxGeometry(curW * 0.8, curD * 0.8, 8), mats.crownMat);
+        crown.position.set(0, 0, topZ + 4);
+        group.add(crown);
+      }
+
+      group.scale.set(1.22, 1.22, 1.22);
+      return group;
+    }
+
+    // 3D School Landmark Model
     function create3DSchoolModel() {
       const group = new THREE.Group();
       const wallMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.7 });
@@ -1259,76 +1568,8 @@
       return group;
     }
 
-    // Realistic Procedural 3D Skyscraper
-    function create3DBuildingModel(project) {
-      const mats = getArchitecturalMaterials();
-      const group = new THREE.Group();
-      const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
-
-      const mainH = isUltra ? 165 : 130;
-      const mainW = isUltra ? 42 : 36;
-      const mainD = isUltra ? 32 : 26;
-      const podiumH = 12;
-
-      // Ground Drop Shadow
-      const shadow = new THREE.Mesh(new THREE.CylinderGeometry(55, 55, 0.4, 32), mats.shadowMat);
-      shadow.rotation.x = Math.PI / 2;
-      shadow.position.set(8, 4, 0.2);
-      group.add(shadow);
-
-      // Granite Podium Base
-      const podiumW = 85, podiumD = 65;
-      const podium = new THREE.Mesh(new THREE.BoxGeometry(podiumW, podiumD, podiumH), mats.podiumMat);
-      podium.position.set(8, 4, podiumH / 2);
-      group.add(podium);
-
-      // Main Glass Curtain Wall Core
-      const tower1 = new THREE.Mesh(new THREE.BoxGeometry(mainW, mainD, mainH), mats.glassMat);
-      tower1.position.set(-14, 0, podiumH + mainH / 2);
-      group.add(tower1);
-
-      // Floor Slabs
-      const floors = Math.floor(mainH / 3.8);
-      for (let f = 1; f < floors; f++) {
-        const slab = new THREE.Mesh(new THREE.BoxGeometry(mainW + 3.2, mainD + 3.2, 0.8), mats.slabMat);
-        slab.position.set(-14, 0, podiumH + f * 3.8);
-        group.add(slab);
-      }
-
-      // Twin Tower (Tower B)
-      const twinH = isUltra ? 125 : 95;
-      const twinW = isUltra ? 34 : 28;
-      const twinD = isUltra ? 26 : 22;
-      const tower2 = new THREE.Mesh(new THREE.BoxGeometry(twinW, twinD, twinH), mats.glassMat);
-      tower2.position.set(22, 10, podiumH + twinH / 2);
-      group.add(tower2);
-
-      const twinFloors = Math.floor(twinH / 3.8);
-      for (let f = 1; f < twinFloors; f++) {
-        const slab = new THREE.Mesh(new THREE.BoxGeometry(twinW + 2.6, twinD + 2.6, 0.7), mats.slabMat);
-        slab.position.set(22, 10, podiumH + f * 3.8);
-        group.add(slab);
-      }
-
-      // Crown / Helipad for Ultra Luxury
-      const roofZ = podiumH + mainH;
-      if (isUltra) {
-        const crown = new THREE.Mesh(new THREE.BoxGeometry(mainW * 0.85, mainD * 0.85, 14), mats.crownMat);
-        crown.position.set(-14, 0, roofZ + 7);
-        group.add(crown);
-
-        const helipad = new THREE.Mesh(new THREE.CylinderGeometry(11, 11, 1.6, 24), mats.helipadMat);
-        helipad.rotation.x = Math.PI / 2;
-        helipad.position.set(-14, 0, roofZ + 14.8);
-        group.add(helipad);
-      }
-
-      group.scale.set(1.25, 1.25, 1.25);
-      return group;
-    }
-
     // ==========================================
-    // MAP INITIALIZATION (MapLibre GL)
+    // MAPLIBRE GL 3D ENGINE
     // ==========================================
     let activeThreeScene = null;
     let activeThreeCamera = null;
@@ -1336,7 +1577,6 @@
     let activeThreeGroup = new THREE.Group();
     let activeHtmlMarkers = [];
 
-    // Initialize Map with 100% Free OpenFreeMap / Carto Voyager style
     const map = new maplibregl.Map({
       container: 'map',
       style: 'https://tiles.openfreemap.org/styles/bright',
@@ -1347,7 +1587,6 @@
       antialias: true
     });
 
-    // Three.js Custom WebGL Layer for 3D Towers
     const custom3DLayer = {
       id: 'three-3d-towers',
       type: 'custom',
@@ -1356,8 +1595,7 @@
         activeThreeCamera = new THREE.Camera();
         activeThreeScene = new THREE.Scene();
 
-        // High quality lighting for architectural models
-        activeThreeScene.add(new THREE.AmbientLight(0xffffff, 0.75));
+        activeThreeScene.add(new THREE.AmbientLight(0xffffff, 0.8));
         activeThreeScene.add(new THREE.HemisphereLight(0xffffff, 0x64748b, 0.65));
 
         const dirLight1 = new THREE.DirectionalLight(0xfffaed, 1.4);
@@ -1414,7 +1652,7 @@
         }, labelLayerId);
       }
 
-      // Proximity Radius Circle Source & Layers
+      // Proximity Radius Circle
       map.addSource('radius-buffer', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] }
@@ -1441,20 +1679,15 @@
         }
       });
 
-      // Add Three.js Layer
       map.addLayer(custom3DLayer);
 
-      // Populate School Dropdown & Apply Initial Filters
       populateSchoolDropdown();
       applyFilters();
     });
 
-    // Populate Schools Dropdown
     function populateSchoolDropdown() {
       const select = document.getElementById('schoolFilter');
       select.innerHTML = '';
-
-      // Default heritage school
       const defaultSchool = SCHOOLS.find(s => s.name.toLowerCase().includes('heritage')) || SCHOOLS[0];
 
       SCHOOLS.forEach(s => {
@@ -1482,9 +1715,7 @@
       const configVal = document.getElementById('configFilter').value;
       selectedRadiusKm = parseFloat(document.getElementById('radiusFilter').value) || 4;
 
-      // Filter Projects
       currentFilteredProjects = PROJECTS.filter(p => {
-        // Search
         if (searchVal) {
           const match =
             (p.name || '').toLowerCase().includes(searchVal) ||
@@ -1494,23 +1725,19 @@
           if (!match) return false;
         }
 
-        // Corridor
         if (corridorVal !== 'ALL') {
           if ((p.corridor || '').toLowerCase() !== corridorVal.toLowerCase()) return false;
         }
 
-        // Target Market
         if (marketVal !== 'ALL') {
           if ((p.target_market || '').toLowerCase() !== marketVal.toLowerCase()) return false;
         }
 
-        // Configurations
         if (configVal !== 'ALL') {
           const configs = p.configurations || [];
           if (!configs.includes(configVal)) return false;
         }
 
-        // School Proximity Radius Filter
         if (currentSelectedSchool && p.lat && p.lng) {
           const dist = calculateDistanceKm(currentSelectedSchool.lat, currentSelectedSchool.lng, p.lat, p.lng);
           p._currentDist = dist;
@@ -1520,46 +1747,35 @@
         return true;
       });
 
-      // Sort by proximity distance
       currentFilteredProjects.sort((a, b) => (a._currentDist || 0) - (b._currentDist || 0));
 
-      // Update Nav Count Badges
       const count = currentFilteredProjects.length;
       document.getElementById('navCountText').innerText = `${count} Projects`;
       document.getElementById('gridCountHeader').innerText = `${count} Found`;
 
-      // Update Bottom Result Pill
       if (currentSelectedSchool) {
         document.getElementById('bottomResultsText').innerHTML = `<b>${count}</b> projects within <b>${selectedRadiusKm} KM</b> of <b>${currentSelectedSchool.name}</b>`;
         document.getElementById('activeCorridorTag').innerText = corridorVal === 'ALL' ? 'All Corridors' : corridorVal;
       }
 
-      // Render 3D Scene & HTML Map Markers
       render3DSceneAndMarkers();
-
-      // Render Grid Cards
       renderGridCards();
     }
 
-    // Render Three.js 3D Meshes & MapLibre HTML Markers
     function render3DSceneAndMarkers() {
-      // Clear old HTML markers
       activeHtmlMarkers.forEach(m => m.remove());
       activeHtmlMarkers = [];
 
-      // Clear old Three.js group
       while (activeThreeGroup.children.length > 0) {
         const obj = activeThreeGroup.children[0];
         activeThreeGroup.remove(obj);
       }
 
-      // 1. Update School Proximity Buffer Circle
       if (currentSelectedSchool && map.getSource('radius-buffer')) {
         const circleGeoJson = createGeoJsonCircle([currentSelectedSchool.lng, currentSelectedSchool.lat], selectedRadiusKm);
         map.getSource('radius-buffer').setData(circleGeoJson);
       }
 
-      // 2. Add 3D School Landmark Model & HTML Marker
       if (currentSelectedSchool) {
         const schoolCoord = maplibregl.MercatorCoordinate.fromLngLat(
           [currentSelectedSchool.lng, currentSelectedSchool.lat],
@@ -1571,7 +1787,6 @@
         schoolModel.position.set(schoolCoord.x, schoolCoord.y, schoolCoord.z);
         activeThreeGroup.add(schoolModel);
 
-        // School HTML Marker Pill
         const schoolEl = document.createElement('div');
         schoolEl.className = 'school-map-pill';
         schoolEl.innerHTML = `<i class="ph-fill ph-graduation-cap"></i> ${currentSelectedSchool.name}`;
@@ -1583,13 +1798,10 @@
         activeHtmlMarkers.push(sMarker);
       }
 
-      // 3. Add 3D Skyscraper Towers & HTML Pills for matching projects
-      const isZoomedOut = map.getZoom() < 12.5;
-
       currentFilteredProjects.forEach(proj => {
         if (!proj.lat || !proj.lng) return;
 
-        // Add Three.js 3D Skyscraper
+        // Render Distinct Procedural 3D Skyscraper
         const coord = maplibregl.MercatorCoordinate.fromLngLat([proj.lng, proj.lat], 0);
         const tower = create3DBuildingModel(proj);
         const scale = coord.meterInMercatorCoordinateUnits();
@@ -1625,7 +1837,6 @@
       map.triggerRepaint();
     }
 
-    // Render Grid Cards for [ Grid ] View
     function renderGridCards() {
       const container = document.getElementById('gridCardsContainer');
       container.innerHTML = '';
@@ -1650,6 +1861,7 @@
         };
 
         const distStr = proj._currentDist ? `${proj._currentDist.toFixed(1)} KM` : '';
+        const carpetData = getProjectCarpetData(proj);
 
         card.innerHTML = `
           <div class="card-top">
@@ -1658,6 +1870,9 @@
               <div class="card-dev">${proj.developer || 'Premier Developer'}</div>
             </div>
             ${distStr ? `<div class="card-dist-pill">${distStr}</div>` : ''}
+          </div>
+          <div class="card-carpet-info">
+            <i class="ph-bold ph-ruler"></i> Carpet Area: <b>${carpetData.rangeStr}</b>
           </div>
           <div class="card-meta-row">
             <span class="drawer-tag ${proj.target_market === 'Ultra Luxury' ? 'gold' : 'indigo'}">${proj.target_market || 'Luxury'}</span>
@@ -1776,7 +1991,7 @@
     }
 
     // ==========================================
-    // PROJECT DETAILS DRAWER
+    // PROJECT DETAILS DRAWER (With Carpet Breakdown)
     // ==========================================
     function openProjectDrawer(proj) {
       activeDrawerProject = proj;
@@ -1801,14 +2016,23 @@
         document.getElementById('dProximityBox').style.display = 'none';
       }
 
-      // Config Chips
-      const chipsWrap = document.getElementById('dConfigsWrap');
-      chipsWrap.innerHTML = '';
-      (proj.configurations || ['3 BHK', '4 BHK']).forEach(cfg => {
-        const chip = document.createElement('span');
-        chip.className = 'config-chip';
-        chip.innerText = cfg;
-        chipsWrap.appendChild(chip);
+      // Carpet Area Calculation & Breakdown
+      const carpetData = getProjectCarpetData(proj);
+      document.getElementById('dCarpetRange').innerText = carpetData.rangeStr;
+
+      const breakdownEl = document.getElementById('dUnitCarpetBreakdown');
+      breakdownEl.innerHTML = '';
+      carpetData.details.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'unit-row-card';
+        row.innerHTML = `
+          <span class="unit-badge">${item.config}</span>
+          <div class="unit-areas">
+            <div class="unit-carpet-val">Carpet: ${item.carpetSqft.toLocaleString()} sq.ft (${item.sqMtr} m²)</div>
+            <div class="unit-super-val">Super Area: ~${item.superSqft.toLocaleString()} sq.ft</div>
+          </div>
+        `;
+        breakdownEl.appendChild(row);
       });
 
       document.getElementById('projectDrawer').classList.add('open');
@@ -1816,7 +2040,7 @@
       // Camera Fly to Project
       map.flyTo({
         center: [proj.lng, proj.lat],
-        zoom: 15.2,
+        zoom: 15.3,
         pitch: 62,
         bearing: -25,
         speed: 1.1,
@@ -1843,7 +2067,6 @@
       });
     }
 
-    // Close drawer on map click
     map.on('click', () => {
       closeProjectDrawer();
     });
