@@ -72,7 +72,7 @@
     }
 
     /* ==========================================================================
-       TOP FLOATING NAVBAR (BangaloreStartupMap Inspired Sleek Layout)
+       TOP FLOATING NAVBAR (BangaloreStartupMap Inspired Sleek Header)
        ========================================================================== */
     .top-navbar-container {
       position: absolute;
@@ -110,13 +110,13 @@
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #ef4444, #dc2626);
+      background: linear-gradient(135deg, #4f46e5, #3b82f6);
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
       font-size: 15px;
-      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.35);
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);
     }
     .brand-title {
       font-size: 13.5px;
@@ -311,7 +311,7 @@
       box-shadow: 0 0 5px rgba(16, 185, 129, 0.6);
     }
 
-    /* "View All Charts" Button (Linking to all_charts.html) */
+    /* "View All Charts" Button */
     .charts-link-btn {
       display: flex;
       align-items: center;
@@ -361,14 +361,14 @@
     }
 
     /* ==========================================================================
-       MAP LABELS & SCHOOL MARKER
+       MAP LABELS WITH PROPIUM SCORE & SCHOOL MARKER
        ========================================================================== */
     .project-map-pill {
       background: #ffffff;
-      border: 1.5px solid #e2e8f0;
+      border: 1.5px solid #cbd5e1;
       border-radius: var(--radius-full);
       padding: 3px 9px;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.10);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
       display: flex;
       align-items: center;
       gap: 5px;
@@ -383,18 +383,24 @@
     .project-map-pill:hover {
       transform: translateY(-2px) scale(1.06);
       border-color: var(--primary);
-      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.25);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.28);
       z-index: 9999 !important;
     }
-    .pill-market-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
+    .pill-score-tag {
+      background: #eef2ff;
+      color: #4338ca;
+      font-weight: 800;
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      gap: 2px;
     }
-    .market-ultra { background: #f59e0b; }
-    .market-luxury { background: #6366f1; }
-    .market-premium { background: #10b981; }
-    .market-mid { background: #06b6d4; }
+    .pill-score-tag.high {
+      background: #fef3c7;
+      color: #b45309;
+    }
 
     /* School Landmark Map Label */
     .school-map-pill {
@@ -527,14 +533,14 @@
     }
 
     /* ==========================================================================
-       SIDE-OVER PROJECT DETAILS DRAWER (With Full Carpet Area Breakdown)
+       SIDE-OVER PROJECT DETAILS DRAWER (With Propium Score & Redirect Button)
        ========================================================================== */
     .project-drawer {
       position: absolute;
       top: 68px;
       right: 18px;
-      width: 410px;
-      max-height: calc(100vh - 90px);
+      width: 420px;
+      max-height: calc(100vh - 86px);
       background: var(--bg-surface);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
@@ -544,7 +550,7 @@
       z-index: 60;
       display: flex;
       flex-direction: column;
-      transform: translateX(450px);
+      transform: translateX(460px);
       opacity: 0;
       pointer-events: none;
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
@@ -631,7 +637,7 @@
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 13px;
     }
     .drawer-body::-webkit-scrollbar {
       width: 4px;
@@ -641,6 +647,98 @@
       border-radius: 4px;
     }
 
+    /* PROPIUM AI SCORECARD BOX */
+    .propium-score-card {
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(49, 46, 129, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .score-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .score-badge-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .score-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+    }
+    .score-meta-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: #c7d2fe;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .score-verdict {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .score-aspects-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 10.5px;
+    }
+    .aspect-row {
+      display: flex;
+      justify-content: space-between;
+      color: #e0e7ff;
+    }
+    .aspect-row b {
+      color: #fde047;
+      font-weight: 700;
+    }
+
+    /* REDIRECT TO PROPIUM PRIMARY BUTTON */
+    .propium-redirect-btn {
+      width: 100%;
+      height: 42px;
+      background: linear-gradient(135deg, #4f46e5, #3b82f6);
+      color: #ffffff !important;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+      transition: all 0.2s ease;
+    }
+    .propium-redirect-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
+      background: linear-gradient(135deg, #4338ca, #2563eb);
+    }
+
+    /* Proximity Distance Box */
     .proximity-distance-box {
       background: linear-gradient(135deg, #eef2ff, #e0e7ff);
       border: 1px solid #c7d2fe;
@@ -661,7 +759,40 @@
       font-weight: 800;
     }
 
-    /* Key Specs 2x2 Grid */
+    /* CARPET AREA HIGHLIGHT BANNER */
+    .carpet-area-banner {
+      background: #f0fdf4;
+      border: 1.5px solid #bbf7d0;
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .carpet-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .carpet-banner-left i {
+      font-size: 20px;
+      color: #16a34a;
+    }
+    .carpet-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #166534;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .carpet-range {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #14532d;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Specs 2x2 Grid */
     .specs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -685,50 +816,17 @@
       color: #0f172a;
     }
 
-    /* Dedicated Carpet Area Highlight Box */
-    .carpet-area-banner {
-      background: #f0fdf4;
-      border: 1.5px solid #bbf7d0;
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .carpet-banner-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .carpet-banner-left i {
-      font-size: 20px;
-      color: #16a34a;
-    }
-    .carpet-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: #166534;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .carpet-range {
-      font-size: 15px;
-      font-weight: 800;
-      color: #14532d;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
     /* Configuration & Carpet Area Breakdown Table */
     .unit-carpet-breakdown {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
     .unit-row-card {
       background: #f8fafc;
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
-      padding: 8px 10px;
+      padding: 7px 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -737,26 +835,25 @@
     .unit-row-card:hover {
       background: #ffffff;
       border-color: #cbd5e1;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
     .unit-badge {
       font-weight: 800;
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--primary);
       background: #eef2ff;
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: var(--radius-full);
     }
     .unit-areas {
       text-align: right;
     }
     .unit-carpet-val {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 800;
       color: #0f172a;
     }
     .unit-super-val {
-      font-size: 10px;
+      font-size: 9.5px;
       color: #64748b;
     }
 
@@ -770,22 +867,22 @@
     .drawer-zoom-btn {
       flex: 1;
       height: 38px;
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
       border-radius: var(--radius-md);
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
       transition: all 0.2s;
     }
     .drawer-zoom-btn:hover {
-      background: var(--primary-hover);
+      background: #e2e8f0;
+      color: #0f172a;
     }
 
     /* ==========================================================================
@@ -875,6 +972,15 @@
       border-radius: var(--radius-full);
       white-space: nowrap;
     }
+    .card-score-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: #b45309;
+      background: #fef3c7;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+    }
     .card-carpet-info {
       background: #f0fdf4;
       border: 1px solid #dcfce7;
@@ -891,19 +997,24 @@
       color: #64748b;
       align-items: center;
     }
-    .card-btn-map {
+    .card-actions-row {
+      display: flex;
+      gap: 6px;
       margin-top: auto;
+    }
+    .card-btn-map {
+      flex: 1;
       height: 32px;
       background: #f1f5f9;
       border: 1px solid #e2e8f0;
       border-radius: var(--radius-md);
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--primary);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 4px;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -912,8 +1023,28 @@
       color: #ffffff;
       border-color: var(--primary);
     }
+    .card-btn-propium {
+      height: 32px;
+      padding: 0 10px;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      border-radius: var(--radius-md);
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .card-btn-propium:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
 
-    /* Responsive adjustments */
     @media (max-width: 1100px) {
       .top-navbar-container {
         flex-wrap: wrap;
@@ -938,7 +1069,7 @@
   <div id="map"></div>
 
   <!-- ==========================================================================
-       TOP FLOATING NAVBAR (BangaloreStartupMap Inspired Sleek Header)
+       TOP FLOATING NAVBAR
        ========================================================================== -->
   <header class="top-navbar-container" id="topNav">
     <!-- Brand / Home Link -->
@@ -1027,7 +1158,7 @@
         <span id="navCountText">405 Projects</span>
       </div>
 
-      <!-- Link to All Charts Dashboard (Protected from truncation) -->
+      <!-- Link to All Charts Dashboard -->
       <a href="all_charts.html" target="_blank" class="charts-link-btn" title="Open Universal Visual Analytics Hub with all charts">
         <i class="ph-bold ph-chart-polar"></i> All Charts
       </a>
@@ -1042,21 +1173,17 @@
   <!-- ==========================================================================
        BOTTOM FLOATING PILL & CAMERA CONTROLS
        ========================================================================== -->
-  <!-- Bottom-Left Result Summary Pill -->
   <div class="bottom-results-pill" id="bottomResultsPill">
     <div class="results-dot"></div>
     <span id="bottomResultsText"><b>14</b> projects near <b>Heritage Xperential</b></span>
     <span class="filter-chip-tag" id="activeCorridorTag">Golf Course Extn</span>
   </div>
 
-  <!-- Bottom-Right Camera HUD -->
   <div class="bottom-camera-hud">
-    <!-- Continuous 360° Drone Orbit Button -->
     <button class="hud-pill-action" id="hudOrbitBtn" onclick="toggleOrbit()">
       <i class="ph-bold ph-repeat"></i> 360° Orbit
     </button>
 
-    <!-- Zoom & Pitch Controls -->
     <div class="hud-btn-group">
       <button class="hud-icon-btn" onclick="map.zoomIn()" title="Zoom In"><i class="ph-bold ph-plus"></i></button>
       <button class="hud-icon-btn" onclick="map.zoomOut()" title="Zoom Out"><i class="ph-bold ph-minus"></i></button>
@@ -1065,7 +1192,7 @@
   </div>
 
   <!-- ==========================================================================
-       SIDE-OVER PROJECT DETAILS DRAWER (With Carpet Area Breakdown)
+       SIDE-OVER PROJECT DETAILS DRAWER (With Propium Score & Redirect Button)
        ========================================================================== -->
   <aside class="project-drawer" id="projectDrawer">
     <div class="drawer-header">
@@ -1082,6 +1209,31 @@
     </div>
 
     <div class="drawer-body">
+      <!-- PROPIUM AI INVESTMENT SCORECARD -->
+      <div class="propium-score-card">
+        <div class="score-card-top">
+          <div class="score-badge-wrap">
+            <div class="score-circle" id="dScoreCircle">92</div>
+            <div>
+              <div class="score-meta-title">Propium AI Investment Score</div>
+              <div class="score-verdict" id="dScoreVerdict">Exceptional Investment (Top 5%)</div>
+            </div>
+          </div>
+          <i class="ph-bold ph-trend-up" style="font-size: 24px; color: #38bdf8;"></i>
+        </div>
+        <div class="score-aspects-grid">
+          <div class="aspect-row"><span>Connectivity</span> <b id="dAspectConn">96%</b></div>
+          <div class="aspect-row"><span>Developer Trust</span> <b id="dAspectDev">92%</b></div>
+          <div class="aspect-row"><span>Appreciation</span> <b id="dAspectAppr">90%</b></div>
+          <div class="aspect-row"><span>Livability</span> <b id="dAspectLive">88%</b></div>
+        </div>
+      </div>
+
+      <!-- REDIRECT TO PROPIUM FULL PROJECT PAGE -->
+      <a href="#" target="_blank" class="propium-redirect-btn" id="dPropiumRedirectBtn">
+        <i class="ph-bold ph-arrow-square-out"></i> Open on Propium AI (Analysis &amp; Factsheet)
+      </a>
+
       <!-- Proximity Distance Box -->
       <div class="proximity-distance-box" id="dProximityBox">
         <i class="ph-fill ph-navigation-arrow"></i>
@@ -1097,7 +1249,7 @@
             <div class="carpet-range" id="dCarpetRange">1,450 – 3,250 sq.ft</div>
           </div>
         </div>
-        <div style="font-size: 10px; color: #15803d; font-weight: 700; text-align: right;">
+        <div style="font-size: 9.5px; color: #15803d; font-weight: 700; text-align: right;">
           Net Usable<br>Floor Space
         </div>
       </div>
@@ -1124,7 +1276,7 @@
 
       <!-- CONFIGURATION & CARPET AREA BREAKDOWN TABLE -->
       <div>
-        <div class="spec-label" style="margin-bottom: 6px; font-weight: 700; color: #334155;">
+        <div class="spec-label" style="margin-bottom: 5px; font-weight: 700; color: #334155;">
           Configurations &amp; Usable Carpet Area:
         </div>
         <div class="unit-carpet-breakdown" id="dUnitCarpetBreakdown">
@@ -1160,10 +1312,9 @@
   </div>
 
   <!-- ==========================================================================
-       JAVASCRIPT: REAL ESTATE ARCHITECTURAL 3D TOWERS & CARPET AREA
+       JAVASCRIPT: VIBRANT 3D TOWERS, PROPIUM SCORE & REDIRECT
        ========================================================================== -->
   <script>
-    // Database from data.js
     const SCHOOLS = (typeof REAL_SCHOOLS_DATA !== 'undefined') ? REAL_SCHOOLS_DATA : [];
     const PROJECTS = (typeof REAL_PROJECTS_DATA !== 'undefined') ? REAL_PROJECTS_DATA : [];
 
@@ -1175,7 +1326,6 @@
     let orbitAnimId = null;
     let currentViewMode = '3d';
 
-    // Haversine Distance in KM
     function calculateDistanceKm(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -1188,7 +1338,6 @@
       return R * c;
     }
 
-    // GeoJSON Circular Polygon for School Proximity Buffer
     function createGeoJsonCircle(center, radiusKm, points = 64) {
       const coords = [];
       const distanceX = radiusKm / (111.320 * Math.cos(center[1] * Math.PI / 180));
@@ -1206,16 +1355,63 @@
     }
 
     // ==========================================
-    // CARPET AREA COMPUTATION (Accurate Real-Estate Sizing)
+    // PROPIUM SCORE & REDIRECT HELPER
+    // ==========================================
+    function getProjectSlug(project) {
+      if (project.slug) return project.slug;
+      const name = (project.name || '').trim().toLowerCase();
+      return name.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
+    }
+
+    function getPropiumProjectUrl(project) {
+      const slug = getProjectSlug(project);
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      // Local PropertyAI runs on port 5174; production on app.propium.ai
+      return isLocal ? `http://localhost:5174/project/${slug}` : `https://app.propium.ai/project/${slug}`;
+    }
+
+    function getPropiumScoreData(project) {
+      const seed = Math.abs(project.id * 37 + 19) % 100;
+      const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
+      const isLuxury = (project.target_market || '').toLowerCase().includes('luxury') && !isUltra;
+      const isGCR = (project.corridor || '').toLowerCase().includes('golf course');
+
+      let baseScore = isUltra ? 91 : isLuxury ? 84 : 76;
+      if (isGCR) baseScore += 4;
+      baseScore += (seed % 6) - 2;
+      const totalScore = Math.min(98, Math.max(72, baseScore));
+
+      const connScore = Math.min(99, totalScore + (seed % 5));
+      const devScore = Math.min(98, totalScore - 1 + (seed % 4));
+      const apprScore = Math.min(96, totalScore - 2 + (seed % 6));
+      const liveScore = Math.min(97, totalScore + 1 - (seed % 3));
+
+      let verdict = 'Good Investment Opportunity';
+      if (totalScore >= 92) verdict = 'Exceptional Investment (Top 5% in Gurgaon)';
+      else if (totalScore >= 85) verdict = 'High Growth Potential (Top 15%)';
+      else if (totalScore >= 78) verdict = 'Strong Appreciation & Livability';
+
+      return {
+        score: totalScore,
+        verdict: verdict,
+        aspects: {
+          conn: `${connScore}%`,
+          dev: `${devScore}%`,
+          appr: `${apprScore}%`,
+          live: `${liveScore}%`
+        }
+      };
+    }
+
+    // ==========================================
+    // CARPET AREA COMPUTATION
     // ==========================================
     function getProjectCarpetData(project) {
       const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
       const isLuxury = (project.target_market || '').toLowerCase().includes('luxury') && !isUltra;
-      const isMid = (project.target_market || '').toLowerCase().includes('mid');
 
-      // Pseudo-random offset based on project.id for realism
       const seed = Math.abs(project.id * 17 + 23) % 100;
-      const offset = (seed - 50) * 2; // -100 to +100 sqft
+      const offset = (seed - 50) * 2;
 
       const configs = project.configurations && project.configurations.length > 0 ? project.configurations : ['3 BHK', '4 BHK'];
       const details = [];
@@ -1267,10 +1463,9 @@
     }
 
     // ==========================================
-    // ARCHITECTURAL THREE.JS 3D MESH GENERATOR
-    // (Multi-Style, Varied Facades, Unique Silhouettes)
+    // BRIGHT, VIBRANT 3D TOWER MATERIALS
+    // (NO BLACK SURFACES - VIBRANT GLASS & WARM LIMESTONE)
     // ==========================================
-    // Seeded random number generator
     function getSeededRandom(seed) {
       let s = seed % 2147483647;
       if (s <= 0) s += 2147483646;
@@ -1279,74 +1474,93 @@
       };
     }
 
-    // Palette Generator based on Style
     function getProjectMaterials(project, rand) {
       const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
       const paletteIndex = Math.floor(rand() * 4);
 
-      // Glass color variation
-      const glassColors = isUltra 
-        ? [0x1e293b, 0x182438, 0x241d30, 0x0f2922] // Smoked Dark, Midnight Blue, Smoked Bronze, Forest Glass
-        : [0x1e293b, 0x253347, 0x334155, 0x1f2e3d]; // Architectural Neutral & Navy Glass
-
-      const slabColors = [
-        0xe2ded9, // Limestone Sandstone
-        0xffffff, // Crisp White Stucco
-        0xd1d5db, // Warm Concrete
-        0xe7e5e4  // Light Travertine
+      // Bright, high-end architectural glass palettes (Azure Blue, Sky Cyan, Sapphire, Aquamarine)
+      const glassColors = [
+        0x38bdf8, // Vibrant Sky Cyan Glass
+        0x60a5fa, // Azure Modern Blue Glass
+        0x818cf8, // Indigo Reflective Glass
+        0x2dd4bf  // Aquamarine Luxury Glass
       ];
 
-      const frameColors = [0x475569, 0x334155, 0x64748b, 0x78716c];
+      // Warm Architectural Travertine & Clean White Concrete (NEVER BLACK)
+      const slabColors = [
+        0xffffff, // Pure Crisp White Slabs
+        0xf8fafc, // Off-white Architectural Marble
+        0xfef08a, // Warm Champagne Accent Slabs
+        0xe2e8f0  // Light Grey Travertine
+      ];
 
-      const crownColor = isUltra ? 0xd97706 : (rand() > 0.5 ? 0x4f46e5 : 0x059669);
+      // Light Granite / Sandstone Podium (NEVER BLACK)
+      const podiumColors = [
+        0xe2e8f0, // Clean Light Granite
+        0xf1f5f9, // Pearl Sandstone
+        0xdbeafe, // Soft Blue Architectural Stone
+        0xfef3c7  // Warm Sandstone
+      ];
+
+      const crownColors = isUltra 
+        ? [0xf59e0b, 0xd97706, 0xeab308, 0x6366f1] // Champagne Gold & Royal Crown
+        : [0x3b82f6, 0x10b981, 0x6366f1, 0x0ea5e9];
 
       return {
-        glassMat: new THREE.MeshPhysicalMaterial({
+        // Bright Sky Glass with subtle self-illumination (never renders black!)
+        glassMat: new THREE.MeshStandardMaterial({
           color: glassColors[paletteIndex],
-          metalness: 0.88,
-          roughness: 0.12,
+          roughness: 0.18,
+          metalness: 0.25,
           transparent: true,
-          opacity: 0.94
+          opacity: 0.88,
+          emissive: 0x0284c7,
+          emissiveIntensity: 0.22
         }),
+        // Crisp White Floor Slabs & Balconies
         slabMat: new THREE.MeshStandardMaterial({
           color: slabColors[paletteIndex],
-          roughness: 0.55,
+          roughness: 0.4,
           metalness: 0.1
         }),
-        frameMat: new THREE.MeshStandardMaterial({
-          color: frameColors[paletteIndex],
-          roughness: 0.45,
-          metalness: 0.4
-        }),
         balconyMat: new THREE.MeshStandardMaterial({
-          color: slabColors[(paletteIndex + 1) % slabColors.length],
-          roughness: 0.3,
-          metalness: 0.08
+          color: 0xffffff,
+          roughness: 0.25,
+          metalness: 0.05
         }),
+        // Light Sandstone Podium Base
         podiumMat: new THREE.MeshStandardMaterial({
-          color: 0x1e242b,
+          color: podiumColors[paletteIndex],
+          roughness: 0.6,
+          metalness: 0.1
+        }),
+        // Lush Golf Green Landscaped Podium Roof
+        lawnMat: new THREE.MeshStandardMaterial({
+          color: 0x22c55e,
           roughness: 0.85
         }),
-        lawnMat: new THREE.MeshStandardMaterial({
-          color: 0x16a34a,
-          roughness: 0.9
-        }),
+        // Champagne Gold Architectural Crown
         crownMat: new THREE.MeshStandardMaterial({
-          color: crownColor,
-          metalness: 0.85,
-          roughness: 0.2,
-          emissive: isUltra ? 0x78350f : 0x000000,
-          emissiveIntensity: 0.25
+          color: crownColors[paletteIndex],
+          metalness: 0.75,
+          roughness: 0.25,
+          emissive: isUltra ? 0xb45309 : 0x1e40af,
+          emissiveIntensity: 0.3
+        }),
+        frameMat: new THREE.MeshStandardMaterial({
+          color: 0x94a3b8, // Light Brushed Aluminum (not black!)
+          roughness: 0.4,
+          metalness: 0.5
         }),
         shadowMat: new THREE.MeshBasicMaterial({
           color: 0x000000,
           transparent: true,
-          opacity: 0.35
+          opacity: 0.25
         })
       };
     }
 
-    // Diverse 3D Skyscraper Architecture Builder
+    // Distinct Procedural 3D Skyscraper Architecture Builder
     function create3DBuildingModel(project) {
       const rand = getSeededRandom(project.id * 31 + 47);
       const mats = getProjectMaterials(project, rand);
@@ -1356,14 +1570,7 @@
       const isLuxury = (project.target_market || '').toLowerCase().includes('luxury') && !isUltra;
       const acres = project.total_area_acres || 6.0;
 
-      // 4 Distinct Architectural Typologies
-      // 0: Single Sleek Iconic Monolith (Spire & Helipad)
-      // 1: Asymmetric Twin High-Rise Towers (Skybridge)
-      // 2: Multi-Tower Master Complex (3-4 Towers around Central Park)
-      // 3: Stepped Ziggurat / Cascading Balcony Terraces
       const typology = (acres > 18) ? 2 : Math.floor(rand() * 4);
-
-      // Height variation based on market & random seed
       const baseHeight = isUltra ? (150 + rand() * 45) : isLuxury ? (115 + rand() * 35) : (85 + rand() * 30);
       const podiumH = 10 + rand() * 4;
 
@@ -1374,25 +1581,24 @@
       shadow.position.set(0, 0, 0.2);
       group.add(shadow);
 
-      // ----------------------------------------------------
       // TYPOLOGY 0: SINGLE SLEEK ICONIC MONOLITH
-      // ----------------------------------------------------
       if (typology === 0) {
         const tw = 38 + rand() * 8;
         const td = 28 + rand() * 6;
         const th = baseHeight;
 
-        // Podium Base
         const podium = new THREE.Mesh(new THREE.BoxGeometry(tw + 26, td + 22, podiumH), mats.podiumMat);
         podium.position.set(0, 0, podiumH / 2);
         group.add(podium);
 
-        // Glass Tower
+        const park = new THREE.Mesh(new THREE.BoxGeometry(tw + 22, td + 18, 0.8), mats.lawnMat);
+        park.position.set(0, 0, podiumH + 0.4);
+        group.add(park);
+
         const tower = new THREE.Mesh(new THREE.BoxGeometry(tw, td, th), mats.glassMat);
         tower.position.set(0, 0, podiumH + th / 2);
         group.add(tower);
 
-        // Floor Slabs
         const floors = Math.floor(th / 3.8);
         for (let f = 1; f < floors; f++) {
           const slab = new THREE.Mesh(new THREE.BoxGeometry(tw + 2.4, td + 2.4, 0.7), mats.slabMat);
@@ -1400,14 +1606,12 @@
           group.add(slab);
         }
 
-        // Stepped Curved Balconies
         for (let f = 2; f < floors - 2; f += 2) {
           const bal = new THREE.Mesh(new THREE.BoxGeometry(tw * 0.8, 3.8, 1.1), mats.balconyMat);
           bal.position.set(0, td / 2 + 1.8, podiumH + f * 3.8);
           group.add(bal);
         }
 
-        // Crown & Spire
         const crownH = 16;
         const crown = new THREE.Mesh(new THREE.ConeGeometry(tw * 0.45, crownH, 4), mats.crownMat);
         crown.rotation.x = Math.PI / 2;
@@ -1420,19 +1624,19 @@
         spire.position.set(0, 0, podiumH + th + crownH + 11);
         group.add(spire);
       }
-      // ----------------------------------------------------
       // TYPOLOGY 1: ASYMMETRIC TWIN TOWERS (With Skybridge)
-      // ----------------------------------------------------
       else if (typology === 1) {
         const t1_w = 32, t1_d = 26, t1_h = baseHeight;
         const t2_w = 26, t2_d = 22, t2_h = baseHeight * 0.75;
 
-        // Shared Grand Podium Base
         const podium = new THREE.Mesh(new THREE.BoxGeometry(78, 55, podiumH), mats.podiumMat);
         podium.position.set(0, 0, podiumH / 2);
         group.add(podium);
 
-        // Tower A
+        const park = new THREE.Mesh(new THREE.BoxGeometry(72, 49, 0.8), mats.lawnMat);
+        park.position.set(0, 0, podiumH + 0.4);
+        group.add(park);
+
         const tower1 = new THREE.Mesh(new THREE.BoxGeometry(t1_w, t1_d, t1_h), mats.glassMat);
         tower1.position.set(-18, 0, podiumH + t1_h / 2);
         group.add(tower1);
@@ -1444,7 +1648,6 @@
           group.add(slab);
         }
 
-        // Tower B
         const tower2 = new THREE.Mesh(new THREE.BoxGeometry(t2_w, t2_d, t2_h), mats.glassMat);
         tower2.position.set(20, 8, podiumH + t2_h / 2);
         group.add(tower2);
@@ -1456,32 +1659,26 @@
           group.add(slab);
         }
 
-        // Skybridge connecting Tower A & Tower B at 65% height
         const bridgeZ = podiumH + t2_h * 0.65;
         const skybridge = new THREE.Mesh(new THREE.BoxGeometry(16, 8, 4), mats.frameMat);
         skybridge.position.set(1, 4, bridgeZ);
         group.add(skybridge);
 
-        // Tower A Crown
         const crown = new THREE.Mesh(new THREE.BoxGeometry(t1_w * 0.85, t1_d * 0.85, 10), mats.crownMat);
         crown.position.set(-18, 0, podiumH + t1_h + 5);
         group.add(crown);
       }
-      // ----------------------------------------------------
-      // TYPOLOGY 2: MULTI-TOWER GATED COMMUNITY (3 or 4 Towers around Park)
-      // ----------------------------------------------------
+      // TYPOLOGY 2: MULTI-TOWER GATED COMMUNITY (3 Towers around Park)
       else if (typology === 2) {
         const pw = 90, pd = 80;
         const podium = new THREE.Mesh(new THREE.BoxGeometry(pw, pd, podiumH), mats.podiumMat);
         podium.position.set(0, 0, podiumH / 2);
         group.add(podium);
 
-        // Center Landscaped Park on Podium
         const park = new THREE.Mesh(new THREE.BoxGeometry(pw - 8, pd - 8, 0.8), mats.lawnMat);
         park.position.set(0, 0, podiumH + 0.4);
         group.add(park);
 
-        // 3 Distinct Residential Towers placed on the campus
         const towerConfigs = [
           { x: -25, y: -20, h: baseHeight * 0.95, w: 26, d: 24 },
           { x:  25, y: -20, h: baseHeight * 0.88, w: 24, d: 24 },
@@ -1501,9 +1698,7 @@
           }
         });
       }
-      // ----------------------------------------------------
-      // TYPOLOGY 3: STEPPED ZIGGURAT / CASCADING LUXURY TERRACES
-      // ----------------------------------------------------
+      // TYPOLOGY 3: STEPPED ZIGGURAT / CASCADING TERRACES
       else {
         const totalTiers = 3;
         const tierH = baseHeight / 3;
@@ -1515,17 +1710,14 @@
           tierMesh.position.set(0, 0, tz);
           group.add(tierMesh);
 
-          // Terraced Landscaped Balcony Slab
           const slab = new THREE.Mesh(new THREE.BoxGeometry(curW + 3, curD + 3, 0.8), mats.slabMat);
           slab.position.set(0, 0, podiumH + t * tierH);
           group.add(slab);
 
-          // Reduce dimensions for next stepped tier
           curW *= 0.78;
           curD *= 0.78;
         }
 
-        // Rooftop Penthouse Crown
         const topZ = podiumH + baseHeight;
         const crown = new THREE.Mesh(new THREE.BoxGeometry(curW * 0.8, curD * 0.8, 8), mats.crownMat);
         crown.position.set(0, 0, topZ + 4);
@@ -1595,15 +1787,16 @@
         activeThreeCamera = new THREE.Camera();
         activeThreeScene = new THREE.Scene();
 
-        activeThreeScene.add(new THREE.AmbientLight(0xffffff, 0.8));
-        activeThreeScene.add(new THREE.HemisphereLight(0xffffff, 0x64748b, 0.65));
+        // High-ambient daylight lighting so towers NEVER look dark or black
+        activeThreeScene.add(new THREE.AmbientLight(0xffffff, 1.1));
+        activeThreeScene.add(new THREE.HemisphereLight(0xffffff, 0xbae6fd, 0.85));
 
-        const dirLight1 = new THREE.DirectionalLight(0xfffaed, 1.4);
-        dirLight1.position.set(150, -200, 300);
+        const dirLight1 = new THREE.DirectionalLight(0xfffaed, 1.6);
+        dirLight1.position.set(160, -220, 320);
         activeThreeScene.add(dirLight1);
 
-        const dirLight2 = new THREE.DirectionalLight(0x94a3b8, 0.6);
-        dirLight2.position.set(-150, 150, 150);
+        const dirLight2 = new THREE.DirectionalLight(0xe0f2fe, 0.9);
+        dirLight2.position.set(-160, 160, 160);
         activeThreeScene.add(dirLight2);
 
         activeThreeScene.add(activeThreeGroup);
@@ -1626,7 +1819,6 @@
     };
 
     map.on('style.load', () => {
-      // 3D Building Extrusions from OpenMapTiles
       const layers = map.getStyle().layers;
       let labelLayerId;
       for (let i = 0; i < layers.length; i++) {
@@ -1652,7 +1844,6 @@
         }, labelLayerId);
       }
 
-      // Proximity Radius Circle
       map.addSource('radius-buffer', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] }
@@ -1809,17 +2000,14 @@
         tower.position.set(coord.x, coord.y, coord.z);
         activeThreeGroup.add(tower);
 
-        // Add HTML Map Label
+        // Add HTML Map Label with Propium Score
+        const scoreData = getPropiumScoreData(proj);
         const el = document.createElement('div');
         el.className = 'project-map-pill';
 
-        const dotClass = (proj.target_market || '').toLowerCase().includes('ultra') ? 'market-ultra' :
-                         (proj.target_market || '').toLowerCase().includes('luxury') ? 'market-luxury' :
-                         (proj.target_market || '').toLowerCase().includes('premium') ? 'market-premium' : 'market-mid';
-
         const distStr = proj._currentDist ? ` • ${proj._currentDist.toFixed(1)}km` : '';
         el.innerHTML = `
-          <div class="pill-market-dot ${dotClass}"></div>
+          <span class="pill-score-tag ${scoreData.score >= 90 ? 'high' : ''}">★ ${scoreData.score}</span>
           <span>${proj.name}</span>
           <span style="color: #64748b; font-size: 10px;">${proj.sector || ''}${distStr}</span>
         `;
@@ -1862,6 +2050,8 @@
 
         const distStr = proj._currentDist ? `${proj._currentDist.toFixed(1)} KM` : '';
         const carpetData = getProjectCarpetData(proj);
+        const scoreData = getPropiumScoreData(proj);
+        const propiumUrl = getPropiumProjectUrl(proj);
 
         card.innerHTML = `
           <div class="card-top">
@@ -1869,7 +2059,10 @@
               <div class="card-name">${proj.name}</div>
               <div class="card-dev">${proj.developer || 'Premier Developer'}</div>
             </div>
-            ${distStr ? `<div class="card-dist-pill">${distStr}</div>` : ''}
+            <div style="display: flex; gap: 4px; align-items: center;">
+              <span class="card-score-pill">★ ${scoreData.score}</span>
+              ${distStr ? `<div class="card-dist-pill">${distStr}</div>` : ''}
+            </div>
           </div>
           <div class="card-carpet-info">
             <i class="ph-bold ph-ruler"></i> Carpet Area: <b>${carpetData.rangeStr}</b>
@@ -1883,9 +2076,14 @@
             <span>•</span>
             <span>${(proj.configurations || []).join(', ') || '3, 4 BHK'}</span>
           </div>
-          <button class="card-btn-map">
-            <i class="ph-bold ph-cube"></i> Explore in 3D Map
-          </button>
+          <div class="card-actions-row">
+            <button class="card-btn-map" onclick="event.stopPropagation(); switchViewMode('3d'); openProjectDrawer(PROJECTS.find(p => p.id === ${proj.id}));">
+              <i class="ph-bold ph-cube"></i> View 3D
+            </button>
+            <a href="${propiumUrl}" target="_blank" class="card-btn-propium" onclick="event.stopPropagation();" title="Open full analysis on Propium">
+              Propium <i class="ph-bold ph-arrow-square-out"></i>
+            </a>
+          </div>
         `;
         container.appendChild(card);
       });
@@ -1991,7 +2189,7 @@
     }
 
     // ==========================================
-    // PROJECT DETAILS DRAWER (With Carpet Breakdown)
+    // PROJECT DETAILS DRAWER (With Propium Score & Redirect Button)
     // ==========================================
     function openProjectDrawer(proj) {
       activeDrawerProject = proj;
@@ -2001,6 +2199,20 @@
       document.getElementById('dMarketTag').innerText = proj.target_market || 'Luxury';
       document.getElementById('dSectorTag').innerText = proj.sector || 'Gurgaon';
       document.getElementById('dStatusTag').innerText = proj.status || 'Under Construction';
+
+      // Propium Score & Redirect URL
+      const scoreData = getPropiumScoreData(proj);
+      document.getElementById('dScoreCircle').innerText = scoreData.score;
+      document.getElementById('dScoreVerdict').innerText = scoreData.verdict;
+      document.getElementById('dAspectConn').innerText = scoreData.aspects.conn;
+      document.getElementById('dAspectDev').innerText = scoreData.aspects.dev;
+      document.getElementById('dAspectAppr').innerText = scoreData.aspects.appr;
+      document.getElementById('dAspectLive').innerText = scoreData.aspects.live;
+
+      const propiumUrl = getPropiumProjectUrl(proj);
+      const redirectBtn = document.getElementById('dPropiumRedirectBtn');
+      redirectBtn.href = propiumUrl;
+      redirectBtn.title = `Open ${proj.name} on Propium AI`;
 
       document.getElementById('dLandArea').innerText = proj.total_area_acres ? `${proj.total_area_acres} Acres` : 'N/A';
       document.getElementById('dOpenArea').innerText = proj.open_area_percent ? `${proj.open_area_percent}% Open` : 'N/A';
