@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-    <title>proPIUM 3D — Real Estate Explorer</title>
+  <title>proPIUM 3D — Real Estate Explorer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 
   <!-- Official proPIUM Favicons -->
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
@@ -1250,7 +1253,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
+      cursor: pointer !important;
+      pointer-events: auto !important;
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-weight: 800;
       color: #ffffff;
@@ -2653,13 +2657,25 @@
       } else {
         const bounds = new maplibregl.LngLatBounds();
         item.projects.forEach(p => bounds.extend([p.lng, p.lat]));
-        map.fitBounds(bounds, {
-          padding: { top: 110, bottom: 110, left: 110, right: 110 },
-          maxZoom: 16.2,
-          duration: 800,
-          pitch: 58,
-          bearing: -20
-        });
+        const ne = bounds.getNorthEast();
+        const sw = bounds.getSouthWest();
+        if (Math.abs(ne.lat - sw.lat) < 0.0005 && Math.abs(ne.lng - sw.lng) < 0.0005) {
+          map.flyTo({
+            center: [item.lng, item.lat],
+            zoom: 15.6,
+            pitch: 58,
+            bearing: -20,
+            duration: 800
+          });
+        } else {
+          map.fitBounds(bounds, {
+            padding: { top: 120, bottom: 120, left: 120, right: 120 },
+            maxZoom: 16.2,
+            duration: 800,
+            pitch: 58,
+            bearing: -20
+          });
+        }
       }
 
       // Update UI counts and banner
