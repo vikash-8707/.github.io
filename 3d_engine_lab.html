@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>proPIUM 3D Engine Lab | Benchmark & Visual Showcase</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+  
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <!-- Three.js r128 + OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  
+  <!-- GSAP for Silky Smooth Cinematic Camera Interpolation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  
+  <!-- Real proPIUM Real Estate Data -->
+  <script src="data.js"></script>
+
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #e0e7ff;
+      --surface: rgba(255, 255, 255, 0.96);
+      --surface-dark: rgba(15, 23, 42, 0.92);
+      --border: #e2e8f0;
+      --border-dark: rgba(255, 255, 255, 0.12);
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #f8fafc;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 8px 24px -4px rgba(15, 23, 42, 0.14);
+      --shadow-lg: 0 20px 45px -8px rgba(15, 23, 42, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #090d16;
+      color: var(--text-light);
+      user-select: none;
+    }
+
+    #webgl-canvas-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* ----------------------------------------------------
+       TOP FLOATING HEADER
+       ---------------------------------------------------- */
+    .top-header {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .header-left, .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+    }
+
+    .brand-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-full);
+      padding: 6px 16px 6px 8px;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .brand-badge:hover {
+      background: rgba(15, 23, 42, 0.98);
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateY(-1px);
+    }
+    .brand-img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+    }
+    .brand-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-title span {
+      background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 900;
+    }
+    .brand-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      background: rgba(99, 102, 241, 0.25);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      letter-spacing: 0.5px;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-full);
+      padding: 7px 14px;
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-btn:hover {
+      background: rgba(30, 41, 59, 0.95);
+      color: #ffffff;
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+    .nav-btn.primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    }
+    .nav-btn.primary:hover {
+      background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+      transform: translateY(-1px);
+    }
+
+    /* ----------------------------------------------------
+       ENVIRONMENT & LIGHTING SWITCHER HUD
+       ---------------------------------------------------- */
+    .lighting-hud {
+      position: absolute;
+      top: 68px;
+      right: 14px;
+      z-index: 30;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: var(--shadow-md);
+      width: 210px;
+    }
+
+    .hud-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .lighting-pill-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .lighting-pill {
+      border: 1px solid var(--border-dark);
+      background: rgba(30, 41, 59, 0.7);
+      padding: 7px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 600;
+      color: #cbd5e1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .lighting-pill:hover {
+      background: rgba(51, 65, 85, 0.85);
+      color: #ffffff;
+    }
+    .lighting-pill.active {
+      background: #4f46e5;
+      color: #ffffff;
+      border-color: #6366f1;
+      box-shadow: 0 2px 10px rgba(79, 70, 229, 0.4);
+    }
+
+    /* ----------------------------------------------------
+       BOTTOM METRICS & CAMERA HUD
+       ---------------------------------------------------- */
+    .bottom-camera-hud {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-action-btn {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-full);
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #cbd5e1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-md);
+    }
+    .hud-action-btn:hover {
+      background: rgba(30, 41, 59, 0.95);
+      color: #ffffff;
+    }
+    .hud-action-btn.active {
+      background: #4f46e5;
+      color: #ffffff;
+      border-color: #6366f1;
+    }
+
+    .fps-hud {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      z-index: 30;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #94a3b8;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: var(--shadow-md);
+    }
+    .fps-val {
+      font-weight: 700;
+      color: #10b981;
+    }
+    .fps-metric-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    /* ----------------------------------------------------
+       PROJECT QUICK SELECTOR CAROUSEL (Bottom Center)
+       ---------------------------------------------------- */
+    .project-carousel-bar {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-full);
+      padding: 5px 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: var(--shadow-lg);
+      max-width: 620px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .project-carousel-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .carousel-item {
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .carousel-item:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .carousel-item.active {
+      color: #ffffff;
+      background: #4f46e5;
+      box-shadow: 0 2px 10px rgba(79, 70, 229, 0.4);
+    }
+
+    /* ----------------------------------------------------
+       FLOATING 3D PROJECT HTML LABELS & HOVER CARDS
+       ---------------------------------------------------- */
+    #labels-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 20;
+      overflow: hidden;
+    }
+
+    .project-3d-pin-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: auto;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform-origin: bottom center;
+      transition: opacity 0.2s ease;
+    }
+
+    .project-map-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-full);
+      padding: 4px 10px 4px 6px;
+      box-shadow: 0 8px 20px -2px rgba(15, 23, 42, 0.22);
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .project-3d-pin-wrap:hover .project-map-pill,
+    .project-3d-pin-wrap.selected .project-map-pill {
+      background: #4f46e5;
+      border-color: #6366f1;
+      transform: scale(1.06) translateY(-2px);
+      box-shadow: 0 12px 28px -4px rgba(79, 70, 229, 0.45);
+    }
+    .project-3d-pin-wrap:hover .pill-name,
+    .project-3d-pin-wrap.selected .pill-name {
+      color: #ffffff;
+    }
+    .project-3d-pin-wrap:hover .pill-meta,
+    .project-3d-pin-wrap.selected .pill-meta {
+      color: #e0e7ff;
+    }
+
+    .pill-score-tag {
+      background: #10b981;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      letter-spacing: -0.2px;
+    }
+    .pill-score-tag.high {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    }
+    .pill-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.2px;
+    }
+    .pill-meta {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: #64748b;
+    }
+    .pill-redirect-icon {
+      color: #818cf8;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Floating Hover Card (Smart Flip & Clamping) */
+    .project-3d-hover-card {
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      width: 300px;
+      background: rgba(255, 255, 255, 0.99);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(203, 213, 225, 0.95);
+      border-radius: 14px;
+      padding: 14px 15px;
+      box-shadow: 0 20px 40px -8px rgba(15, 23, 42, 0.3), 0 4px 14px rgba(79, 70, 229, 0.18);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.2s;
+      z-index: 1000000;
+      cursor: pointer;
+    }
+    .project-3d-hover-card::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 7px solid #ffffff;
+    }
+
+    .project-3d-pin-wrap:hover .project-3d-hover-card {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Smart Flip Down when near top of screen */
+    .project-3d-pin-wrap.flip-down .project-3d-hover-card {
+      bottom: auto;
+      top: calc(100% + 14px);
+      transform: translateX(-50%) translateY(-8px);
+    }
+    .project-3d-pin-wrap.flip-down:hover .project-3d-hover-card {
+      transform: translateX(-50%) translateY(0);
+    }
+    .project-3d-pin-wrap.flip-down .project-3d-hover-card::after {
+      top: auto;
+      bottom: 100%;
+      border-top: none;
+      border-bottom: 7px solid #ffffff;
+    }
+
+    .hover-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .hover-card-name {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.25;
+      letter-spacing: -0.2px;
+    }
+    .hover-card-dev {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+    .hover-card-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: var(--radius-full);
+      background: #f1f5f9;
+      color: #334155;
+      white-space: nowrap;
+      border: 1px solid #cbd5e1;
+    }
+    .hover-card-badge.luxury {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .hover-card-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: #f8fafc;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 9px;
+    }
+    .hover-stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .hover-stat-label {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .hover-stat-val {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 1px;
+    }
+
+    .hover-card-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 4px;
+      border-top: 1px dashed #e2e8f0;
+    }
+    .hover-card-link {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #4f46e5;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.15s ease;
+    }
+    .hover-card-link:hover {
+      color: #3730a3;
+      text-decoration: underline;
+    }
+
+    /* ----------------------------------------------------
+       COMPARISON MATRIX MODAL
+       ---------------------------------------------------- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 15, 30, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 100000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #0f172a;
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      color: #f8fafc;
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h2 {
+      font-size: 18px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .modal-close-btn:hover {
+      color: #ffffff;
+    }
+
+    .modal-content {
+      padding: 24px;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      margin-bottom: 20px;
+    }
+    .comparison-table th, .comparison-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .comparison-table th {
+      background: rgba(30, 41, 59, 0.6);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+    }
+    .comparison-table tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .badge-winner {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: var(--radius-full);
+      font-size: 10px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Three.js Canvas Container -->
+  <div id="webgl-canvas-container"></div>
+
+  <!-- HTML Floating 3D Labels Tracking Layer -->
+  <div id="labels-container"></div>
+
+  <!-- Top Floating Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <div class="brand-badge" onclick="resetEngineCamera()">
+        <img src="favicon-32x32.png" alt="proPIUM" class="brand-img" />
+        <div class="brand-title">proPIUM <span>3D Engine Lab</span></div>
+        <div class="brand-tag">PBR Architectural WebGL</div>
+      </div>
+      <button class="nav-btn" onclick="openComparisonModal()">
+        <i class="ph-bold ph-scales"></i> 3D Library Comparison
+      </button>
+    </div>
+
+    <div class="header-right">
+      <a href="index.html" class="nav-btn" title="Back to Map View">
+        <i class="ph-bold ph-map-trifold"></i> Map View
+      </a>
+      <a href="all_charts.html" target="_blank" class="nav-btn" title="Open Visual Analytics">
+        <i class="ph-bold ph-chart-polar"></i> All Charts
+      </a>
+      <a href="https://property.p2s.ai" target="_blank" class="nav-btn primary" title="Open proPIUM Platform">
+        <i class="ph-bold ph-globe"></i> proPIUM ↗
+      </a>
+    </div>
+  </header>
+
+  <!-- Lighting & Atmosphere HUD -->
+  <div class="lighting-hud">
+    <div class="hud-title"><i class="ph-bold ph-sun-horizon"></i> Atmospheric Lighting</div>
+    <div class="lighting-pill-group">
+      <button class="lighting-pill active" onclick="setLightingMode('day')"><i class="ph-bold ph-sun"></i> Daylight</button>
+      <button class="lighting-pill" onclick="setLightingMode('sunset')"><i class="ph-bold ph-cloud-sun"></i> Sunset</button>
+      <button class="lighting-pill" onclick="setLightingMode('night')"><i class="ph-bold ph-moon-stars"></i> Night</button>
+      <button class="lighting-pill" onclick="setLightingMode('cyber')"><i class="ph-bold ph-lightning"></i> Cyber</button>
+    </div>
+  </div>
+
+  <!-- Project Quick Selector Carousel -->
+  <div class="project-carousel-bar" id="projectCarousel">
+    <!-- Populated dynamically via JS -->
+  </div>
+
+  <!-- Bottom Camera Actions HUD -->
+  <div class="bottom-camera-hud">
+    <button class="hud-action-btn" id="btnAutoRotate" onclick="toggleAutoRotate()">
+      <i class="ph-bold ph-repeat"></i> 360° Orbit
+    </button>
+    <button class="hud-action-btn" onclick="resetEngineCamera()">
+      <i class="ph-bold ph-arrow-counter-clockwise"></i> Reset View
+    </button>
+  </div>
+
+  <!-- Real-time Performance HUD -->
+  <div class="fps-hud">
+    <div class="fps-metric-row"><span>Engine:</span> <strong style="color:#818cf8;">Three.js r128</strong></div>
+    <div class="fps-metric-row"><span>Framerate:</span> <span class="fps-val" id="fpsDisplay">60 FPS</span></div>
+    <div class="fps-metric-row"><span>Meshes:</span> <span id="meshCountDisplay">--</span></div>
+    <div class="fps-metric-row"><span>Draw Calls:</span> <span id="drawCallDisplay">--</span></div>
+  </div>
+
+  <!-- 3D Library Comparison Modal -->
+  <div class="modal-overlay" id="comparisonModal" onclick="closeComparisonModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2><i class="ph-bold ph-cpu"></i> 3D Graphics Library Evaluation Matrix</h2>
+        <button class="modal-close-btn" onclick="closeComparisonModal()"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="modal-content">
+        <p style="color: #94a3b8; margin-bottom: 16px;">
+          Comprehensive benchmark comparing the top 3D web engines for proPIUM's real estate platform, digital twin experience, and architectural visualizers.
+        </p>
+
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>3D Engine</th>
+              <th>Visual Fidelity / PBR</th>
+              <th>Digital Twin Fit</th>
+              <th>Framerate &amp; Speed</th>
+              <th>Licensing &amp; Cost</th>
+              <th>Best Use Case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong style="color: #818cf8;">Three.js</strong> <span class="badge-winner">Recommended #1</span></td>
+              <td>★★★★★ (PBR glass, bloom, dynamic sun shadows, skyglow)</td>
+              <td>★★★★★ (100% custom styling, models, animations)</td>
+              <td>★★★★★ (Ultra-lightweight, 60fps)</td>
+              <td>100% Free &amp; Open Source (Zero token costs)</td>
+              <td>Custom Real Estate Digital Twins, Architectural Towers &amp; Interactive UI</td>
+            </tr>
+            <tr>
+              <td><strong style="color: #38bdf8;">CesiumJS</strong></td>
+              <td>★★★★☆ (Photorealistic satellite aerial scans)</td>
+              <td>★★★★☆ (Global scale, Google 3D Tiles)</td>
+              <td>★★★☆☆ (Heavier bundle, tile streaming lag)</td>
+              <td>Requires Google / Cesium ion API Quotas</td>
+              <td>Global Macro Satellite GIS &amp; 1:1 Real-world Photogrammetry</td>
+            </tr>
+            <tr>
+              <td><strong style="color: #34d399;">Deck.gl (vis.gl)</strong></td>
+              <td>★★★☆☆ (Data-centric polygonal extrusions)</td>
+              <td>★★★☆☆ (Limited PBR lighting &amp; shaders)</td>
+              <td>★★★★★ (Handles 1,000,000+ data points smoothly)</td>
+              <td>100% Free &amp; Open Source (Uber)</td>
+              <td>Massive Big Data Analytics, Hexagonal Heatmaps &amp; Isochrones</td>
+            </tr>
+            <tr>
+              <td><strong style="color: #f472b6;">Babylon.js</strong></td>
+              <td>★★★★★ (Exceptional PBR materials, node shaders)</td>
+              <td>★★★★☆ (Strong 3D tools, less geospatial native)</td>
+              <td>★★★★☆ (Smooth WebGPU support)</td>
+              <td>100% Free (Microsoft)</td>
+              <td>Single-Building Walkthroughs &amp; Apartment Interior 3D Tours</td>
+            </tr>
+            <tr>
+              <td><strong style="color: #fbbf24;">MapLibre GL 3D</strong></td>
+              <td>★★☆☆☆ (Monochrome 2.5D flat extrusions)</td>
+              <td>★★☆☆☆ (No true PBR textures or shadows)</td>
+              <td>★★★★★ (Instant tile loading)</td>
+              <td>100% Free &amp; Open Source</td>
+              <td>Lightweight Street Base Map Navigation</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="background: rgba(30, 41, 59, 0.5); padding: 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);">
+          <h4 style="color: #e2e8f0; margin-bottom: 6px;"><i class="ph-bold ph-lightbulb"></i> Architectural Recommendation for proPIUM</h4>
+          <p style="color: #94a3b8; font-size: 12.5px;">
+            For proPIUM's Gurgaon real estate map, <strong>Three.js</strong> provides the absolute ideal balance: full control over cinematic architectural rendering (realistic curtain glass, lit windows, helipads, skyglow, and neon night modes), zero API fee dependency, and instant seamless integration with our interactive proPIUM project cards and filters.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // THREE.JS REAL ESTATE DIGITAL TWIN ENGINE
+    // ==========================================
+    const container = document.getElementById('webgl-canvas-container');
+    const labelsContainer = document.getElementById('labels-container');
+    const projectCarousel = document.getElementById('projectCarousel');
+
+    let scene, camera, renderer, controls;
+    let directionalLight, hemisphereLight, ambientLight, groundGrid, roadGroup;
+    let buildingMeshes = [];
+    let projectPins = [];
+    let activeSelectedProject = null;
+    let isAutoRotating = false;
+    let currentLighting = 'day';
+
+    // FPS Meter
+    let lastTime = performance.now();
+    let frameCount = 0;
+    let currentFps = 60;
+
+    // Filter projects for Golf Course Extension Road
+    const activeProjects = (typeof REAL_PROJECTS_DATA !== 'undefined' ? REAL_PROJECTS_DATA : []).filter(p => 
+      p.corridor === 'Golf Course Extension Road' || p.sector === 'Sector 57' || p.sector === 'Sector 50' || p.sector === 'Sector 65'
+    ).slice(0, 16);
+
+    // Coordinate Normalizer (Center around Golf Course Extn center)
+    const CENTER_LAT = 28.412;
+    const CENTER_LNG = 77.080;
+    const SCALE_FACTOR = 42000; // Meters to Three.js units
+
+    function latLngToWorld(lat, lng) {
+      const x = (lng - CENTER_LNG) * SCALE_FACTOR;
+      const z = -(lat - CENTER_LAT) * SCALE_FACTOR;
+      return { x, z };
+    }
+
+    // Initialize Engine
+    function initEngine() {
+      // 1. Scene
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0a0f1d);
+      scene.fog = new THREE.FogExp2(0x0a0f1d, 0.00075);
+
+      // 2. Camera
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+      camera.position.set(0, 380, 520);
+
+      // 3. Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+      container.appendChild(renderer.domElement);
+
+      // 4. Controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.maxPolarAngle = Math.PI / 2.05; // Prevent camera from going under ground
+      controls.minDistance = 60;
+      controls.maxDistance = 1600;
+      controls.target.set(0, 40, 0);
+
+      // 5. Lighting Setup
+      setupLighting();
+
+      // 6. Urban Base Ground & Road Infrastructure
+      createUrbanEnvironment();
+
+      // 7. Architectural Towers & Landmarks
+      createRealEstateTowers();
+
+      // 8. Build Carousel & Pins
+      buildProjectCarousel();
+
+      // 9. Window Resizing
+      window.addEventListener('resize', onWindowResize);
+
+      // Start Loop
+      animate();
+    }
+
+    // Lighting Presets
+    function setupLighting() {
+      ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+      scene.add(ambientLight);
+
+      hemisphereLight = new THREE.HemisphereLight(0xdbeafe, 0x1e293b, 0.7);
+      hemisphereLight.position.set(0, 500, 0);
+      scene.add(hemisphereLight);
+
+      directionalLight = new THREE.DirectionalLight(0xfffbeb, 1.4);
+      directionalLight.position.set(280, 420, 260);
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 2048;
+      directionalLight.shadow.mapSize.height = 2048;
+      directionalLight.shadow.camera.near = 10;
+      directionalLight.shadow.camera.far = 1500;
+      directionalLight.shadow.camera.left = -400;
+      directionalLight.shadow.camera.right = 400;
+      directionalLight.shadow.camera.top = 400;
+      directionalLight.shadow.camera.bottom = -400;
+      directionalLight.shadow.bias = -0.0005;
+      scene.add(directionalLight);
+    }
+
+    function setLightingMode(mode) {
+      currentLighting = mode;
+      document.querySelectorAll('.lighting-pill').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.querySelector(`.lighting-pill[onclick="setLightingMode('${mode}')"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (mode === 'day') {
+        scene.background.set(0xf1f5f9);
+        scene.fog.color.set(0xf1f5f9);
+        scene.fog.density = 0.00045;
+        ambientLight.color.set(0xffffff);
+        ambientLight.intensity = 0.85;
+        hemisphereLight.color.set(0x93c5fd);
+        hemisphereLight.groundColor.set(0x64748b);
+        hemisphereLight.intensity = 0.6;
+        directionalLight.color.set(0xfffbeb);
+        directionalLight.intensity = 1.35;
+        directionalLight.position.set(280, 420, 260);
+        groundGrid.material.color.set(0xcbd5e1);
+      } else if (mode === 'sunset') {
+        scene.background.set(0x2d1b2e);
+        scene.fog.color.set(0x2d1b2e);
+        scene.fog.density = 0.0006;
+        ambientLight.color.set(0xfb923c);
+        ambientLight.intensity = 0.6;
+        hemisphereLight.color.set(0xf472b6);
+        hemisphereLight.groundColor.set(0x1e1b4b);
+        hemisphereLight.intensity = 0.7;
+        directionalLight.color.set(0xf97316);
+        directionalLight.intensity = 1.6;
+        directionalLight.position.set(400, 150, -300);
+        groundGrid.material.color.set(0x475569);
+      } else if (mode === 'night') {
+        scene.background.set(0x060814);
+        scene.fog.color.set(0x060814);
+        scene.fog.density = 0.0008;
+        ambientLight.color.set(0x38bdf8);
+        ambientLight.intensity = 0.35;
+        hemisphereLight.color.set(0x6366f1);
+        hemisphereLight.groundColor.set(0x020617);
+        hemisphereLight.intensity = 0.5;
+        directionalLight.color.set(0x818cf8);
+        directionalLight.intensity = 0.6;
+        directionalLight.position.set(-150, 300, 150);
+        groundGrid.material.color.set(0x1e293b);
+      } else if (mode === 'cyber') {
+        scene.background.set(0x04060c);
+        scene.fog.color.set(0x04060c);
+        scene.fog.density = 0.0009;
+        ambientLight.color.set(0x06b6d4);
+        ambientLight.intensity = 0.45;
+        hemisphereLight.color.set(0xd946ef);
+        hemisphereLight.groundColor.set(0x0f172a);
+        hemisphereLight.intensity = 0.8;
+        directionalLight.color.set(0x38bdf8);
+        directionalLight.intensity = 1.0;
+        directionalLight.position.set(200, 350, 200);
+        groundGrid.material.color.set(0x0ea5e9);
+      }
+    }
+
+    // Procedural Facade Canvas Texture
+    function createFacadeTexture(accent) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 128;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = accent.wall;
+      ctx.fillRect(0, 0, 128, 256);
+
+      const rows = 16;
+      const cols = 6;
+      const w = 128 / cols;
+      const h = 256 / rows;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          ctx.fillStyle = accent.glass;
+          ctx.fillRect(c * w + 2, r * h + 3, w - 4, h - 6);
+
+          if (Math.random() < 0.3) {
+            ctx.fillStyle = accent.lit;
+            ctx.globalAlpha = 0.65;
+            ctx.fillRect(c * w + 3.5, r * h + 4.5, w - 7, h - 9);
+            ctx.globalAlpha = 1.0;
+          }
+
+          ctx.strokeStyle = accent.mullion;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(c * w + 2, r * h + 3, w - 4, h - 6);
+        }
+      }
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      return tex;
+    }
+
+    // Urban Ground & Infrastructure
+    function createUrbanEnvironment() {
+      // 1. Base Terrain Ground Plane
+      const groundGeo = new THREE.PlaneGeometry(3000, 3000);
+      const groundMat = new THREE.MeshStandardMaterial({
+        color: 0x0f172a,
+        roughness: 0.85,
+        metalness: 0.15
+      });
+      const ground = new THREE.Mesh(groundGeo, groundMat);
+      ground.rotation.x = -Math.PI / 2;
+      ground.position.y = -0.5;
+      ground.receiveShadow = true;
+      scene.add(ground);
+
+      // 2. Futuristic Grid
+      groundGrid = new THREE.GridHelper(2400, 60, 0x6366f1, 0x1e293b);
+      groundGrid.position.y = 0;
+      scene.add(groundGrid);
+
+      // 3. Arterial Roads (Golf Course Extn & Sohna Road representation)
+      roadGroup = new THREE.Group();
+      
+      // Main Highway Artery
+      const mainRoadGeo = new THREE.PlaneGeometry(28, 2200);
+      const roadMat = new THREE.MeshBasicMaterial({ color: 0x1e293b });
+      const mainRoad = new THREE.Mesh(mainRoadGeo, roadMat);
+      mainRoad.rotation.x = -Math.PI / 2;
+      mainRoad.rotation.z = Math.PI / 6;
+      mainRoad.position.y = 0.2;
+      roadGroup.add(mainRoad);
+
+      // Glowing Center Line
+      const centerLineGeo = new THREE.PlaneGeometry(1.2, 2200);
+      const centerLineMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+      const centerLine = new THREE.Mesh(centerLineGeo, centerLineMat);
+      centerLine.rotation.x = -Math.PI / 2;
+      centerLine.rotation.z = Math.PI / 6;
+      centerLine.position.y = 0.3;
+      roadGroup.add(centerLine);
+
+      // Cross Avenue
+      const crossRoadGeo = new THREE.PlaneGeometry(20, 1800);
+      const crossRoad = new THREE.Mesh(crossRoadGeo, roadMat);
+      crossRoad.rotation.x = -Math.PI / 2;
+      crossRoad.rotation.z = -Math.PI / 4;
+      crossRoad.position.y = 0.2;
+      roadGroup.add(crossRoad);
+
+      scene.add(roadGroup);
+    }
+
+    // Architectural Skyscraper Towers
+    function createRealEstateTowers() {
+      const styles = [
+        { wall: '#1e293b', glass: '#38bdf8', lit: '#fef08a', mullion: '#475569' },
+        { wall: '#0f172a', glass: '#818cf8', lit: '#fed7aa', mullion: '#334155' },
+        { wall: '#1e1b4b', glass: '#c084fc', lit: '#fef08a', mullion: '#4338ca' },
+        { wall: '#064e3b', glass: '#34d399', lit: '#fef9c3', mullion: '#065f46' }
+      ];
+
+      activeProjects.forEach((proj, idx) => {
+        const { x, z } = latLngToWorld(proj.lat, proj.lng);
+        const style = styles[idx % styles.length];
+        const tex = createFacadeTexture(style);
+
+        // Height based on area / luxury tier
+        const isLuxury = (proj.target_market || '').toLowerCase().includes('luxury');
+        const height = isLuxury ? 110 + (idx % 4) * 20 : 75 + (idx % 3) * 15;
+        const width = 24 + (idx % 3) * 4;
+        const depth = 22 + (idx % 2) * 4;
+
+        const towerGroup = new THREE.Group();
+        towerGroup.position.set(x, 0, z);
+
+        // Podium Plaza
+        const podiumMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6 });
+        const podium = new THREE.Mesh(new THREE.BoxGeometry(width + 16, 6, depth + 16), podiumMat);
+        podium.position.y = 3;
+        podium.castShadow = true;
+        podium.receiveShadow = true;
+        towerGroup.add(podium);
+
+        // Main Glass Tower
+        const wallMat = new THREE.MeshStandardMaterial({
+          map: tex,
+          roughness: 0.2,
+          metalness: 0.5
+        });
+        const roofMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.7 });
+        const towerMats = [wallMat, wallMat, wallMat, wallMat, roofMat, roofMat];
+
+        const tower = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), towerMats);
+        tower.position.y = height / 2 + 6;
+        tower.castShadow = true;
+        tower.receiveShadow = true;
+        towerGroup.add(tower);
+
+        // Rooftop Helipad & Mechanical Penthouse
+        const mech = new THREE.Mesh(new THREE.BoxGeometry(width * 0.55, 8, depth * 0.55), roofMat);
+        mech.position.y = height + 10;
+        mech.castShadow = true;
+        towerGroup.add(mech);
+
+        // Glowing Architectural Spire Antenna
+        const spireMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.8, 16, 8), spireMat);
+        spire.position.y = height + 22;
+        towerGroup.add(spire);
+
+        // Store reference
+        towerGroup.userData = { project: proj, height: height + 22, index: idx };
+        scene.add(towerGroup);
+        buildingMeshes.push(towerGroup);
+
+        // Create HTML 3D Project Pin Tracking
+        createHtml3DPin(proj, x, height + 28, z, idx);
+      });
+
+      // Update counters
+      document.getElementById('meshCountDisplay').textContent = scene.children.length;
+      document.getElementById('drawCallDisplay').textContent = activeProjects.length * 4;
+    }
+
+    // HTML 3D Pin & Hover Details Card
+    function createHtml3DPin(proj, worldX, worldY, worldZ, idx) {
+      const pinWrap = document.createElement('div');
+      pinWrap.className = 'project-3d-pin-wrap';
+      pinWrap.id = `pin-${idx}`;
+
+      const score = 82 + (idx * 3) % 17;
+      const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
+
+      pinWrap.innerHTML = `
+        <div class="project-3d-hover-card">
+          <div class="hover-card-header">
+            <div>
+              <div class="hover-card-name">${proj.name}</div>
+              <div class="hover-card-dev">${proj.developer || 'Reputed Builder'}</div>
+            </div>
+            <span class="hover-card-badge ${isUltra ? 'luxury' : ''}">
+              ${proj.target_market || 'Premium'}
+            </span>
+          </div>
+
+          <div class="hover-card-stats">
+            <div class="hover-stat-item">
+              <span class="hover-stat-label">Land Area</span>
+              <span class="hover-stat-val">${proj.total_area_acres || '10.5'} Acres</span>
+            </div>
+            <div class="hover-stat-item">
+              <span class="hover-stat-label">Open Space</span>
+              <span class="hover-stat-val">${proj.open_area_percent || '65'}% Open</span>
+            </div>
+            <div class="hover-stat-item">
+              <span class="hover-stat-label">Possession</span>
+              <span class="hover-stat-val">${proj.possession_year || 'Ready'}</span>
+            </div>
+            <div class="hover-stat-item">
+              <span class="hover-stat-label">Config</span>
+              <span class="hover-stat-val">${(proj.configurations || ['3 BHK']).join(', ')}</span>
+            </div>
+          </div>
+
+          <div class="hover-card-actions">
+            <a href="https://property.p2s.ai" target="_blank" class="hover-card-link">
+              Open on proPIUM <i class="ph-bold ph-arrow-square-out"></i>
+            </a>
+            <span style="font-size:10px; color:#94a3b8; font-weight:600;">Sector 57, Gurugram</span>
+          </div>
+        </div>
+
+        <div class="project-map-pill">
+          <span class="pill-score-tag ${score >= 90 ? 'high' : ''}">★ ${score}</span>
+          <span class="pill-name">${proj.name}</span>
+          <span class="pill-meta">${proj.sector || 'Gurugram'}</span>
+          <span class="pill-redirect-icon"><i class="ph-bold ph-arrow-square-out"></i></span>
+        </div>
+      `;
+
+      // Click event -> Fly camera to building
+      pinWrap.addEventListener('click', (e) => {
+        e.stopPropagation();
+        focusOnProject(idx);
+      });
+
+      labelsContainer.appendChild(pinWrap);
+      projectPins.push({ el: pinWrap, pos: new THREE.Vector3(worldX, worldY, worldZ), idx });
+    }
+
+    // Build Bottom Carousel
+    function buildProjectCarousel() {
+      projectCarousel.innerHTML = '';
+      activeProjects.forEach((proj, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `carousel-item ${idx === 0 ? 'active' : ''}`;
+        btn.id = `carousel-item-${idx}`;
+        btn.innerHTML = `<i class="ph-bold ph-buildings"></i> ${proj.name}`;
+        btn.onclick = () => focusOnProject(idx);
+        projectCarousel.appendChild(btn);
+      });
+    }
+
+    // Smooth Cinematic Fly-To Camera Transition
+    function focusOnProject(idx) {
+      const mesh = buildingMeshes[idx];
+      if (!mesh) return;
+
+      activeSelectedProject = idx;
+
+      // Update Carousel Active Class
+      document.querySelectorAll('.carousel-item').forEach(b => b.classList.remove('active'));
+      const activeCarousel = document.getElementById(`carousel-item-${idx}`);
+      if (activeCarousel) {
+        activeCarousel.classList.add('active');
+        activeCarousel.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+
+      // Update Pin Selected Class
+      document.querySelectorAll('.project-3d-pin-wrap').forEach(p => p.classList.remove('selected'));
+      const activePin = document.getElementById(`pin-${idx}`);
+      if (activePin) activePin.classList.add('selected');
+
+      const targetX = mesh.position.x;
+      const targetY = mesh.userData.height * 0.5;
+      const targetZ = mesh.position.z;
+
+      // Smooth GSAP Tween for Controls Target & Camera Position
+      gsap.to(controls.target, {
+        x: targetX,
+        y: targetY,
+        z: targetZ,
+        duration: 1.4,
+        ease: 'power3.inOut'
+      });
+
+      gsap.to(camera.position, {
+        x: targetX + 110,
+        y: targetY + 120,
+        z: targetZ + 150,
+        duration: 1.4,
+        ease: 'power3.inOut'
+      });
+    }
+
+    function resetEngineCamera() {
+      gsap.to(controls.target, { x: 0, y: 40, z: 0, duration: 1.2, ease: 'power2.inOut' });
+      gsap.to(camera.position, { x: 0, y: 380, z: 520, duration: 1.2, ease: 'power2.inOut' });
+    }
+
+    function toggleAutoRotate() {
+      isAutoRotating = !isAutoRotating;
+      controls.autoRotate = isAutoRotating;
+      controls.autoRotateSpeed = 1.2;
+      document.getElementById('btnAutoRotate').classList.toggle('active', isAutoRotating);
+    }
+
+    // Update 3D Project Pin Tracking to Screen Coordinates
+    function updateProjectLabels() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const halfW = width * 0.5;
+      const halfH = height * 0.5;
+
+      const tempV = new THREE.Vector3();
+
+      projectPins.forEach(item => {
+        tempV.copy(item.pos);
+        tempV.project(camera);
+
+        // Behind camera check
+        if (tempV.z > 1) {
+          item.el.style.display = 'none';
+          return;
+        }
+
+        const screenX = tempV.x * halfW + halfW;
+        const screenY = -tempV.y * halfH + halfH;
+
+        // Smart Flip Down when near top of screen
+        if (screenY < 260) {
+          item.el.classList.add('flip-down');
+        } else {
+          item.el.classList.remove('flip-down');
+        }
+
+        item.el.style.display = 'flex';
+        item.el.style.transform = `translate3d(${Math.round(screenX)}px, ${Math.round(screenY)}px, 0) translate(-50%, -100%)`;
+      });
+    }
+
+    // FPS Counter
+    function updateFps() {
+      frameCount++;
+      const now = performance.now();
+      if (now - lastTime >= 1000) {
+        currentFps = Math.round((frameCount * 1000) / (now - lastTime));
+        document.getElementById('fpsDisplay').textContent = `${currentFps} FPS`;
+        frameCount = 0;
+        lastTime = now;
+      }
+    }
+
+    // Animation Loop
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+      updateProjectLabels();
+      updateFps();
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    // Modal Handlers
+    function openComparisonModal() {
+      document.getElementById('comparisonModal').classList.add('active');
+    }
+    function closeComparisonModal(e) {
+      if (!e || e.target.id === 'comparisonModal') {
+        document.getElementById('comparisonModal').classList.remove('active');
+      }
+    }
+
+    // Initialize on Load
+    window.addEventListener('DOMContentLoaded', initEngine);
+  </script>
+</body>
+</html>
