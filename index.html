@@ -1663,12 +1663,174 @@
       color: var(--primary);
     }
 
+
+    /* ==========================================================================
+       GURUGRAM 3D DIGITAL TWIN OVERLAY
+       ========================================================================== */
+    .digital-twin-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 900;
+      background: #0a0910;
+      display: none;
+      animation: fadeInTwin 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes fadeInTwin {
+      from { opacity: 0; transform: scale(0.99); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .digital-twin-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+    .twin-floating-hud {
+      position: absolute;
+      top: 82px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.90);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(255, 255, 255, 0.16);
+      border-radius: var(--radius-full);
+      padding: 6px 16px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(99, 102, 241, 0.28);
+      z-index: 1000;
+      user-select: none;
+    }
+    .twin-hud-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+    .twin-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981, 0 0 16px rgba(16, 185, 129, 0.8);
+      animation: twinPulse 1.8s infinite;
+    }
+    @keyframes twinPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.6; }
+    }
+    .twin-hud-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      padding-left: 12px;
+    }
+    .twin-switch-back-btn {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-full);
+      padding: 5px 14px;
+      font-size: 11.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+      transition: all 0.2s;
+    }
+    .twin-switch-back-btn:hover {
+      background: linear-gradient(135deg, #4338ca, #4f46e5);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.55);
+    }
+    .twin-external-link {
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .twin-external-link:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .twin-nav-btn {
+      height: 34px;
+      padding: 0 12px;
+      background: linear-gradient(135deg, #0f172a, #1e1b4b);
+      border: 1.5px solid #6366f1;
+      border-radius: var(--radius-full);
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #e0e7ff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+    .twin-nav-btn:hover {
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      border-color: #818cf8;
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+    }
+    .twin-nav-btn.active {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      border-color: #a5b4fc;
+      color: #ffffff;
+      box-shadow: 0 0 18px rgba(99, 102, 241, 0.6);
+    }
+
   </style>
 </head>
 <body>
 
   <!-- MapLibre GL 3D Map Container -->
   <div id="map"></div>
+
+  <!-- Gurugram 3D Digital Twin Overlay -->
+  <div id="gurugramTwinContainer" class="digital-twin-container" style="display: none;">
+    <iframe
+      id="twinIframe"
+      src="https://ggn-city.vercel.app/?s=eyJjIjpbMCw4MS4yLC0wLjEsLTE0Ny40LDM1LC0zMiw5NjQuNl19"
+      class="digital-twin-iframe"
+      title="Gurugram 3D Digital Twin"
+      allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+    ></iframe>
+    <div class="twin-floating-hud">
+      <div class="twin-hud-badge">
+        <span class="twin-pulse-dot"></span>
+        <span>Gurugram 3D Digital Twin (Cyber Hub &amp; Skyline)</span>
+      </div>
+      <div class="twin-hud-actions">
+        <button class="twin-switch-back-btn" onclick="toggleDigitalTwinMode()">
+          <i class="ph-bold ph-map-trifold"></i> Back to proPIUM Map
+        </button>
+        <a href="https://ggn-city.vercel.app/?s=eyJjIjpbMCw4MS4yLC0wLjEsLTE0Ny40LDM1LC0zMiw5NjQuNl19" target="_blank" class="twin-external-link" title="Open Fullscreen in New Window">
+          <i class="ph-bold ph-arrow-square-out"></i> Fullscreen
+        </a>
+      </div>
+    </div>
+  </div>
 
   <!-- ==========================================================================
        TOP FLOATING NAVBAR
@@ -1750,6 +1912,11 @@
         <i class="ph-bold ph-globe"></i> proPIUM ↗
       </a>
 
+      <!-- Gurugram 3D Digital Twin Toggle -->
+      <button class="twin-nav-btn" id="btnDigitalTwin" onclick="toggleDigitalTwinMode()" title="Toggle Photorealistic Gurugram 3D Digital Twin">
+        <i class="ph-bold ph-buildings"></i> Gurugram Twin
+      </button>
+
       <!-- Link to All Charts Dashboard -->
       <a href="all_charts.html" target="_blank" class="charts-link-btn" title="Open Universal Visual Analytics Hub with all charts">
         <i class="ph-bold ph-chart-polar"></i> All Charts
@@ -1772,6 +1939,9 @@
   </div>
 
   <div class="bottom-camera-hud">
+    <button class="hud-pill-action" id="hudTwinBtn" onclick="toggleDigitalTwinMode()" title="Switch to Gurugram 3D Digital Twin">
+      <i class="ph-bold ph-buildings"></i> Gurugram Twin
+    </button>
     <button class="hud-pill-action" id="hudOrbitBtn" onclick="toggleOrbit()">
       <i class="ph-bold ph-repeat"></i> 360° Orbit
     </button>
@@ -3486,6 +3656,26 @@
     map.on('click', () => {
       closeProjectDrawer();
     });
-  </script>
+  
+    // ==========================================
+    // GURUGRAM 3D DIGITAL TWIN TOGGLE
+    // ==========================================
+    let isDigitalTwinActive = false;
+
+    function toggleDigitalTwinMode() {
+      isDigitalTwinActive = !isDigitalTwinActive;
+      const container = document.getElementById('gurugramTwinContainer');
+      const navBtn = document.getElementById('btnDigitalTwin');
+      const hudBtn = document.getElementById('hudTwinBtn');
+
+      if (container) {
+        container.style.display = isDigitalTwinActive ? 'block' : 'none';
+      }
+
+      if (navBtn) navBtn.classList.toggle('active', isDigitalTwinActive);
+      if (hudBtn) hudBtn.classList.toggle('active', isDigitalTwinActive);
+    }
+
+</script>
 </body>
 </html>
