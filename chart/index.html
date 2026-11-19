@@ -544,6 +544,72 @@
       gap: 5px;
     }
 
+    /* Project name label (sits above the tower) */
+    .model-label-building {
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+      border-width: 1px;
+      border-radius: 10px;
+      padding: 6px 10px;
+    }
+    .label-name-link {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .label-name-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    /* Hover details card (non-blocking, shown when hovering a project label) */
+    .project-hover-card {
+      position: fixed;
+      z-index: 2000;
+      width: 280px;
+      background: rgba(15, 23, 42, 0.97);
+      color: #e2e8f0;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      font-size: 12px;
+      line-height: 1.45;
+      opacity: 0;
+      transform: translateY(4px);
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    }
+    .project-hover-card.visible { opacity: 1; transform: none; pointer-events: auto; }
+    .project-hover-card .hc-name {
+      display: block;
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      text-decoration: none;
+    }
+    .project-hover-card .hc-name:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .project-hover-card .hc-dev { color: #94a3b8; font-size: 11px; margin-top: 2px; }
+    .project-hover-card .hc-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 0;
+      border-top: 1px solid rgba(148, 163, 184, 0.15);
+    }
+    .project-hover-card .hc-row span:first-child { color: #94a3b8; }
+    .project-hover-card .hc-row span:last-child { text-align: right; font-weight: 600; }
+    .project-hover-card .hc-cta {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      background: #4f46e5;
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .project-hover-card .hc-cta:hover { background: #4338ca; }
+    @media (max-width: 600px) { .project-hover-card { display: none; } }
+
     /* 3D Legend & HUD at Bottom Right */
     .hud-controls {
       position: absolute;
@@ -1019,6 +1085,8 @@
 </div>
 
 <!-- Glassmorphic View Details Modal -->
+<div class="project-hover-card" id="projectHoverCard" aria-hidden="true"></div>
+
 <div class="modal-backdrop" id="projectDetailsModal" onclick="handleModalBackdropClick(event)">
   <div class="modal-card">
     <div class="modal-header">
@@ -1902,17 +1970,17 @@
       .addTo(map);
     activeHtmlMarkers.push({ marker: schoolMarker });
 
-    // Project Pins
+    // Project Pins: name sits above the tower top. Hover shows details, the name opens the project page, click opens full details.
     projects.slice(0, 25).forEach(proj => {
       const el = document.createElement('div');
       const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
       const is4S = proj.name.toLowerCase().includes('4s');
       el.className = `model-label-building ${isUltra ? 'ultra-label' : ''} ${is4S ? 'featured-label' : ''}`;
-      
+
       el.innerHTML = `
         <div class="label-top-row">
           <i class="ph-bold ph-buildings" style="color: ${isUltra ? 'var(--accent-gold)' : 'var(--accent-cyan)'}"></i>
-          <b>${proj.name}</b>
+          <a class="label-name-link" href="${escapeHtml(getPropiumProjectUrl(proj))}" target="_blank" rel="noopener">${escapeHtml(proj.name)}</a>
         </div>
         <div class="label-sub-row">
           <span style="color: var(--accent-cyan); font-weight: 800;">📍 ${proj.distanceFromSchool.toFixed(1)} km</span>
@@ -1923,18 +1991,130 @@
 
       const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
         .setLngLat([proj.lng, proj.lat])
+        .setOffset([0, labelOffsetPx(proj)])
         .addTo(map);
 
-      // Clicking ANY project marker opens View Details Modal
+      // Name link opens the project page; clicking the rest of the label opens full details
       el.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return;
         e.stopPropagation();
+        hideHoverCardNow();
         openProjectDetails(proj, school);
       });
+
+      // Hover opens the details card
+      el.addEventListener('mouseenter', () => showHoverCard(proj, school, el));
+      el.addEventListener('mouseleave', () => scheduleHoverHide());
 
       activeHtmlMarkers.push({ marker, el, proj });
     });
 
     updateLabelStaggering();
+  }
+
+  // ==========================================
+  // PROJECT LINKS, LABEL PLACEMENT AND HOVER CARD
+  // ==========================================
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function getProjectSlug(project) {
+    if (project.slug) return project.slug;
+    const name = (project.name || '').trim().toLowerCase();
+    return name.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-');
+  }
+
+  function getPropiumProjectUrl(project) {
+    return `https://property.p2s.ai/project/${getProjectSlug(project)}`;
+  }
+
+  // Approximate height of each tower top (podium + tower + crown/spire), in metres
+  function towerTopMetres(proj) {
+    const isUltra = (proj.target_market || '').toLowerCase().includes('ultra');
+    return isUltra ? 200 : 150;
+  }
+
+  // Pixel offset that lifts the label from the ground point up to the tower top, for the current zoom and pitch
+  function labelOffsetPx(proj) {
+    const metresPerPx = 40075016.686 * Math.cos(proj.lat * Math.PI / 180) / (512 * Math.pow(2, map.getZoom()));
+    const screenFactor = Math.sin(map.getPitch() * Math.PI / 180);
+    return -((towerTopMetres(proj) / metresPerPx) * screenFactor) - 6;
+  }
+
+  function refreshLabelOffsets() {
+    activeHtmlMarkers.forEach(item => {
+      if (item.marker && item.proj) item.marker.setOffset([0, labelOffsetPx(item.proj)]);
+    });
+  }
+
+  map.on('zoom', refreshLabelOffsets);
+  map.on('pitch', refreshLabelOffsets);
+
+  let hoverShowTimer = null;
+  let hoverHideTimer = null;
+
+  function buildHoverCardHtml(proj, school) {
+    const url = getPropiumProjectUrl(proj);
+    const schoolName = school ? school.name : '';
+    const configs = (proj.configurations && proj.configurations.length) ? proj.configurations.join(', ') : '—';
+    const area = proj.total_area_acres ? `${proj.total_area_acres} acres` : '—';
+    const possession = proj.possession_year ? `${proj.possession_year}` : (proj.status || '—');
+    const distance = (proj.distanceFromSchool !== undefined) ? `${proj.distanceFromSchool.toFixed(1)} km` : '—';
+    return `
+      <a class="hc-name" href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(proj.name)}</a>
+      <div class="hc-dev">${proj.developer ? 'by ' + escapeHtml(proj.developer) : 'Premier Real Estate Developer'}</div>
+      <div class="hc-row"><span>Market</span><span>${escapeHtml(proj.target_market || 'Premium')}</span></div>
+      <div class="hc-row"><span>Status</span><span>${escapeHtml(proj.status || 'Under Construction')}</span></div>
+      <div class="hc-row"><span>Distance${schoolName ? ' from ' + escapeHtml(schoolName) : ''}</span><span>${distance}</span></div>
+      <div class="hc-row"><span>Configurations</span><span>${escapeHtml(configs)}</span></div>
+      <div class="hc-row"><span>Land area</span><span>${area}</span></div>
+      <div class="hc-row"><span>Possession</span><span>${escapeHtml(possession)}</span></div>
+      <a class="hc-cta" href="${escapeHtml(url)}" target="_blank" rel="noopener">View project on PropIUM →</a>
+    `;
+  }
+
+  function positionHoverCard(card, anchorEl) {
+    const rect = anchorEl.getBoundingClientRect();
+    const cardWidth = card.offsetWidth || 280;
+    const cardHeight = card.offsetHeight || 260;
+    let left = rect.right + 12;
+    if (left + cardWidth > window.innerWidth - 12) left = rect.left - cardWidth - 12;
+    let top = rect.top - 8;
+    if (top + cardHeight > window.innerHeight - 12) top = window.innerHeight - cardHeight - 12;
+    card.style.left = Math.max(12, left) + 'px';
+    card.style.top = Math.max(12, top) + 'px';
+  }
+
+  function showHoverCard(proj, school, anchorEl) {
+    clearTimeout(hoverHideTimer);
+    clearTimeout(hoverShowTimer);
+    hoverShowTimer = setTimeout(() => {
+      const card = document.getElementById('projectHoverCard');
+      card.innerHTML = buildHoverCardHtml(proj, school);
+      card.onmouseenter = () => clearTimeout(hoverHideTimer);
+      card.onmouseleave = () => scheduleHoverHide();
+      card.classList.add('visible');
+      positionHoverCard(card, anchorEl);
+    }, 120);
+  }
+
+  function scheduleHoverHide() {
+    clearTimeout(hoverShowTimer);
+    clearTimeout(hoverHideTimer);
+    hoverHideTimer = setTimeout(hideHoverCardNow, 220);
+  }
+
+  function hideHoverCardNow() {
+    clearTimeout(hoverShowTimer);
+    clearTimeout(hoverHideTimer);
+    const card = document.getElementById('projectHoverCard');
+    if (card) card.classList.remove('visible');
   }
 
   // Dynamic anti-overlap staggering so cards along roads never collide
@@ -1944,6 +2124,7 @@
     activeHtmlMarkers.forEach(item => {
       if (!item.proj) return;
       const pt = map.project([item.proj.lng, item.proj.lat]);
+      pt.y += labelOffsetPx(item.proj);
       let tier = 0;
       for (const p of placed) {
         const dx = Math.abs(pt.x - p.x);
