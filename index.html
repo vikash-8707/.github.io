@@ -501,27 +501,27 @@
       display: none;
     }
 
-    /* Rich Glassmorphism Hover Details Card */
+    /* Rich Glassmorphism Hover Details Card with Smart Flip & Clamping */
     .project-3d-hover-card {
       position: absolute;
-      bottom: calc(100% + 8px);
+      bottom: calc(100% + 12px);
       left: 50%;
-      transform: translateX(-50%) translateY(6px);
-      width: 290px;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1.5px solid rgba(203, 213, 225, 0.9);
+      transform: translateX(-50%) translateY(8px);
+      width: 300px;
+      background: rgba(255, 255, 255, 0.99);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(203, 213, 225, 0.95);
       border-radius: 14px;
-      padding: 13px 14px;
-      box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.25), 0 4px 14px rgba(79, 70, 229, 0.15);
+      padding: 14px 15px;
+      box-shadow: 0 20px 40px -8px rgba(15, 23, 42, 0.3), 0 4px 14px rgba(79, 70, 229, 0.18);
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
       transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                   transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                   visibility 0.2s;
-      z-index: 100000;
+      z-index: 1000000;
       cursor: pointer;
     }
     .project-3d-hover-card::after {
@@ -542,6 +542,112 @@
       visibility: visible;
       pointer-events: auto;
       transform: translateX(-50%) translateY(0);
+    }
+
+    /* Smart Flip Down when near top of screen (Under Navbar) */
+    .project-3d-pin-wrap.flip-down .project-3d-hover-card {
+      bottom: auto;
+      top: calc(100% + 14px);
+      transform: translateX(-50%) translateY(-8px);
+    }
+    .project-3d-pin-wrap.flip-down:hover .project-3d-hover-card {
+      transform: translateX(-50%) translateY(0);
+    }
+    .project-3d-pin-wrap.flip-down .project-3d-hover-card::after {
+      top: auto;
+      bottom: 100%;
+      border-top: none;
+      border-bottom: 7px solid #ffffff;
+    }
+
+    /* Horizontal Edge Clamping */
+    .project-3d-pin-wrap.align-left .project-3d-hover-card {
+      left: 0;
+      transform: translateY(8px);
+    }
+    .project-3d-pin-wrap.align-left:hover .project-3d-hover-card {
+      transform: translateY(0);
+    }
+    .project-3d-pin-wrap.align-left.flip-down .project-3d-hover-card {
+      transform: translateY(-8px);
+    }
+    .project-3d-pin-wrap.align-left.flip-down:hover .project-3d-hover-card {
+      transform: translateY(0);
+    }
+    .project-3d-pin-wrap.align-left .project-3d-hover-card::after {
+      left: 32px;
+    }
+
+    .project-3d-pin-wrap.align-right .project-3d-hover-card {
+      left: auto;
+      right: 0;
+      transform: translateY(8px);
+    }
+    .project-3d-pin-wrap.align-right:hover .project-3d-hover-card {
+      transform: translateY(0);
+    }
+    .project-3d-pin-wrap.align-right.flip-down .project-3d-hover-card {
+      transform: translateY(-8px);
+    }
+    .project-3d-pin-wrap.align-right.flip-down:hover .project-3d-hover-card {
+      transform: translateY(0);
+    }
+    .project-3d-pin-wrap.align-right .project-3d-hover-card::after {
+      left: auto;
+      right: 32px;
+    }
+
+    /* Embedded 3D Digital Twin Map Viewport */
+    .base-3d-city-iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      z-index: 1;
+      display: none;
+      background: #0a0910;
+    }
+
+    .map-layer-selector {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      z-index: 30;
+      display: flex;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-full);
+      padding: 3px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      user-select: none;
+      gap: 3px;
+    }
+    .layer-toggle-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .layer-toggle-btn:hover {
+      color: #0f172a;
+      background: #f1f5f9;
+    }
+    .layer-toggle-btn.active {
+      background: #4f46e5;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(79, 70, 229, 0.4);
     }
     .hover-card-header {
       margin-bottom: 8px;
@@ -1804,32 +1910,25 @@
 </head>
 <body>
 
-  <!-- MapLibre GL 3D Map Container -->
-  <div id="map"></div>
-
-  <!-- Gurugram 3D Digital Twin Overlay -->
-  <div id="gurugramTwinContainer" class="digital-twin-container" style="display: none;">
+  <!-- Map Container with Embedded 3D Digital Twin -->
+  <div id="map">
     <iframe
-      id="twinIframe"
+      id="ggnCityMapIframe"
       src="https://ggn-city.vercel.app/?s=eyJjIjpbMCw4MS4yLC0wLjEsLTE0Ny40LDM1LC0zMiw5NjQuNl19"
-      class="digital-twin-iframe"
+      class="base-3d-city-iframe"
       title="Gurugram 3D Digital Twin"
       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
     ></iframe>
-    <div class="twin-floating-hud">
-      <div class="twin-hud-badge">
-        <span class="twin-pulse-dot"></span>
-        <span>Gurugram 3D Digital Twin (Cyber Hub &amp; Skyline)</span>
-      </div>
-      <div class="twin-hud-actions">
-        <button class="twin-switch-back-btn" onclick="toggleDigitalTwinMode()">
-          <i class="ph-bold ph-map-trifold"></i> Back to proPIUM Map
-        </button>
-        <a href="https://ggn-city.vercel.app/?s=eyJjIjpbMCw4MS4yLC0wLjEsLTE0Ny40LDM1LC0zMiw5NjQuNl19" target="_blank" class="twin-external-link" title="Open Fullscreen in New Window">
-          <i class="ph-bold ph-arrow-square-out"></i> Fullscreen
-        </a>
-      </div>
-    </div>
+  </div>
+
+  <!-- Bottom Left Map Layer Selector -->
+  <div class="map-layer-selector">
+    <button class="layer-toggle-btn active" id="btnLayerStreet" onclick="switchBaseMapLayer('street')">
+      <i class="ph-bold ph-map-trifold"></i> Street 3D
+    </button>
+    <button class="layer-toggle-btn" id="btnLayerTwin" onclick="switchBaseMapLayer('twin')">
+      <i class="ph-bold ph-buildings"></i> City Twin 3D
+    </button>
   </div>
 
   <!-- ==========================================================================
@@ -1912,11 +2011,6 @@
         <i class="ph-bold ph-globe"></i> proPIUM ↗
       </a>
 
-      <!-- Gurugram 3D Digital Twin Toggle -->
-      <button class="twin-nav-btn" id="btnDigitalTwin" onclick="toggleDigitalTwinMode()" title="Toggle Photorealistic Gurugram 3D Digital Twin">
-        <i class="ph-bold ph-buildings"></i> Gurugram Twin
-      </button>
-
       <!-- Link to All Charts Dashboard -->
       <a href="all_charts.html" target="_blank" class="charts-link-btn" title="Open Universal Visual Analytics Hub with all charts">
         <i class="ph-bold ph-chart-polar"></i> All Charts
@@ -1939,9 +2033,6 @@
   </div>
 
   <div class="bottom-camera-hud">
-    <button class="hud-pill-action" id="hudTwinBtn" onclick="toggleDigitalTwinMode()" title="Switch to Gurugram 3D Digital Twin">
-      <i class="ph-bold ph-buildings"></i> Gurugram Twin
-    </button>
     <button class="hud-pill-action" id="hudOrbitBtn" onclick="toggleOrbit()">
       <i class="ph-bold ph-repeat"></i> 360° Orbit
     </button>
@@ -2992,6 +3083,20 @@
       if (!is3D || !lastRenderMatrix) {
         active3DProjectLabels.forEach(item => {
           const pos = map.project([item.proj.lng, item.proj.lat]);
+          if (pos.y < 290) {
+            item.el.classList.add('flip-down');
+          } else {
+            item.el.classList.remove('flip-down');
+          }
+          if (pos.x < 170) {
+            item.el.classList.add('align-left');
+            item.el.classList.remove('align-right');
+          } else if (pos.x > width - 170) {
+            item.el.classList.add('align-right');
+            item.el.classList.remove('align-left');
+          } else {
+            item.el.classList.remove('align-left', 'align-right');
+          }
           item.el.style.display = 'flex';
           item.el.style.transform = `translate3d(${Math.round(pos.x)}px, ${Math.round(pos.y)}px, 0) translate(-50%, -100%)`;
           item.el.classList.add('mode-2d');
@@ -3029,6 +3134,24 @@
 
         const screenX = (ndcX * 0.5 + 0.5) * width;
         const screenY = (-ndcY * 0.5 + 0.5) * height;
+
+        // Smart Flip Down if near the top of the screen (under navbar)
+        if (screenY < 290) {
+          item.el.classList.add('flip-down');
+        } else {
+          item.el.classList.remove('flip-down');
+        }
+
+        // Horizontal Edge Clamping so card never clips off screen
+        if (screenX < 170) {
+          item.el.classList.add('align-left');
+          item.el.classList.remove('align-right');
+        } else if (screenX > width - 170) {
+          item.el.classList.add('align-right');
+          item.el.classList.remove('align-left');
+        } else {
+          item.el.classList.remove('align-left', 'align-right');
+        }
 
         item.el.style.display = 'flex';
         item.el.style.transform = `translate3d(${Math.round(screenX)}px, ${Math.round(screenY)}px, 0) translate(-50%, -100%)`;
@@ -3201,12 +3324,12 @@
           </div>
         </div>
 
-        <!-- Main Rooftop Pill -->
-        <div class="project-map-pill" title="Click to open ${proj.name} on proPIUM">
+        <!-- Main Rooftop Pill (No ugly native tooltips) -->
+        <div class="project-map-pill">
           <span class="pill-score-tag ${scoreData.score >= 90 ? 'high' : ''}">★ ${scoreData.score}</span>
           <span class="pill-name">${proj.name}</span>
           <span class="pill-meta">${proj.sector || ''}${distStr}</span>
-          <span class="pill-redirect-icon" title="Redirect to ${proj.name} on proPIUM">
+          <span class="pill-redirect-icon">
             <i class="ph-bold ph-arrow-square-out"></i>
           </span>
         </div>
@@ -3658,22 +3781,28 @@
     });
   
     // ==========================================
-    // GURUGRAM 3D DIGITAL TWIN TOGGLE
+    // MAP LAYER SELECTOR (Street 3D vs City Twin 3D)
     // ==========================================
-    let isDigitalTwinActive = false;
+    let currentMapLayer = 'street';
 
-    function toggleDigitalTwinMode() {
-      isDigitalTwinActive = !isDigitalTwinActive;
-      const container = document.getElementById('gurugramTwinContainer');
-      const navBtn = document.getElementById('btnDigitalTwin');
-      const hudBtn = document.getElementById('hudTwinBtn');
+    function switchBaseMapLayer(layer) {
+      currentMapLayer = layer;
+      const iframe = document.getElementById('ggnCityMapIframe');
+      const btnStreet = document.getElementById('btnLayerStreet');
+      const btnTwin = document.getElementById('btnLayerTwin');
+      const canvas = map.getCanvas();
 
-      if (container) {
-        container.style.display = isDigitalTwinActive ? 'block' : 'none';
+      if (layer === 'twin') {
+        if (iframe) iframe.style.display = 'block';
+        if (canvas) canvas.style.opacity = '0';
+        if (btnTwin) btnTwin.classList.add('active');
+        if (btnStreet) btnStreet.classList.remove('active');
+      } else {
+        if (iframe) iframe.style.display = 'none';
+        if (canvas) canvas.style.opacity = '1';
+        if (btnStreet) btnStreet.classList.add('active');
+        if (btnTwin) btnTwin.classList.remove('active');
       }
-
-      if (navBtn) navBtn.classList.toggle('active', isDigitalTwinActive);
-      if (hudBtn) hudBtn.classList.toggle('active', isDigitalTwinActive);
     }
 
 </script>
