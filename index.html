@@ -382,12 +382,43 @@
     /* ==========================================================================
        MAP LABELS WITH PROPIUM SCORE & SCHOOL MARKER
        ========================================================================== */
+    /* ==========================================================================
+       3D BUILDING ROOFTOP LABELS & HOVER CARDS
+       ========================================================================== */
+    .project-labels-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 10;
+    }
+
+    .project-3d-pin-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      will-change: transform;
+      transform-origin: bottom center;
+    }
+    .project-3d-pin-wrap:hover {
+      z-index: 999999 !important;
+    }
+
     .project-map-pill {
       background: #ffffff;
       border: 1.5px solid #cbd5e1;
       border-radius: var(--radius-full);
       padding: 3px 9px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
       display: flex;
       align-items: center;
       gap: 5px;
@@ -399,11 +430,10 @@
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       user-select: none;
     }
-    .project-map-pill:hover {
-      transform: translateY(-2px) scale(1.06);
+    .project-3d-pin-wrap:hover .project-map-pill {
+      transform: translateY(-2px) scale(1.05);
       border-color: var(--primary);
-      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.28);
-      z-index: 9999 !important;
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.32);
     }
     .pill-score-tag {
       background: #eef2ff;
@@ -419,6 +449,231 @@
     .pill-score-tag.high {
       background: #fef3c7;
       color: #b45309;
+    }
+    .pill-name {
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .pill-meta {
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .pill-redirect-icon {
+      color: #6366f1;
+      font-size: 12px;
+      margin-left: 1px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* Downward stem linking label directly to 3D skyscraper roof */
+    .project-3d-pin-stem {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: none;
+      margin-top: -1px;
+    }
+    .stem-caret {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid #ffffff;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.12));
+    }
+    .stem-needle {
+      width: 1.5px;
+      height: 9px;
+      background: linear-gradient(180deg, #4f46e5, #38bdf8);
+      box-shadow: 0 0 5px rgba(79, 70, 229, 0.5);
+    }
+    .stem-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 6px #38bdf8, 0 0 10px rgba(56, 189, 248, 0.8);
+      border: 1px solid #ffffff;
+    }
+    .project-3d-pin-wrap.mode-2d .project-3d-pin-stem {
+      display: none;
+    }
+
+    /* Rich Glassmorphism Hover Details Card */
+    .project-3d-hover-card {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      width: 290px;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1.5px solid rgba(203, 213, 225, 0.9);
+      border-radius: 14px;
+      padding: 13px 14px;
+      box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.25), 0 4px 14px rgba(79, 70, 229, 0.15);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.2s;
+      z-index: 100000;
+      cursor: pointer;
+    }
+    .project-3d-hover-card::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 7px solid #ffffff;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.06));
+    }
+    .project-3d-pin-wrap:hover .project-3d-hover-card {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .hover-card-header {
+      margin-bottom: 8px;
+    }
+    .hover-card-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .hover-card-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.25;
+      margin: 0;
+    }
+    .hover-score-badge {
+      background: #eef2ff;
+      color: #4338ca;
+      font-weight: 800;
+      font-size: 10.5px;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      flex-shrink: 0;
+    }
+    .hover-score-badge.high {
+      background: #fef3c7;
+      color: #b45309;
+    }
+    .hover-card-dev {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .hover-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 9px;
+    }
+    .hover-tag {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #475569;
+    }
+    .hover-tag.market {
+      background: #ede9fe;
+      color: #6d28d9;
+    }
+    .hover-tag.status {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    .hover-tag.sector {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+    .hover-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: #f8fafc;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 9px;
+    }
+    .hover-stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .hover-stat-label {
+      font-size: 9px;
+      color: #94a3b8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .hover-stat-val {
+      font-size: 11px;
+      color: #1e293b;
+      font-weight: 700;
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hover-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-top: 7px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .hover-footer-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #4f46e5;
+      transition: color 0.15s;
+    }
+    .project-3d-hover-card:hover .hover-footer-action {
+      color: #4338ca;
+      text-decoration: underline;
+    }
+    .hover-footer-drawer-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.15s;
+    }
+    .hover-footer-drawer-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
     }
 
     /* School Landmark Map Label */
@@ -2275,6 +2530,8 @@
     let activeThreeRenderer = null;
     let activeThreeGroup = new THREE.Group();
     let activeHtmlMarkers = [];
+    let active3DProjectLabels = [];
+    let lastRenderMatrix = null;
 
     const map = new maplibregl.Map({
       container: 'map',
@@ -2318,10 +2575,12 @@
       },
       render: function(gl, matrix) {
         if (!activeThreeRenderer) return;
+        lastRenderMatrix = matrix;
         const m = new THREE.Matrix4().fromArray(matrix);
         activeThreeCamera.projectionMatrix = m;
         activeThreeRenderer.resetState();
         activeThreeRenderer.render(activeThreeScene, activeThreeCamera);
+        update3DProjectLabels();
         map.triggerRepaint();
       }
     };
@@ -2380,9 +2639,23 @@
 
       map.addLayer(custom3DLayer);
 
+      let overlay = document.getElementById('projectLabelsOverlay');
+      if (!overlay && map.getCanvasContainer()) {
+        overlay = document.createElement('div');
+        overlay.id = 'projectLabelsOverlay';
+        overlay.className = 'project-labels-overlay';
+        map.getCanvasContainer().appendChild(overlay);
+      }
+
       populateSchoolDropdown();
       applyFilters();
     });
+
+    map.on('move', update3DProjectLabels);
+    map.on('zoom', update3DProjectLabels);
+    map.on('pitch', update3DProjectLabels);
+    map.on('rotate', update3DProjectLabels);
+    map.on('resize', update3DProjectLabels);
 
     function populateSchoolDropdown() {
       const select = document.getElementById('schoolFilter');
@@ -2519,9 +2792,93 @@
       return clusters;
     }
 
+    function getProjectBuildingTopZ(project) {
+      const rand = getSeededRandom(project.id * 31 + 47);
+      const isUltra = (project.target_market || '').toLowerCase().includes('ultra');
+      const isLuxury = (project.target_market || '').toLowerCase().includes('luxury') && !isUltra;
+      const acres = project.total_area_acres || 6.0;
+      const typology = (acres > 18) ? 2 : Math.floor(rand() * 3);
+      const baseHeight = isUltra ? (130 + rand() * 35) : isLuxury ? (105 + rand() * 25) : (75 + rand() * 20);
+      const plazaH = 1.6;
+      const lobbyH = 5.0;
+
+      if (typology === 0) {
+        return plazaH + lobbyH + baseHeight + 9.5;
+      } else if (typology === 1) {
+        return plazaH + lobbyH + baseHeight + 3.0;
+      } else {
+        return plazaH + lobbyH + baseHeight + 14.5;
+      }
+    }
+
+    function update3DProjectLabels() {
+      if (!active3DProjectLabels || active3DProjectLabels.length === 0) return;
+      const canvas = map.getCanvas();
+      if (!canvas) return;
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      const is3D = (currentViewMode === '3d' && (map.getZoom() >= 13.0 || activeClusterFilter));
+
+      if (!is3D || !lastRenderMatrix) {
+        active3DProjectLabels.forEach(item => {
+          const pos = map.project([item.proj.lng, item.proj.lat]);
+          item.el.style.display = 'flex';
+          item.el.style.transform = `translate3d(${Math.round(pos.x)}px, ${Math.round(pos.y)}px, 0) translate(-50%, -100%)`;
+          item.el.classList.add('mode-2d');
+        });
+        return;
+      }
+
+      const e = lastRenderMatrix;
+
+      active3DProjectLabels.forEach(item => {
+        item.el.classList.remove('mode-2d');
+        const x = item.mercatorX;
+        const y = item.mercatorY;
+        const z = item.mercatorZ;
+
+        // Clip space coordinates via view-projection matrix
+        const clipX = e[0] * x + e[4] * y + e[8] * z + e[12];
+        const clipY = e[1] * x + e[5] * y + e[9] * z + e[13];
+        const clipZ = e[2] * x + e[6] * y + e[10] * z + e[14];
+        const clipW = e[3] * x + e[7] * y + e[11] * z + e[15];
+
+        if (clipW <= 0.0001) {
+          item.el.style.display = 'none';
+          return;
+        }
+
+        const ndcX = clipX / clipW;
+        const ndcY = clipY / clipW;
+        const ndcZ = clipZ / clipW;
+
+        if (ndcX < -1.5 || ndcX > 1.5 || ndcY < -1.5 || ndcY > 1.5 || ndcZ > 1.0) {
+          item.el.style.display = 'none';
+          return;
+        }
+
+        const screenX = (ndcX * 0.5 + 0.5) * width;
+        const screenY = (-ndcY * 0.5 + 0.5) * height;
+
+        item.el.style.display = 'flex';
+        item.el.style.transform = `translate3d(${Math.round(screenX)}px, ${Math.round(screenY)}px, 0) translate(-50%, -100%)`;
+        item.el.style.zIndex = Math.max(1, Math.min(9990, Math.round((1.0 - ndcZ) * 10000)));
+      });
+    }
+
     function render3DSceneAndMarkers() {
       activeHtmlMarkers.forEach(m => m.remove());
       activeHtmlMarkers = [];
+
+      let overlay = document.getElementById('projectLabelsOverlay');
+      if (!overlay && map.getCanvasContainer()) {
+        overlay = document.createElement('div');
+        overlay.id = 'projectLabelsOverlay';
+        overlay.className = 'project-labels-overlay';
+        map.getCanvasContainer().appendChild(overlay);
+      }
+      if (overlay) overlay.innerHTML = '';
+      active3DProjectLabels = [];
 
       while (activeThreeGroup.children.length > 0) {
         const obj = activeThreeGroup.children[0];
@@ -2603,11 +2960,14 @@
     function renderSingleProject(proj, currentZoom) {
       if (!proj || !proj.lat || !proj.lng) return;
 
+      const coord = maplibregl.MercatorCoordinate.fromLngLat([proj.lng, proj.lat], 0);
+      const scale = coord.meterInMercatorCoordinateUnits();
+      const topModelZ = getProjectBuildingTopZ(proj);
+      const topMercatorZ = coord.z + (topModelZ * scale * 1.25);
+
       // Render Radiant Three.js 3D Skyscraper only when in 3D mode
       if (currentViewMode === '3d' && (currentZoom >= 13.0 || activeClusterFilter)) {
-        const coord = maplibregl.MercatorCoordinate.fromLngLat([proj.lng, proj.lat], 0);
         const tower = create3DBuildingModel(proj);
-        const scale = coord.meterInMercatorCoordinateUnits();
         tower.scale.set(scale * 1.25, scale * 1.25, scale * 1.25);
         tower.position.set(coord.x, coord.y, coord.z);
         activeThreeGroup.add(tower);
@@ -2616,28 +2976,112 @@
       // Modern Pill with proPIUM Score & Redirect Link
       const scoreData = getPropiumScoreData(proj);
       const propiumUrl = getPropiumProjectUrl(proj);
-      const el = document.createElement('div');
-      el.className = 'project-map-pill';
-
       const distStr = proj._currentDist ? ` • ${proj._currentDist.toFixed(1)}km` : '';
-      el.innerHTML = `
-        <span class="pill-score-tag ${scoreData.score >= 90 ? 'high' : ''}">★ ${scoreData.score}</span>
-        <span>${proj.name}</span>
-        <span style="color: #64748b; font-size: 10px;">${proj.sector || ''}${distStr}</span>
-        <a href="${propiumUrl}" target="_blank" class="pill-uat-link" title="Open ${proj.name} on proPIUM" onclick="event.stopPropagation();">
-          <i class="ph-bold ph-arrow-square-out"></i>
-        </a>
+      const driveMins = proj._currentDist ? Math.max(3, Math.round(proj._currentDist * 2.8)) : null;
+
+      const pinWrap = document.createElement('div');
+      pinWrap.className = 'project-3d-pin-wrap';
+
+      pinWrap.innerHTML = `
+        <!-- Floating Hover Details Card -->
+        <div class="project-3d-hover-card">
+          <div class="hover-card-header">
+            <div class="hover-card-title-row">
+              <h4 class="hover-card-title">${proj.name}</h4>
+              <span class="hover-score-badge ${scoreData.score >= 90 ? 'high' : ''}">★ ${scoreData.score}</span>
+            </div>
+            <div class="hover-card-dev">
+              <i class="ph-bold ph-buildings" style="color: #6366f1;"></i> by ${proj.developer || 'Premier Developer'}
+            </div>
+          </div>
+
+          <div class="hover-tags-row">
+            <span class="hover-tag market">${proj.target_market || 'Luxury'}</span>
+            <span class="hover-tag status">${proj.status || 'Under Construction'}</span>
+            <span class="hover-tag sector">${proj.sector || 'Gurgaon'}</span>
+          </div>
+
+          <div class="hover-stats-grid">
+            <div class="hover-stat-item">
+              <span class="hover-stat-label">Location / Dist</span>
+              <span class="hover-stat-val">${proj._currentDist ? `${proj._currentDist.toFixed(1)} KM (🚗 ~${driveMins}m)` : (proj.corridor || 'Gurgaon')}</span>
+            </div>
+            <div class="hover-stat-item">
+              <span class="hover-stat-label">Configurations</span>
+              <span class="hover-stat-val">${(proj.configurations && proj.configurations.length) ? proj.configurations.join(', ') : '3, 4 BHK'}</span>
+            </div>
+            <div class="hover-stat-item">
+              <span class="hover-stat-label">Total Land</span>
+              <span class="hover-stat-val">${proj.total_area_acres ? `${proj.total_area_acres} Acres` : '6.0 Acres'}</span>
+            </div>
+            <div class="hover-stat-item">
+              <span class="hover-stat-label">Green Space</span>
+              <span class="hover-stat-val">${proj.open_area_percent ? `${proj.open_area_percent}% Open` : '65% Open'}</span>
+            </div>
+          </div>
+
+          <div class="hover-card-footer">
+            <span class="hover-footer-action">
+              <span>Open on proPIUM</span>
+              <i class="ph-bold ph-arrow-square-out"></i>
+            </span>
+            <button class="hover-footer-drawer-btn" type="button" title="Open 3D Analysis Drawer">
+              <i class="ph-bold ph-sidebar-simple"></i> Drawer
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Rooftop Pill -->
+        <div class="project-map-pill" title="Click to open ${proj.name} on proPIUM">
+          <span class="pill-score-tag ${scoreData.score >= 90 ? 'high' : ''}">★ ${scoreData.score}</span>
+          <span class="pill-name">${proj.name}</span>
+          <span class="pill-meta">${proj.sector || ''}${distStr}</span>
+          <span class="pill-redirect-icon" title="Redirect to ${proj.name} on proPIUM">
+            <i class="ph-bold ph-arrow-square-out"></i>
+          </span>
+        </div>
+
+        <!-- Downward Pin Stem pointing to 3D Skyscraper Rooftop -->
+        <div class="project-3d-pin-stem">
+          <div class="stem-caret"></div>
+          <div class="stem-needle"></div>
+          <div class="stem-dot"></div>
+        </div>
       `;
 
-      el.onclick = (e) => {
+      // Drawer button inside hover card opens the side drawer
+      const drawerBtn = pinWrap.querySelector('.hover-footer-drawer-btn');
+      if (drawerBtn) {
+        drawerBtn.onclick = (e) => {
+          e.stopPropagation();
+          openProjectDrawer(proj);
+        };
+      }
+
+      // Clicking anywhere on the project name or pill redirects to proPIUM!
+      pinWrap.onclick = (e) => {
         e.stopPropagation();
-        openProjectDrawer(proj);
+        window.open(propiumUrl, '_blank');
       };
 
-      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
-        .setLngLat([proj.lng, proj.lat])
-        .addTo(map);
-      activeHtmlMarkers.push(marker);
+      let overlay = document.getElementById('projectLabelsOverlay');
+      if (!overlay && map.getCanvasContainer()) {
+        overlay = document.createElement('div');
+        overlay.id = 'projectLabelsOverlay';
+        overlay.className = 'project-labels-overlay';
+        map.getCanvasContainer().appendChild(overlay);
+      }
+      if (overlay) {
+        overlay.appendChild(pinWrap);
+      }
+
+      active3DProjectLabels.push({
+        proj: proj,
+        el: pinWrap,
+        mercatorX: coord.x,
+        mercatorY: coord.y,
+        mercatorZ: topMercatorZ
+      });
     }
 
     function openClusterProjects(item) {
